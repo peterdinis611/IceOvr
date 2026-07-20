@@ -1,65 +1,82 @@
-import Image from "next/image";
+import { HomeExperience } from "@/components/HomeExperience";
+import { buildScoutCard } from "@/lib/scoring";
+import { synthesizeContributionWeeks } from "@/lib/contributions";
+import type { RawGitHubStats } from "@/lib/types";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+function withWeeks(raw: Omit<RawGitHubStats, "contributionWeeks">): RawGitHubStats {
+  return {
+    ...raw,
+    contributionWeeks: synthesizeContributionWeeks(raw.login, raw.commitsLastYear),
+  };
+}
+
+const demos: RawGitHubStats[] = [
+  withWeeks({
+    login: "torvalds",
+    name: "Linus Torvalds",
+    avatarUrl: "https://avatars.githubusercontent.com/u/1024025?v=4",
+    bio: "Creator of Linux",
+    location: "Portland, OR",
+    company: null,
+    createdAt: "2011-09-03T00:00:00Z",
+    followers: 220000,
+    following: 0,
+    publicRepos: 8,
+    totalStars: 180000,
+    commitsLastYear: 1200,
+    pullRequests: 40,
+    issues: 200,
+    reviews: 80,
+    contributionsLifetime: 15000,
+    languageCount: 4,
+    topLanguage: "C",
+    countryCode: "US",
+  }),
+  withWeeks({
+    login: "gaearon",
+    name: "Dan Abramov",
+    avatarUrl: "https://avatars.githubusercontent.com/u/810438?v=4",
+    bio: "Working on React",
+    location: null,
+    company: null,
+    createdAt: "2011-05-25T00:00:00Z",
+    followers: 90000,
+    following: 100,
+    publicRepos: 80,
+    totalStars: 95000,
+    commitsLastYear: 600,
+    pullRequests: 900,
+    issues: 400,
+    reviews: 700,
+    contributionsLifetime: 12000,
+    languageCount: 7,
+    topLanguage: "JavaScript",
+    countryCode: "GB",
+  }),
+  withWeeks({
+    login: "tj",
+    name: "TJ Holowaychuk",
+    avatarUrl: "https://avatars.githubusercontent.com/u/25254?v=4",
+    bio: null,
+    location: "Victoria, BC",
+    company: null,
+    createdAt: "2008-09-18T00:00:00Z",
+    followers: 48000,
+    following: 50,
+    publicRepos: 300,
+    totalStars: 120000,
+    commitsLastYear: 900,
+    pullRequests: 500,
+    issues: 300,
+    reviews: 200,
+    contributionsLifetime: 20000,
+    languageCount: 10,
+    topLanguage: "Go",
+    countryCode: "CA",
+  }),
+];
+
+export default function HomePage() {
+  const cards = demos.map((d) => buildScoutCard(d));
+  return <HomeExperience cards={cards} />;
 }

@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IceOVR
 
-## Getting Started
+**Your GitHub, rated for the rink.** 🏒
 
-First, run the development server:
+Turn any GitHub profile into an NHL Ultimate Team-style GitHub card — scored live, embeddable as a PNG.
+
+Inspired by [GitFut](https://github.com/younesfdj/gitfut), rebuilt with hockey aesthetics (not affiliated with NHL / EA).
+
+## Scout attributes
+
+| Stat | Name | Scouted from |
+|------|------|--------------|
+| **SPD** | Skating | Commits in the last year |
+| **SHO** | Shooting | Stars across owned repos |
+| **HND** | Hands | Language diversity + push rhythm |
+| **PAS** | Passing | Pull requests + followers |
+| **DEF** | Defense | Reviews + issues |
+| **STR** | Strength | Lifetime contributions + account age |
+
+**OVR** caps near **88** unless a legacy gate (years + influence) unlocks the 90s.
+
+### Positions
+- **C** — playmaker (PAS)
+- **LW / RW** — sniper / speedster (SHO / SPD)
+- **D** — two-way blue line (DEF + PAS)
+- **G** — standing wall easter egg (elite DEF + consistency)
+
+### Tiers
+Bronze → Silver → Gold → X-Factor → TOTY → Legend
+
+## Stack
+Next.js · TypeScript · Tailwind · GitHub API · `next/og` PNG cards
+
+## Setup
 
 ```bash
+cd iceovr
+npm install
+cp .env.example .env.local
+# optional but recommended:
+# GITHUB_TOKEN=ghp_...
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| URL | What |
+|-----|------|
+| `/` | Landing — GET DRAFTED |
+| `/u/<username>` | Full scout report |
+| `/<username>.png` | Live embeddable card image |
+| `/api/card/<username>` | Same PNG (API) |
 
-## Learn More
+Tier, nation (from location) and top language come automatically from GitHub — no query overrides.
 
-To learn more about Next.js, take a look at the following resources:
+### Embed
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```md
+[![IceOVR card](https://YOUR_DOMAIN/USERNAME.png)](https://YOUR_DOMAIN/u/USERNAME)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Env
 
-## Deploy on Vercel
+| Variable | Required | Notes |
+|----------|----------|-------|
+| `GITHUB_TOKEN` | Recommended | Apollo GraphQL (higher limits + real contribution calendar). Without it, IceOVR uses public REST. |
+| `NEXT_PUBLIC_SITE_URL` | For prod embeds | e.g. `https://iceovr.app` |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Without a token, IceOVR falls back to the public REST API (lower limits, estimated review counts).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Caching
+
+Scout data is cached for **1 hour** across layers:
+
+1. **L1** — in-memory `TtlMap` (hot path in the same process)
+2. **L2** — Next.js `unstable_cache` + fetch `revalidate` / tags (`scout:<user>`)
+3. **L3** — Apollo `InMemoryCache` with TTL-aware `cache-first` → `network-only`
+4. **CDN** — PNG responses send `s-maxage=3600, stale-while-revalidate=86400`
+
+## Tests
+
+```bash
+npm test          # vitest run
+npm run test:watch
+```
+
+Tests live in `__tests__/` (scoring, countries, languages, scout→card mapping, `PlayerCard`, Scout Lab dialog).
