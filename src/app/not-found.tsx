@@ -80,8 +80,9 @@ export default function NotFound() {
         >
           This profile did not make the draft board. Check the GitHub username, then scout a different player.
         </motion.p>
+        <GoalReplay />
         <motion.div
-          className="mt-8 border-y border-white/10 py-5"
+          className="mt-5 border-y border-white/10 py-5"
           initial={{ opacity: 0, scaleX: 0.92 }}
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ delay: 0.55, duration: 0.4 }}
@@ -102,5 +103,55 @@ export default function NotFound() {
         </p>
       </motion.div>
     </main>
+  );
+}
+
+function GoalReplay() {
+  return (
+    <motion.div
+      className="relative mt-6 h-24 overflow-hidden rounded-xl border border-white/10 bg-black/25 text-left"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.52 }}
+    >
+      <div className="absolute inset-y-0 left-0 z-10 flex w-1/2 flex-col justify-center px-4 sm:px-5">
+        <span className="text-[9px] font-black uppercase tracking-[0.24em] text-[#7dd3fc]">Replay review</span>
+        <span className="mt-1 font-display text-xl tracking-[0.12em] text-white">NO GOAL</span>
+        <span className="mt-0.5 text-[9px] uppercase tracking-[0.13em] text-white/45">Profile unavailable</span>
+      </div>
+      <motion.svg
+        aria-hidden
+        viewBox="0 0 260 150"
+        className="absolute -bottom-5 -right-3 h-32 w-56 text-[#7dd3fc]/45 sm:right-1"
+      >
+        <path d="M178 132V42c0-12 9-22 21-22h35c12 0 21 10 21 22v90" fill="none" stroke="currentColor" strokeWidth="3" />
+        <path d="M178 58h77M178 82h77M178 106h77M194 20v112M216 20v112M238 20v112" fill="none" stroke="currentColor" strokeWidth="1" opacity=".55" />
+        <path d="M22 126c36-2 64-20 88-53M31 125l38 2c8 0 16-5 20-13l9-18" fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
+        <motion.circle
+          r="6"
+          fill="#050505"
+          stroke="rgba(255,255,255,.35)"
+          strokeWidth="1"
+          initial={{ cx: 72, cy: 113, opacity: 0 }}
+          animate={{
+            cx: [72, 72, 194, 194, 72],
+            cy: [113, 113, 78, 78, 113],
+            opacity: [0, 1, 1, 0, 0],
+            scale: [0.8, 1, 1, 1.8, 0.8],
+          }}
+          transition={{ duration: 3.6, repeat: Infinity, times: [0, 0.18, 0.55, 0.68, 1], ease: "easeInOut" }}
+        />
+        <motion.circle
+          cx="194"
+          cy="78"
+          r="18"
+          fill="none"
+          stroke="#e11d2e"
+          strokeWidth="2"
+          animate={{ opacity: [0, 0, 0.8, 0], scale: [0.4, 0.4, 1.25, 1.6] }}
+          transition={{ duration: 3.6, repeat: Infinity, times: [0, 0.52, 0.66, 0.8] }}
+        />
+      </motion.svg>
+    </motion.div>
   );
 }

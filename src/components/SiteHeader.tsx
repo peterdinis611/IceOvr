@@ -38,7 +38,13 @@ export function SiteHeader({
             <ScoutForm initial={scoutInitial} />
           </div>
         ) : (
-          <div className="hidden justify-end sm:flex">
+          <div className="hidden items-center justify-end gap-5 sm:flex">
+            <Link
+              href="/team"
+              className="text-xs font-bold uppercase tracking-[0.2em] text-[#7dd3fc] transition hover:text-white"
+            >
+              My team
+            </Link>
             <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-[#94a3b8]">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e11d2e] opacity-60" />
