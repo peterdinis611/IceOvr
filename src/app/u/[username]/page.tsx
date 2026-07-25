@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { GitHubApiAlert } from "@/components/GitHubApiAlert";
 import { PlayerExperience } from "@/components/PlayerExperience";
 import { scoutPlayer } from "@/lib/scout";
 
@@ -15,9 +16,14 @@ export default async function PlayerPage({
   let card;
   try {
     card = await scoutPlayer(username);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (isUnknownPlayer(error)) notFound();
+    return <GitHubApiAlert username={username} />;
   }
 
   return <PlayerExperience card={card} />;
+}
+
+function isUnknownPlayer(error: unknown): boolean {
+  return error instanceof Error && /not found in the league/i.test(error.message);
 }
