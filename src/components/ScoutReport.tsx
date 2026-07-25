@@ -7,11 +7,9 @@ import { CountUp } from "@/components/CountUp";
 import { ContributionHeatmap } from "@/components/ContributionHeatmap";
 import { FlagBadge, LanguageBadge } from "@/components/Badges";
 import { RatingMethodologyButton } from "@/components/RatingMethodology";
-import { deriveRole } from "@/components/player-card/fromScout";
 
 export function ScoutReport({ card }: { card: ScoutCard }) {
   const tier = TIER_META[card.tier];
-  const role = deriveRole(card.topLanguage);
 
   return (
     <motion.section
@@ -29,14 +27,14 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            Live Scout Feed
+            Attribute breakdown
           </motion.p>
-          <h2 className="mt-1 truncate font-display text-3xl tracking-wide text-white sm:text-4xl">
-            {card.displayName}
+          <h2 className="mt-1 truncate font-display text-3xl tracking-[0.08em] text-white sm:text-4xl">
+            PERFORMANCE REPORT
           </h2>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#94a3b8]">
             <span>
-              {card.archetype} · {role} · {tier.label}
+              {card.archetype} · {tier.label} tier
             </span>
             <FlagBadge code={card.countryCode} />
             <LanguageBadge language={card.topLanguage} />
@@ -45,13 +43,15 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
             <RatingMethodologyButton card={card} />
           </div>
         </div>
-        <div className="shrink-0 rounded-xl border border-white/10 bg-black/35 px-4 py-3 text-right">
-          <CountUp
-            value={card.ovr}
-            className="font-display text-4xl sm:text-5xl"
-            style={{ color: tier.accent }}
-          />
-          <p className="text-xs uppercase tracking-[0.2em] text-[#64748b]">Overall</p>
+        <div className="shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/35">
+          <div className="border-b border-white/10 px-4 py-2 text-right">
+            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Data source</p>
+            <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-[#7dd3fc]">GitHub live</p>
+          </div>
+          <div className="px-4 py-2 text-right">
+            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Rating model</p>
+            <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em]" style={{ color: tier.accent }}>IceOVR 99</p>
+          </div>
         </div>
       </div>
 

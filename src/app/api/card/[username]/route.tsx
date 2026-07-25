@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { scoutPlayer } from "@/lib/scout";
 import { TIER_META } from "@/lib/tiers";
 import { languageIconUrl } from "@/lib/languages";
-import { computeStreak, deriveRole } from "@/components/player-card/fromScout";
+import { computeStreak } from "@/components/player-card/fromScout";
 import { tierFromRating, TIER_VISUAL } from "@/components/player-card/tierStyles";
 import { PNG_CACHE_CONTROL } from "@/lib/cache";
 
@@ -21,17 +21,6 @@ export async function GET(
     const tierKey = tierFromRating(card.ovr);
     const visual = TIER_VISUAL[tierKey];
     const meta = TIER_META[card.tier];
-    const role = deriveRole(card.topLanguage);
-    const shortPos =
-      role === "Frontend"
-        ? "FE"
-        : role === "Backend"
-          ? "BE"
-          : role === "Full Stack"
-            ? "FS"
-            : role === "DevOps"
-              ? "OPS"
-              : role.slice(0, 3).toUpperCase();
     const langIcon = languageIconUrl(card.topLanguage);
     const streak = computeStreak(card.contributionWeeks);
     const stats = [
@@ -96,20 +85,6 @@ export async function GET(
                     }}
                   >
                     {card.ovr}
-                  </div>
-                  <div
-                    style={{
-                      marginTop: 4,
-                      padding: "2px 8px",
-                      fontSize: 14,
-                      fontWeight: 800,
-                      letterSpacing: 1,
-                      background: "#111",
-                      border: `1px solid ${visual.accent}88`,
-                      display: "flex",
-                    }}
-                  >
-                    {shortPos}
                   </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>

@@ -4,7 +4,7 @@
 
 Turn any GitHub profile into an NHL Ultimate Team-style GitHub card — scored live, embeddable as a PNG.
 
-Inspired by [GitFut](https://github.com/younesfdj/gitfut), rebuilt with hockey aesthetics (not affiliated with NHL / EA).
+Built with hockey aesthetics (not affiliated with NHL / EA).
 
 ## Scout attributes
 

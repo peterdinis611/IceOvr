@@ -50,6 +50,16 @@ export function CardFrame({
             "linear-gradient(155deg, rgba(255,255,255,0.45) 0%, transparent 32%, transparent 68%, rgba(0,0,0,0.4) 100%)",
         }}
       />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-[2px] rounded-[14px] opacity-45"
+        style={{
+          backgroundImage:
+            "linear-gradient(115deg, rgba(255,255,255,.32) 0 1px, transparent 1px 28px), linear-gradient(25deg, transparent 0 52%, rgba(0,0,0,.4) 52% 53%, transparent 53%)",
+          backgroundSize: "36px 36px, 100% 100%",
+          mixBlendMode: "overlay",
+        }}
+      />
 
       <div
         className="relative h-full w-full overflow-hidden rounded-[11px]"

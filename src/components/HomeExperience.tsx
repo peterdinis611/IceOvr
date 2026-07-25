@@ -176,7 +176,7 @@ export function HomeExperience({ cards }: { cards: ScoutCard[] }) {
       </section>
 
       <footer className="relative z-10 border-t border-white/10 px-6 py-6 text-center text-xs uppercase tracking-[0.2em] text-[#64748b]">
-        IceOVR · NHL-style GitHub cards · Not affiliated with NHL or EA · Inspired by GitFut
+        IceOVR · NHL-style GitHub cards · Not affiliated with NHL or EA
       </footer>
     </main>
   );
