@@ -162,10 +162,28 @@ export async function GET(
                     alignItems: "center",
                   }}
                 >
-                  <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: 1, display: "flex" }}>
+                  <div
+                    style={{
+                      fontSize: 24,
+                      fontWeight: 900,
+                      letterSpacing: 1,
+                      lineHeight: 1,
+                      color: "#ffffff",
+                      display: "flex",
+                    }}
+                  >
                     {card.displayName}
                   </div>
-                  <div style={{ marginTop: 4, fontSize: 12, color: "rgba(255,255,255,0.45)", display: "flex" }}>
+                  <div
+                    style={{
+                      marginTop: 5,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      letterSpacing: 0.6,
+                      color: "rgba(255,255,255,0.82)",
+                      display: "flex",
+                    }}
+                  >
                     @{card.username}
                   </div>
                 </div>
@@ -184,8 +202,8 @@ export async function GET(
                           letterSpacing: 1,
                         }}
                       >
-                        <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 700 }}>{s.label}</span>
-                        <span style={{ fontWeight: 800 }}>{formatStat(s.value)}</span>
+                        <span style={{ color: "rgba(255,255,255,0.76)", fontWeight: 800 }}>{s.label}</span>
+                        <span style={{ color: "#ffffff", fontWeight: 900 }}>{formatStat(s.value)}</span>
                       </div>
                       <div
                         style={{
@@ -219,12 +237,12 @@ export async function GET(
                   borderTop: "1px solid rgba(255,255,255,0.1)",
                   fontSize: 10,
                   letterSpacing: 3,
-                  color: visual.accent,
+                  color: "#ffffff",
                   fontWeight: 900,
                 }}
               >
-                <span>ICEOVR</span>
-                <span style={{ color: "rgba(255,255,255,0.35)", fontWeight: 400 }}>COLLECTIBLE</span>
+                <span style={{ color: visual.accent }}>ICEOVR</span>
+                <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 700 }}>GITHUB CARD</span>
               </div>
             </div>
           </div>

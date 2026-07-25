@@ -12,6 +12,7 @@ export function CardStudio({ card }: { card: ScoutCard }) {
   const { playPuckShot } = useArenaAudio();
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState<"markdown" | "image" | "png" | null>(null);
+  const [copyNotice, setCopyNotice] = useState<string | null>(null);
   const [sharingOpen, setSharingOpen] = useState(false);
   const tier = TIER_META[card.tier];
 
@@ -49,7 +50,9 @@ export function CardStudio({ card }: { card: ScoutCard }) {
     try {
       await navigator.clipboard.writeText(value);
       setCopied(kind);
+      setCopyNotice(kind === "image" ? "Card image URL copied" : "GitHub Markdown copied");
       setTimeout(() => setCopied(null), 1800);
+      setTimeout(() => setCopyNotice(null), 2400);
     } catch {
       // ignore
     }
@@ -65,7 +68,9 @@ export function CardStudio({ card }: { card: ScoutCard }) {
       const image = await response.blob();
       await navigator.clipboard.write([new ClipboardItem({ "image/png": image })]);
       setCopied("png");
+      setCopyNotice("PNG image copied to clipboard");
       setTimeout(() => setCopied(null), 1800);
+      setTimeout(() => setCopyNotice(null), 2400);
     } catch {
       await copyEmbed(publicPng, "image");
     }
@@ -147,6 +152,20 @@ export function CardStudio({ card }: { card: ScoutCard }) {
             onCopyImage={() => void copyEmbed(publicPng, "image")}
             onCopyMarkdown={() => void copyEmbed(markdown, "markdown")}
           />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {copyNotice && (
+          <motion.div
+            role="status"
+            className="fixed bottom-5 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#7dd3fc]/30 bg-[#071524]/95 px-4 py-2.5 text-xs font-bold text-[#d8f5ff] shadow-[0_12px_36px_rgba(0,0,0,.42)] backdrop-blur-md"
+            initial={{ opacity: 0, y: 14, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.96 }}
+          >
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#7dd3fc] text-[10px] text-[#06111c]">✓</span>
+            {copyNotice}
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
