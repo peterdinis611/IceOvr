@@ -82,10 +82,10 @@ export const TIER_META: Record<Tier, TierMeta> = {
 };
 
 export const STAT_LABELS = [
-  { key: "spd", short: "SPD", name: "Skating" },
-  { key: "sho", short: "SHO", name: "Shooting" },
-  { key: "hnd", short: "HND", name: "Hands" },
-  { key: "pas", short: "PAS", name: "Passing" },
-  { key: "def", short: "DEF", name: "Defense" },
-  { key: "str", short: "STR", name: "Strength" },
+  { key: "spd", short: "ACT", name: "Activity" },
+  { key: "sho", short: "IMP", name: "Impact" },
+  { key: "hnd", short: "CRF", name: "Craft" },
+  { key: "pas", short: "COL", name: "Collaboration" },
+  { key: "def", short: "REL", name: "Reliability" },
+  { key: "str", short: "CON", name: "Consistency" },
 ] as const;

@@ -48,10 +48,6 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
             <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Data source</p>
             <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-[#7dd3fc]">GitHub live</p>
           </div>
-          <div className="px-4 py-2 text-right">
-            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Rating model</p>
-            <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em]" style={{ color: tier.accent }}>IceOVR 99</p>
-          </div>
         </div>
       </div>
 

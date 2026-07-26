@@ -13,74 +13,74 @@ export type RatingIngredient = {
 export const RATING_INGREDIENTS: RatingIngredient[] = [
   {
     key: "spd",
-    short: "SPD",
-    name: "Skating",
+    short: "ACT",
+    name: "Activity",
     weight: 0.16,
     sources: "Commits (last year)",
-    detail: (c) => `${c.raw.commitsLastYear.toLocaleString()} commits → cadence on ice`,
+    detail: (c) => `${c.raw.commitsLastYear.toLocaleString()} commits → shipping cadence`,
   },
   {
     key: "sho",
-    short: "SHO",
-    name: "Shooting",
+    short: "IMP",
+    name: "Impact",
     weight: 0.18,
     sources: "Stars on owned repos",
-    detail: (c) => `${c.raw.stars.toLocaleString()} stars → shot power / impact`,
+    detail: (c) => `${c.raw.stars.toLocaleString()} stars → open-source impact`,
   },
   {
     key: "hnd",
-    short: "HND",
-    name: "Hands",
+    short: "CRF",
+    name: "Craft",
     weight: 0.14,
     sources: "Languages + commit rhythm",
     detail: (c) =>
-      `${c.raw.languageCount} languages · ${c.raw.commitsLastYear.toLocaleString()} commits → stickhandling`,
+      `${c.raw.languageCount} languages · ${c.raw.commitsLastYear.toLocaleString()} commits → engineering breadth`,
   },
   {
     key: "pas",
-    short: "PAS",
-    name: "Passing",
+    short: "COL",
+    name: "Collaboration",
     weight: 0.18,
     sources: "Pull requests + followers",
     detail: (c) =>
-      `${c.raw.pullRequests.toLocaleString()} PRs · ${c.raw.followers.toLocaleString()} followers → playmaking`,
+      `${c.raw.pullRequests.toLocaleString()} PRs · ${c.raw.followers.toLocaleString()} followers → collaboration reach`,
   },
   {
     key: "def",
-    short: "DEF",
-    name: "Defense",
+    short: "REL",
+    name: "Reliability",
     weight: 0.16,
     sources: "Reviews + issues",
     detail: (c) =>
-      `${c.raw.reviews.toLocaleString()} reviews · ${c.raw.issues.toLocaleString()} issues → blue-line work`,
+      `${c.raw.reviews.toLocaleString()} reviews · ${c.raw.issues.toLocaleString()} issues → reliability signals`,
   },
   {
     key: "str",
-    short: "STR",
-    name: "Strength",
+    short: "CON",
+    name: "Consistency",
     weight: 0.18,
     sources: "Lifetime contributions + tenure",
     detail: (c) =>
-      `${c.raw.contributionsLifetime.toLocaleString()} contribs · ${c.raw.accountYears} yrs → board battles`,
+      `${c.raw.contributionsLifetime.toLocaleString()} contributions · ${c.raw.accountYears} yrs → sustained work`,
   },
 ];
 
 export const TIER_BANDS = [
-  { tier: "Bronze", range: "40–59", note: "Prospect" },
-  { tier: "Silver", range: "60–74", note: "Call-up" },
-  { tier: "Gold", range: "75–84", note: "Starter" },
-  { tier: "Elite", range: "85–92", note: "All-Star" },
-  { tier: "Legend", range: "93–99", note: "Hall of Fame" },
+  { tier: "Bronze", range: "40–59", note: "Growing" },
+  { tier: "Silver", range: "60–74", note: "Established" },
+  { tier: "Gold", range: "75–84", note: "Standout" },
+  { tier: "Elite", range: "85–92", note: "Expert" },
+  { tier: "Legend", range: "93–99", note: "Legacy" },
 ] as const;
 
 /** Generic one-liners for the landing “how it works” dialog (no player data). */
 export const GUIDE_BLURBS: Record<RatingIngredient["key"], string> = {
-  spd: "More commits last year → higher skating / pace",
-  sho: "Stars on your repos → shot power and impact",
-  hnd: "Language mix + commit rhythm → stickhandling",
-  pas: "PRs and followers → playmaking / distribution",
-  def: "Reviews and issues → defensive awareness",
-  str: "Lifetime contributions + account age → strength",
+  spd: "More commits last year → higher activity",
+  sho: "Stars on your repos → more open-source impact",
+  hnd: "Language mix + commit rhythm → stronger engineering craft",
+  pas: "PRs and followers → broader collaboration",
+  def: "Reviews and issues → stronger reliability signals",
+  str: "Lifetime contributions + account age → proven consistency",
 };
 
 export function describeOvrFormula(card?: ScoutCard | null): string {
