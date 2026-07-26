@@ -13,24 +13,29 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
 
   return (
     <motion.section
-      className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b1524]/80 p-6 backdrop-blur-md"
+      className="relative overflow-hidden rounded-[22px] border border-[#7dd3fc]/15 bg-[linear-gradient(145deg,rgba(12,30,47,.96),rgba(6,17,30,.94))] p-5 shadow-[0_20px_60px_rgba(0,0,0,.2)] backdrop-blur-md sm:p-6"
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25, duration: 0.5 }}
     >
       <div className="absolute inset-x-0 top-0 h-px broadcast-stripe" />
+      <div
+        aria-hidden
+        className="absolute -right-16 -top-20 h-56 w-56 rounded-full blur-3xl"
+        style={{ background: `${tier.accent}18` }}
+      />
 
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+      <div className="relative mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-5">
         <div className="min-w-0 flex-1">
           <motion.p
-            className="text-xs uppercase tracking-[0.28em] text-[#7dd3fc]"
+            className="text-[10px] font-black uppercase tracking-[0.3em] text-[#7dd3fc]"
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            Attribute breakdown
+            GitHub scout summary
           </motion.p>
-          <h2 className="mt-1 truncate font-display text-3xl tracking-[0.08em] text-white sm:text-4xl">
-            PERFORMANCE REPORT
+          <h2 className="mt-1 truncate font-display text-3xl tracking-[0.1em] text-white sm:text-4xl">
+            DEVELOPER PERFORMANCE
           </h2>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#94a3b8]">
             <span>
@@ -43,26 +48,35 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
             <RatingMethodologyButton card={card} />
           </div>
         </div>
-        <div className="shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/35">
-          <div className="border-b border-white/10 px-4 py-2 text-right">
-            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Data source</p>
-            <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-[#7dd3fc]">GitHub live</p>
+        <div className="flex shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/25">
+          <div className="border-r border-white/10 px-3 py-2.5 text-right">
+            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Overall</p>
+            <CountUp value={card.ovr} className="mt-0.5 block font-display text-3xl leading-none" style={{ color: tier.accent }} />
+          </div>
+          <div className="px-3 py-2.5 text-right">
+            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Data source</p>
+            <p className="mt-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#7dd3fc]">GitHub live</p>
           </div>
         </div>
       </div>
 
-      <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mb-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
         {STAT_LABELS.map((stat, i) => {
           const value = card.stats[stat.key];
           const pct = Math.max(4, ((value - 40) / 59) * 100);
           return (
             <motion.div
               key={stat.key}
-              className="rounded-xl border border-white/8 bg-black/30 p-4"
+              className="relative overflow-hidden rounded-xl border border-white/10 bg-black/25 p-3.5"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 + i * 0.07 }}
             >
+              <div
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-px"
+                style={{ background: `linear-gradient(90deg, transparent, ${tier.accent}88, transparent)` }}
+              />
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-xs font-semibold tracking-[0.18em] text-[#94a3b8]">
                   {stat.short} · {stat.name}
@@ -87,14 +101,14 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
         })}
       </div>
 
-      <div className="mb-8">
+      <div className="mb-5 rounded-xl border border-white/10 bg-black/20 p-3 sm:p-4">
         <ContributionHeatmap
           weeks={card.contributionWeeks}
           total={card.raw.contributionsLifetime}
         />
       </div>
 
-      <div className="grid gap-3 text-sm text-[#cbd5e1] sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-2 text-sm text-[#cbd5e1] sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Stars" value={card.raw.stars.toLocaleString()} delay={0.7} />
         <Metric label="Commits (yr)" value={card.raw.commitsLastYear.toLocaleString()} delay={0.76} />
         <Metric label="Followers" value={card.raw.followers.toLocaleString()} delay={0.82} />
@@ -130,13 +144,13 @@ function Metric({
 }) {
   return (
     <motion.div
-      className="rounded-lg border border-white/8 bg-black/25 px-3 py-2 transition hover:border-[#38bdf8]/30 hover:bg-black/40"
+      className="rounded-lg border border-white/10 bg-black/20 px-3 py-2 transition hover:border-[#38bdf8]/35 hover:bg-black/35"
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay }}
     >
       <p className="text-[10px] uppercase tracking-[0.18em] text-[#64748b]">{label}</p>
-      <p className="mt-0.5 font-semibold text-white">{value}</p>
+      <p className="mt-0.5 font-bold tabular-nums text-white">{value}</p>
     </motion.div>
   );
 }
