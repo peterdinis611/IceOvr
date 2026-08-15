@@ -5,6 +5,7 @@ import type { ScoutCard } from "@/lib/types";
 import { STAT_LABELS, TIER_META } from "@/lib/tiers";
 import { CountUp } from "@/components/CountUp";
 import { ContributionHeatmap } from "@/components/ContributionHeatmap";
+import { GitHubTrophies } from "@/components/GitHubTrophies";
 import { FlagBadge, LanguageBadge } from "@/components/Badges";
 import { RatingMethodologyButton } from "@/components/RatingMethodology";
 
@@ -106,6 +107,10 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
           weeks={card.contributionWeeks}
           total={card.raw.contributionsLifetime}
         />
+      </div>
+
+      <div className="mb-5">
+        <GitHubTrophies card={card} />
       </div>
 
       <div className="grid gap-2 text-sm text-[#cbd5e1] sm:grid-cols-2 lg:grid-cols-4">
