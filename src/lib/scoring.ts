@@ -158,6 +158,9 @@ export function buildScoutCard(raw: RawGitHubStats): ScoutCard {
       accountYears: Math.round(yearsSince(raw.createdAt) * 10) / 10,
       languageCount: raw.languageCount,
       publicRepos: raw.publicRepos,
+      languages: raw.languages,
+      repositories: raw.repositories,
+      recentActivity: raw.recentActivity,
     },
     scoutedAt: new Date().toISOString(),
   };

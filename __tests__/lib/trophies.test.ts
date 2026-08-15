@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { makeScoutCard } from "@tests/fixtures";
-import { getGitHubTrophies } from "@/lib/trophies";
+import { getGitHubCupProgress, getGitHubTrophies } from "@/lib/trophies";
 
 describe("getGitHubTrophies", () => {
   it("unlocks trophies from GitHub profile signals", () => {
@@ -47,5 +47,21 @@ describe("getGitHubTrophies", () => {
     expect(getGitHubTrophies(card)).toEqual([
       expect.objectContaining({ id: "rising", title: "Rising Cup" }),
     ]);
+  });
+
+  it("reports locked Cup progress and remaining thresholds", () => {
+    const cups = getGitHubCupProgress(makeScoutCard({
+      raw: { ...makeScoutCard().raw, stars: 400, commitsLastYear: 250 },
+    }));
+
+    expect(cups.find((cup) => cup.id === "impact")).toMatchObject({
+      unlocked: false,
+      current: 400,
+      target: 1_000,
+    });
+    expect(cups.find((cup) => cup.id === "shipper")).toMatchObject({
+      unlocked: true,
+      current: 250,
+    });
   });
 });

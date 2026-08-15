@@ -50,9 +50,15 @@ export async function fetchGitHubProfileViaRest(
 
   const repos = reposRes.ok
     ? ((await reposRes.json()) as Array<{
+        name: string;
+        description: string | null;
         stargazers_count: number;
+        forks_count: number;
         language: string | null;
         fork: boolean;
+        html_url: string;
+        updated_at: string;
+        pushed_at: string | null;
       }>)
     : [];
 
@@ -68,11 +74,31 @@ export async function fetchGitHubProfileViaRest(
   }
   const topLanguage =
     [...langCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+  const languageBreakdown = [...langCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => ({ name, count }));
+  const repositories = owned
+    .sort((a, b) => b.stargazers_count - a.stargazers_count)
+    .slice(0, 3)
+    .map((repo) => ({
+      name: repo.name,
+      description: repo.description,
+      stars: repo.stargazers_count,
+      forks: repo.forks_count,
+      language: repo.language,
+      url: repo.html_url,
+      updatedAt: repo.pushed_at ?? repo.updated_at,
+    }));
 
   let commitsLastYear = Math.min(
     800,
     Math.round(user.public_repos * 12 + user.followers * 0.5),
   );
+  let recentActivity = repositories.map((repo) => ({
+    label: `Updated ${repo.name}`,
+    detail: repo.language ? `${repo.language} repository` : "Repository update",
+    occurredAt: repo.updatedAt,
+  }));
   try {
     const eventsRes = await fetch(
       `${REST}/users/${encodeURIComponent(login)}/events/public?per_page=100`,
@@ -82,6 +108,8 @@ export async function fetchGitHubProfileViaRest(
       const events = (await eventsRes.json()) as Array<{
         type: string;
         created_at: string;
+        repo: { name: string };
+        payload: { action?: string; commits?: Array<unknown> };
       }>;
       const yearAgo = Date.now() - 365 * 24 * 60 * 60 * 1000;
       const pushes = events.filter(
@@ -89,6 +117,11 @@ export async function fetchGitHubProfileViaRest(
           e.type === "PushEvent" && new Date(e.created_at).getTime() > yearAgo,
       ).length;
       commitsLastYear = Math.max(commitsLastYear, pushes * 8);
+      recentActivity = events.slice(0, 3).map((event) => ({
+        label: eventLabel(event),
+        detail: event.repo.name,
+        occurredAt: event.created_at,
+      }));
     }
   } catch {
     // keep estimate
@@ -119,5 +152,16 @@ export async function fetchGitHubProfileViaRest(
     topLanguage,
     countryCode: null,
     contributionWeeks: synthesizeContributionWeeks(user.login, commitsLastYear),
+    languages: languageBreakdown,
+    repositories,
+    recentActivity,
   };
+}
+
+function eventLabel(event: { type: string; payload: { action?: string; commits?: Array<unknown> } }): string {
+  if (event.type === "PushEvent") return `${event.payload.commits?.length ?? 1} commit${(event.payload.commits?.length ?? 1) === 1 ? "" : "s"} pushed`;
+  if (event.type === "PullRequestEvent") return `Pull request ${event.payload.action ?? "updated"}`;
+  if (event.type === "ReleaseEvent") return "Release published";
+  if (event.type === "IssuesEvent") return `Issue ${event.payload.action ?? "updated"}`;
+  return event.type.replace(/Event$/, "").replace(/([A-Z])/g, " $1").trim();
 }

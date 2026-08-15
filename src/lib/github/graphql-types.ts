@@ -9,6 +9,13 @@ export type ScoutProfileUser = {
   followers: { totalCount: number };
   following: { totalCount: number };
   pullRequests: { totalCount: number };
+  recentPullRequests: {
+    nodes: Array<{
+      title: string;
+      createdAt: string;
+      repository: { nameWithOwner: string } | null;
+    } | null>;
+  };
   issues: { totalCount: number };
 };
 
@@ -17,7 +24,12 @@ export type ScoutReposUser = {
   repositories: {
     totalCount: number;
     nodes: Array<{
+      name: string;
+      description: string | null;
       stargazerCount: number;
+      forkCount: number;
+      url: string;
+      updatedAt: string;
       primaryLanguage: { name: string } | null;
     } | null>;
   };

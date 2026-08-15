@@ -17,11 +17,16 @@ export function mapContributionCalendar(
 
 export function mapGraphQLUser(user: GraphQLScoutUser): RawGitHubStats {
   const nodes = user.repositories.nodes.filter(Boolean) as Array<{
+    name: string;
+    description: string | null;
     stargazerCount: number;
+    forkCount: number;
+    url: string;
+    updatedAt: string;
     primaryLanguage: { name: string } | null;
   }>;
   const totalStars = nodes.reduce((s, n) => s + n.stargazerCount, 0);
-  const languages = new Set(
+  const uniqueLanguages = new Set(
     nodes.map((n) => n.primaryLanguage?.name).filter(Boolean) as string[],
   );
   const langCounts = new Map<string, number>();
@@ -32,6 +37,18 @@ export function mapGraphQLUser(user: GraphQLScoutUser): RawGitHubStats {
   }
   const topLanguage =
     [...langCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+  const languages = [...langCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => ({ name, count }));
+  const repositories = nodes.slice(0, 3).map((node) => ({
+    name: node.name,
+    description: node.description,
+    stars: node.stargazerCount,
+    forks: node.forkCount,
+    language: node.primaryLanguage?.name ?? null,
+    url: node.url,
+    updatedAt: node.updatedAt,
+  }));
 
   const commitsLastYear =
     user.contributionsCollection.totalCommitContributions +
@@ -59,11 +76,20 @@ export function mapGraphQLUser(user: GraphQLScoutUser): RawGitHubStats {
     reviews: Math.round(user.pullRequests.totalCount * 0.35),
     contributionsLifetime:
       user.contributionsCollection.contributionCalendar.totalContributions,
-    languageCount: languages.size || 1,
+    languageCount: uniqueLanguages.size || 1,
     topLanguage,
     countryCode: null,
     contributionWeeks: weeks.length
       ? weeks
       : synthesizeContributionWeeks(user.login, commitsLastYear),
+    languages,
+    repositories,
+    recentActivity: user.recentPullRequests.nodes
+      .filter(Boolean)
+      .map((pullRequest) => ({
+        label: pullRequest!.title,
+        detail: `Pull request${pullRequest!.repository ? ` · ${pullRequest!.repository.nameWithOwner}` : ""}`,
+        occurredAt: pullRequest!.createdAt,
+      })),
   };
 }

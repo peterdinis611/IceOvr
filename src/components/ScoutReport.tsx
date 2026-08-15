@@ -6,6 +6,7 @@ import { STAT_LABELS, TIER_META } from "@/lib/tiers";
 import { CountUp } from "@/components/CountUp";
 import { ContributionHeatmap } from "@/components/ContributionHeatmap";
 import { GitHubTrophies } from "@/components/GitHubTrophies";
+import { ReportInsights } from "@/components/ReportInsights";
 import { FlagBadge, LanguageBadge } from "@/components/Badges";
 import { RatingMethodologyButton } from "@/components/RatingMethodology";
 
@@ -36,7 +37,7 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
             GitHub scout summary
           </motion.p>
           <h2 className="mt-1 truncate font-display text-3xl tracking-[0.1em] text-white sm:text-4xl">
-            DEVELOPER PERFORMANCE
+            GITHUB PERFORMANCE
           </h2>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#94a3b8]">
             <span>
@@ -109,7 +110,9 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
         />
       </div>
 
-      <div className="mb-5">
+      <ReportInsights card={card} />
+
+      <div className="mb-5 mt-5">
         <GitHubTrophies card={card} />
       </div>
 

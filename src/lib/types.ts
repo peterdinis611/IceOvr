@@ -4,6 +4,27 @@ export type Position = "C" | "LW" | "RW" | "LD" | "RD" | "D" | "G";
 
 export type Tier = "bronze" | "silver" | "gold" | "elite" | "legend";
 
+export type GitHubLanguage = {
+  name: string;
+  count: number;
+};
+
+export type GitHubRepository = {
+  name: string;
+  description: string | null;
+  stars: number;
+  forks: number;
+  language: string | null;
+  url: string;
+  updatedAt: string;
+};
+
+export type GitHubActivity = {
+  label: string;
+  detail: string;
+  occurredAt: string;
+};
+
 export interface RawGitHubStats {
   login: string;
   name: string | null;
@@ -25,6 +46,9 @@ export interface RawGitHubStats {
   topLanguage: string | null;
   countryCode: string | null;
   contributionWeeks: ContributionWeek[];
+  languages?: GitHubLanguage[];
+  repositories?: GitHubRepository[];
+  recentActivity?: GitHubActivity[];
 }
 
 export interface PlayerStats {
@@ -61,6 +85,9 @@ export interface ScoutCard {
     accountYears: number;
     languageCount: number;
     publicRepos: number;
+    languages?: GitHubLanguage[];
+    repositories?: GitHubRepository[];
+    recentActivity?: GitHubActivity[];
   };
   scoutedAt: string;
 }

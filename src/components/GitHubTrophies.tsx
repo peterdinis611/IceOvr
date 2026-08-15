@@ -2,9 +2,9 @@
 
 import { motion } from "motion/react";
 import type { ScoutCard } from "@/lib/types";
-import { getGitHubTrophies } from "@/lib/trophies";
+import { getGitHubCupProgress } from "@/lib/trophies";
 
-const ACCENT: Record<ReturnType<typeof getGitHubTrophies>[number]["accent"], { text: string; border: string; glow: string }> = {
+const ACCENT: Record<ReturnType<typeof getGitHubCupProgress>[number]["accent"], { text: string; border: string; glow: string }> = {
   cyan: { text: "#7dd3fc", border: "rgba(125,211,252,.28)", glow: "rgba(125,211,252,.13)" },
   gold: { text: "#fde68a", border: "rgba(253,230,138,.28)", glow: "rgba(253,230,138,.13)" },
   violet: { text: "#c4b5fd", border: "rgba(196,181,253,.28)", glow: "rgba(196,181,253,.13)" },
@@ -15,7 +15,8 @@ const ACCENT: Record<ReturnType<typeof getGitHubTrophies>[number]["accent"], { t
 };
 
 export function GitHubTrophies({ card }: { card: ScoutCard }) {
-  const trophies = getGitHubTrophies(card);
+  const cups = getGitHubCupProgress(card);
+  const unlocked = cups.filter((cup) => cup.unlocked).length;
 
   return (
     <section className="rounded-xl border border-white/10 bg-black/20 p-3 sm:p-4">
@@ -25,30 +26,46 @@ export function GitHubTrophies({ card }: { card: ScoutCard }) {
           <p className="mt-0.5 text-xs text-[#94a3b8]">IceOVR achievements calculated from public GitHub activity</p>
         </div>
         <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/45">
-          {trophies.length} unlocked
+          {unlocked}/{cups.length} unlocked
         </span>
       </div>
       <div className="grid gap-2 sm:grid-cols-2">
-        {trophies.map((trophy, index) => {
-          const accent = ACCENT[trophy.accent];
+        {cups.map((cup, index) => {
+          const accent = ACCENT[cup.accent];
+          const remaining = Math.max(0, cup.target - cup.current);
+          const progress = Math.min(100, (cup.current / cup.target) * 100);
           return (
             <motion.div
-              key={trophy.id}
+              key={cup.id}
               className="flex min-w-0 items-center gap-3 rounded-lg border px-3 py-2.5"
-              style={{ borderColor: accent.border, background: `linear-gradient(135deg, ${accent.glow}, transparent 75%)` }}
+              style={{
+                borderColor: cup.unlocked ? accent.border : "rgba(148,163,184,.16)",
+                background: `linear-gradient(135deg, ${cup.unlocked ? accent.glow : "rgba(15,23,42,.22)"}, transparent 75%)`,
+                opacity: cup.unlocked ? 1 : 0.7,
+              }}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.74 + index * 0.06 }}
             >
               <span
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border"
-                style={{ color: accent.text, borderColor: accent.border, boxShadow: `0 0 18px ${accent.glow}` }}
+                style={{ color: cup.unlocked ? accent.text : "#94a3b8", borderColor: cup.unlocked ? accent.border : "rgba(148,163,184,.18)", boxShadow: cup.unlocked ? `0 0 18px ${accent.glow}` : "none" }}
               >
                 <TrophyCup />
               </span>
               <div className="min-w-0">
-                <p className="truncate text-xs font-bold" style={{ color: accent.text }}>{trophy.title}</p>
-                <p className="mt-0.5 truncate text-[10px] text-[#94a3b8]">{trophy.detail}</p>
+                <div className="flex items-center gap-2">
+                  <p className="truncate text-xs font-bold" style={{ color: cup.unlocked ? accent.text : "#cbd5e1" }}>{cup.title}</p>
+                  <span className="text-[8px] font-black uppercase tracking-wider text-[#64748b]">{cup.unlocked ? "won" : "locked"}</span>
+                </div>
+                <p className="mt-0.5 truncate text-[10px] text-[#94a3b8]">
+                  {cup.unlocked ? `${cup.current.toLocaleString()} / ${cup.target.toLocaleString()} · ${cup.detail}` : `${remaining.toLocaleString()} more needed`}
+                </p>
+                {!cup.unlocked && (
+                  <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/10">
+                    <div className="h-full rounded-full bg-[#64748b]" style={{ width: `${progress}%` }} />
+                  </div>
+                )}
               </div>
             </motion.div>
           );

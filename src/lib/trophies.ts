@@ -7,59 +7,16 @@ export type GitHubTrophy = {
   accent: "cyan" | "gold" | "violet" | "green" | "red" | "orange" | "silver";
 };
 
+export type GitHubCupProgress = GitHubTrophy & {
+  unlocked: boolean;
+  current: number;
+  target: number;
+};
+
 export function getGitHubTrophies(card: ScoutCard): GitHubTrophy[] {
-  const trophies: GitHubTrophy[] = [];
-  const streak = currentStreak(card);
-
-  if (card.raw.stars >= 1_000) {
-    trophies.push({
-      id: "impact",
-      title: "Impact Cup",
-      detail: `${card.raw.stars.toLocaleString()} repository stars`,
-      accent: "gold",
-    });
-  }
-  if (card.raw.commitsLastYear >= 250) {
-    trophies.push({
-      id: "shipper",
-      title: "Shipper Cup",
-      detail: `${card.raw.commitsLastYear.toLocaleString()} commits this year`,
-      accent: "cyan",
-    });
-  }
-  if (card.raw.pullRequests >= 100) {
-    trophies.push({
-      id: "collaborator",
-      title: "Collaboration Cup",
-      detail: `${card.raw.pullRequests.toLocaleString()} pull requests`,
-      accent: "violet",
-    });
-  }
-  if (card.raw.followers >= 1_000) {
-    trophies.push({
-      id: "community",
-      title: "Community Cup",
-      detail: `${card.raw.followers.toLocaleString()} followers`,
-      accent: "green",
-    });
-  }
-  if (card.raw.accountYears >= 5) {
-    trophies.push({
-      id: "veteran",
-      title: "Builder Cup",
-      detail: `${card.raw.accountYears} years on GitHub`,
-      accent: "red",
-    });
-  }
-  if (streak >= 14) {
-    trophies.push({
-      id: "streak",
-      title: "Streak Cup",
-      detail: `${streak}-day contribution streak`,
-      accent: "orange",
-    });
-  }
-
+  const trophies = getGitHubCupProgress(card)
+    .filter((cup) => cup.unlocked)
+    .map(({ unlocked: _unlocked, current: _current, target: _target, ...cup }) => cup);
   return trophies.length
     ? trophies.slice(0, 4)
     : [
@@ -70,6 +27,61 @@ export function getGitHubTrophies(card: ScoutCard): GitHubTrophy[] {
           accent: "silver",
         },
       ];
+}
+
+export function getGitHubCupProgress(card: ScoutCard): GitHubCupProgress[] {
+  const streak = currentStreak(card);
+  const cups: Array<GitHubTrophy & { current: number; target: number }> = [
+    {
+      id: "impact",
+      title: "Impact Cup",
+      detail: "Repository stars earned",
+      accent: "gold",
+      current: card.raw.stars,
+      target: 1_000,
+    },
+    {
+      id: "shipper",
+      title: "Shipper Cup",
+      detail: "Commits made this year",
+      accent: "cyan",
+      current: card.raw.commitsLastYear,
+      target: 250,
+    },
+    {
+      id: "collaborator",
+      title: "Collaboration Cup",
+      detail: "Pull requests opened",
+      accent: "violet",
+      current: card.raw.pullRequests,
+      target: 100,
+    },
+    {
+      id: "community",
+      title: "Community Cup",
+      detail: "Followers reached",
+      accent: "green",
+      current: card.raw.followers,
+      target: 1_000,
+    },
+    {
+      id: "veteran",
+      title: "Builder Cup",
+      detail: "Years on GitHub",
+      accent: "red",
+      current: card.raw.accountYears,
+      target: 5,
+    },
+    {
+      id: "streak",
+      title: "Streak Cup",
+      detail: "Consecutive contribution days",
+      accent: "orange",
+      current: streak,
+      target: 14,
+    },
+  ];
+  return cups.map((cup) => ({ ...cup, unlocked: cup.current >= cup.target }));
 }
 
 function currentStreak(card: ScoutCard): number {

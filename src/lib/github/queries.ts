@@ -20,6 +20,18 @@ export const SCOUT_PROFILE_QUERY = gql`
       pullRequests {
         totalCount
       }
+      recentPullRequests: pullRequests(
+        first: 3
+        orderBy: { field: CREATED_AT, direction: DESC }
+      ) {
+        nodes {
+          title
+          createdAt
+          repository {
+            nameWithOwner
+          }
+        }
+      }
       issues {
         totalCount
       }
@@ -39,7 +51,12 @@ export const SCOUT_REPOS_QUERY = gql`
       ) {
         totalCount
         nodes {
+          name
+          description
           stargazerCount
+          forkCount
+          url
+          updatedAt
           primaryLanguage {
             name
           }

@@ -16,13 +16,22 @@ function makeUser(
     followers: { totalCount: 90_000 },
     following: { totalCount: 10 },
     pullRequests: { totalCount: 900 },
+    recentPullRequests: {
+      nodes: [
+        {
+          title: "Improve performance",
+          createdAt: "2026-02-01T00:00:00Z",
+          repository: { nameWithOwner: "gaearon/example" },
+        },
+      ],
+    },
     issues: { totalCount: 400 },
     repositories: {
       totalCount: 80,
       nodes: [
-        { stargazerCount: 50_000, primaryLanguage: { name: "JavaScript" } },
-        { stargazerCount: 10_000, primaryLanguage: { name: "TypeScript" } },
-        { stargazerCount: 100, primaryLanguage: { name: "JavaScript" } },
+        { name: "first", description: "First project", stargazerCount: 50_000, forkCount: 200, url: "https://github.com/gaearon/first", updatedAt: "2026-01-01T00:00:00Z", primaryLanguage: { name: "JavaScript" } },
+        { name: "second", description: null, stargazerCount: 10_000, forkCount: 50, url: "https://github.com/gaearon/second", updatedAt: "2026-01-02T00:00:00Z", primaryLanguage: { name: "TypeScript" } },
+        { name: "third", description: null, stargazerCount: 100, forkCount: 3, url: "https://github.com/gaearon/third", updatedAt: "2026-01-03T00:00:00Z", primaryLanguage: { name: "JavaScript" } },
         null,
       ],
     },
@@ -69,5 +78,11 @@ describe("mapGraphQLUser", () => {
     expect(raw.reviews).toBe(Math.round(900 * 0.35));
     expect(raw.publicRepos).toBe(80);
     expect(raw.contributionWeeks[0][1].count).toBe(4);
+    expect(raw.languages).toEqual([
+      { name: "JavaScript", count: 2 },
+      { name: "TypeScript", count: 1 },
+    ]);
+    expect(raw.repositories?.[0]).toMatchObject({ name: "first", stars: 50_000, forks: 200 });
+    expect(raw.recentActivity?.[0]).toMatchObject({ label: "Improve performance", detail: "Pull request · gaearon/example" });
   });
 });
