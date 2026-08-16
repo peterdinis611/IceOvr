@@ -21,12 +21,15 @@ export function getSeasonForm(weeks: ContributionWeek[]): SeasonForm {
     current,
     previous,
     delta,
-    direction: delta > baseline ? "rising" : delta < -baseline ? "falling" : "steady",
+    direction:
+      delta > baseline ? "rising" : delta < -baseline ? "falling" : "steady",
     streak: currentStreak(days),
   };
 }
 
-export function getMilestone(card: ScoutCard): { title: string; detail: string; progress: number } | null {
+export function getMilestone(
+  card: ScoutCard,
+): { title: string; detail: string; progress: number } | null {
   const next = getGitHubCupProgress(card)
     .filter((cup) => !cup.unlocked)
     .sort((a, b) => b.current / b.target - a.current / a.target)[0];

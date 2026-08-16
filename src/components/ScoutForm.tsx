@@ -72,7 +72,9 @@ export function ScoutForm({
           />
         )}
         <span className="relative z-10 flex items-center justify-center gap-2">
-          {isPending && <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/35 border-t-white" />}
+          {isPending && (
+            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/35 border-t-white" />
+          )}
           {isPending ? "SCOUTING…" : "SCOUT"}
         </span>
       </motion.button>

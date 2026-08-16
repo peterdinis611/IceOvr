@@ -30,7 +30,10 @@ export function SiteHeader({
           </span>
         </Link>
         <SoundToggle />
-        <Link href="/compare" className="rounded border border-white/10 px-2 py-1 text-[9px] font-black uppercase tracking-[.14em] text-[#94a3b8] transition hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc]">
+        <Link
+          href="/compare"
+          className="rounded border border-white/10 px-2 py-1 text-[9px] font-black uppercase tracking-[.14em] text-[#94a3b8] transition hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc]"
+        >
           VS
         </Link>
       </div>

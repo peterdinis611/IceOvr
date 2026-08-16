@@ -4,9 +4,7 @@ import {
   getGitHubApolloClient,
   markApolloHydrated,
 } from "./apollo";
-import type {
-  GraphQLScoutUser,
-} from "./graphql-types";
+import type { GraphQLScoutUser } from "./graphql-types";
 import { mapGraphQLUser } from "./mappers";
 import { SCOUT_QUERY } from "./queries";
 import { fetchGitHubProfileViaRest } from "./rest";

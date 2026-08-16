@@ -17,18 +17,24 @@ export function ContributionHeatmap({
   total: number;
   compact?: boolean;
 }) {
-  const shown = weeks.slice(- (compact ? 26 : 52));
+  const shown = weeks.slice(-(compact ? 26 : 52));
 
   return (
-    <div className={compact ? "" : "rounded-2xl border border-white/10 bg-black/25 p-4"}>
+    <div
+      className={
+        compact ? "" : "rounded-2xl border border-white/10 bg-black/25 p-4"
+      }
+    >
       <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">
             Contributions
           </p>
           <p className="mt-0.5 text-sm text-[#cbd5e1]">
-            <span className="font-semibold text-white">{total.toLocaleString()}</span>
-            {" "}in the last year
+            <span className="font-semibold text-white">
+              {total.toLocaleString()}
+            </span>{" "}
+            in the last year
           </p>
         </div>
         <div className="flex items-center gap-1 text-[10px] text-[#64748b]">
@@ -49,7 +55,9 @@ export function ContributionHeatmap({
                   key={`${day.date}-${di}`}
                   title={`${day.date}: ${day.count} contributions`}
                   className={`h-[10px] w-[10px] rounded-[2px] ${LEVEL_COLORS[day.level]} heatmap-cell`}
-                  style={{ animationDelay: `${Math.min(0.55, (wi * 7 + di) * 0.0015)}s` }}
+                  style={{
+                    animationDelay: `${Math.min(0.55, (wi * 7 + di) * 0.0015)}s`,
+                  }}
                 />
               ))}
             </div>

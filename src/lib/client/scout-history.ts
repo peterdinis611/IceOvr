@@ -12,7 +12,10 @@ const VERSION = 1;
 
 function openDatabase(username: string): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(`${DB_PREFIX}${username.toLowerCase()}`, VERSION);
+    const request = indexedDB.open(
+      `${DB_PREFIX}${username.toLowerCase()}`,
+      VERSION,
+    );
     request.onupgradeneeded = () => {
       if (!request.result.objectStoreNames.contains(STORE_NAME)) {
         request.result.createObjectStore(STORE_NAME, { keyPath: "username" });
@@ -23,23 +26,35 @@ function openDatabase(username: string): Promise<IDBDatabase> {
   });
 }
 
-export async function getScoutSnapshot(username: string): Promise<ScoutSnapshot | null> {
+export async function getScoutSnapshot(
+  username: string,
+): Promise<ScoutSnapshot | null> {
   const database = await openDatabase(username);
   return new Promise((resolve, reject) => {
     const transaction = database.transaction(STORE_NAME, "readonly");
-    const request = transaction.objectStore(STORE_NAME).get(username.toLowerCase());
-    request.onsuccess = () => resolve((request.result as ScoutSnapshot | undefined) ?? null);
+    const request = transaction
+      .objectStore(STORE_NAME)
+      .get(username.toLowerCase());
+    request.onsuccess = () =>
+      resolve((request.result as ScoutSnapshot | undefined) ?? null);
     request.onerror = () => reject(request.error);
     transaction.oncomplete = () => database.close();
   });
 }
 
-export async function saveScoutSnapshot(snapshot: ScoutSnapshot): Promise<void> {
+export async function saveScoutSnapshot(
+  snapshot: ScoutSnapshot,
+): Promise<void> {
   const database = await openDatabase(snapshot.username);
   return new Promise((resolve, reject) => {
     const transaction = database.transaction(STORE_NAME, "readwrite");
-    transaction.objectStore(STORE_NAME).put({ ...snapshot, username: snapshot.username.toLowerCase() });
-    transaction.oncomplete = () => { database.close(); resolve(); };
+    transaction
+      .objectStore(STORE_NAME)
+      .put({ ...snapshot, username: snapshot.username.toLowerCase() });
+    transaction.oncomplete = () => {
+      database.close();
+      resolve();
+    };
     transaction.onerror = () => reject(transaction.error);
   });
 }

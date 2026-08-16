@@ -13,19 +13,39 @@ export default async function ComparePage({
   const { left, right } = await searchParams;
   const players = [cleanUsername(left), cleanUsername(right)];
   if (!players[0] || !players[1]) {
-    return <CompareShell><CompareArena /></CompareShell>;
+    return (
+      <CompareShell>
+        <CompareArena />
+      </CompareShell>
+    );
   }
 
-  const [leftResult, rightResult] = await Promise.allSettled(players.map((username) => scoutPlayer(username!)));
+  const [leftResult, rightResult] = await Promise.allSettled(
+    players.map((username) => scoutPlayer(username!)),
+  );
   if (leftResult.status !== "fulfilled" || rightResult.status !== "fulfilled") {
-    return <CompareShell><CompareArena error="One of the requested GitHub profiles could not be scouted." /></CompareShell>;
+    return (
+      <CompareShell>
+        <CompareArena error="One of the requested GitHub profiles could not be scouted." />
+      </CompareShell>
+    );
   }
 
-  return <CompareShell><CompareArena left={leftResult.value} right={rightResult.value} /></CompareShell>;
+  return (
+    <CompareShell>
+      <CompareArena left={leftResult.value} right={rightResult.value} />
+    </CompareShell>
+  );
 }
 
 function CompareShell({ children }: { children: React.ReactNode }) {
-  return <main className="relative flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto"><RinkAtmosphere subtle /><SiteHeader showScout />{children}</main>;
+  return (
+    <main className="relative flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto">
+      <RinkAtmosphere subtle />
+      <SiteHeader showScout />
+      {children}
+    </main>
+  );
 }
 
 function cleanUsername(value: string | undefined): string | null {

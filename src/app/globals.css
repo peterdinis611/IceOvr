@@ -33,18 +33,42 @@ body {
 
 .rink-bg {
   background:
-    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(56, 189, 248, 0.22), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 15% 80%, rgba(225, 29, 46, 0.14), transparent 50%),
-    radial-gradient(ellipse 45% 35% at 90% 70%, rgba(59, 130, 246, 0.1), transparent 45%),
+    radial-gradient(
+      ellipse 90% 55% at 50% -5%,
+      rgba(56, 189, 248, 0.22),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 15% 80%,
+      rgba(225, 29, 46, 0.14),
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 45% 35% at 90% 70%,
+      rgba(59, 130, 246, 0.1),
+      transparent 45%
+    ),
     linear-gradient(180deg, #01040d 0%, #07101c 42%, #0a1628 100%);
 }
 
 .rink-lines {
   /* Soft ice texture only — no full-height red center line through UI */
   background-image:
-    linear-gradient(0deg, transparent 0%, rgba(125, 211, 252, 0.05) 50%, transparent 100%),
-    radial-gradient(circle at 50% 42%, transparent 18%, rgba(255, 255, 255, 0.035) 18.5%, transparent 19%);
-  background-size: 100% 56px, 100% 100%;
+    linear-gradient(
+      0deg,
+      transparent 0%,
+      rgba(125, 211, 252, 0.05) 50%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 50% 42%,
+      transparent 18%,
+      rgba(255, 255, 255, 0.035) 18.5%,
+      transparent 19%
+    );
+  background-size:
+    100% 56px,
+    100% 100%;
   animation: rink-pulse 6s ease-in-out infinite;
 }
 
@@ -59,27 +83,56 @@ body {
 }
 
 @keyframes rink-pulse {
-  0%, 100% { opacity: 0.45; }
-  50% { opacity: 0.75; }
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.75;
+  }
 }
 
 .ice-sheen {
   background:
-    linear-gradient(125deg, transparent 28%, rgba(255, 255, 255, 0.12) 48%, transparent 64%),
-    radial-gradient(circle at 70% 18%, rgba(125, 211, 252, 0.2), transparent 42%);
-  background-size: 220% 220%, 100% 100%;
+    linear-gradient(
+      125deg,
+      transparent 28%,
+      rgba(255, 255, 255, 0.12) 48%,
+      transparent 64%
+    ),
+    radial-gradient(
+      circle at 70% 18%,
+      rgba(125, 211, 252, 0.2),
+      transparent 42%
+    );
+  background-size:
+    220% 220%,
+    100% 100%;
   animation: sheen-sweep 5.5s ease-in-out infinite;
 }
 
 @keyframes sheen-sweep {
-  0%, 100% { background-position: 0% 50%, 0 0; opacity: 0.35; }
-  50% { background-position: 100% 50%, 0 0; opacity: 0.55; }
+  0%,
+  100% {
+    background-position:
+      0% 50%,
+      0 0;
+    opacity: 0.35;
+  }
+  50% {
+    background-position:
+      100% 50%,
+      0 0;
+    opacity: 0.55;
+  }
 }
 
 .player-card {
   isolation: isolate;
   transform-style: preserve-3d;
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
 }
 
 .hut-card {
@@ -88,8 +141,19 @@ body {
 
 .hut-ice {
   background-image:
-    linear-gradient(90deg, transparent 49.2%, rgba(225, 29, 46, 0.14) 49.2%, rgba(225, 29, 46, 0.14) 50.8%, transparent 50.8%),
-    radial-gradient(circle at 50% 40%, transparent 22%, rgba(125, 211, 252, 0.08) 23%, transparent 24%);
+    linear-gradient(
+      90deg,
+      transparent 49.2%,
+      rgba(225, 29, 46, 0.14) 49.2%,
+      rgba(225, 29, 46, 0.14) 50.8%,
+      transparent 50.8%
+    ),
+    radial-gradient(
+      circle at 50% 40%,
+      transparent 22%,
+      rgba(125, 211, 252, 0.08) 23%,
+      transparent 24%
+    );
 }
 
 .hut-ovr {
@@ -103,20 +167,40 @@ body {
 }
 
 @keyframes glow-breathe {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.18); }
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.18);
+  }
 }
 
 .broadcast-stripe {
-  background: linear-gradient(90deg, transparent, rgba(225, 29, 46, 0.85), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(225, 29, 46, 0.85),
+    transparent
+  );
   animation: stripe-run 2.8s linear infinite;
 }
 
 @keyframes stripe-run {
-  0% { transform: translateX(-40%); opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateX(40%); opacity: 0; }
+  0% {
+    transform: translateX(-40%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(40%);
+    opacity: 0;
+  }
 }
 
 .scout-loader {
@@ -124,9 +208,15 @@ body {
 }
 
 @keyframes scout-loader {
-  0% { transform: translateX(-110%); }
-  50% { transform: translateX(100%); }
-  100% { transform: translateX(310%); }
+  0% {
+    transform: translateX(-110%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(310%);
+  }
 }
 
 .heatmap-cell {
@@ -140,8 +230,14 @@ body {
 }
 
 @keyframes heatmap-appear {
-  from { opacity: 0; transform: scale(0.7); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -162,13 +258,22 @@ body {
 }
 
 @keyframes rink-flake-fall {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(10px, 110vh, 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(10px, 110vh, 0);
+  }
 }
 
 @keyframes puck-float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-14px) rotate(12deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(12deg);
+  }
 }
 
 .spot-beam {
@@ -177,8 +282,15 @@ body {
 }
 
 @keyframes spot-sway {
-  0%, 100% { transform: rotate(-8deg) scaleY(1); opacity: 0.25; }
-  50% { transform: rotate(8deg) scaleY(1.05); opacity: 0.4; }
+  0%,
+  100% {
+    transform: rotate(-8deg) scaleY(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: rotate(8deg) scaleY(1.05);
+    opacity: 0.4;
+  }
 }
 
 .stat-fill {
@@ -187,8 +299,12 @@ body {
 }
 
 @keyframes stat-grow {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 .noise-overlay {

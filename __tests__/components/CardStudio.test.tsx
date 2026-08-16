@@ -29,13 +29,20 @@ describe("CardStudio profile tabs", () => {
     const user = userEvent.setup();
     render(<CardStudio card={makeScoutCard()} />);
 
-    expect(screen.getByRole("tab", { name: /Overview/i })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("tab", { name: /Overview/i })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
     expect(screen.getByText("PLAYER OVERVIEW")).toBeInTheDocument();
 
     await user.click(screen.getByRole("tab", { name: /Scouting report/i }));
-    expect(await screen.findByText("Scouting dossier content")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Scouting dossier content"),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("tab", { name: /Activity/i }));
-    expect(await screen.findByText("Activity report content")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Activity report content"),
+    ).toBeInTheDocument();
   });
 });

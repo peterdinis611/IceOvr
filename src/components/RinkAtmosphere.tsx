@@ -17,7 +17,10 @@ export function RinkAtmosphere({ subtle = false }: { subtle?: boolean }) {
   );
 
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+    <div
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      aria-hidden
+    >
       {/* Soft ambient only — no full-height red center line through content */}
       <div
         className="absolute inset-0"

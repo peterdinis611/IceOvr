@@ -20,8 +20,13 @@ export function HomeExperience({ cards }: { cards: ScoutCard[] }) {
           <div className="pointer-events-none absolute inset-0 opacity-40 [background-image:linear-gradient(rgba(125,211,252,.045)_1px,transparent_1px),linear-gradient(90deg,rgba(125,211,252,.045)_1px,transparent_1px)] [background-size:32px_32px]" />
           <div className="pointer-events-none absolute inset-y-0 left-[48%] w-px bg-[#e11d2e]/35" />
           <div className="relative order-2 mt-8 border-t border-white/10 pt-5 lg:order-1 lg:mt-0 lg:border-t-0 lg:border-r lg:pr-6 lg:pt-0">
-            <p className="text-[10px] font-black uppercase tracking-[.28em] text-[#7dd3fc]">Player evaluation no. 026</p>
-            <p className="mt-4 max-w-[22ch] text-sm leading-relaxed text-[#94a3b8]">Turn public GitHub activity into a scouting profile built for the draft board.</p>
+            <p className="text-[10px] font-black uppercase tracking-[.28em] text-[#7dd3fc]">
+              Player evaluation no. 026
+            </p>
+            <p className="mt-4 max-w-[22ch] text-sm leading-relaxed text-[#94a3b8]">
+              Turn public GitHub activity into a scouting profile built for the
+              draft board.
+            </p>
             <div className="mt-6 grid grid-cols-2 gap-2">
               <DraftMetric value="06" label="Attributes" />
               <DraftMetric value="99" label="Rating cap" />
@@ -29,38 +34,76 @@ export function HomeExperience({ cards }: { cards: ScoutCard[] }) {
           </div>
 
           <div className="relative order-1 lg:order-2">
-            <motion.p className="text-[10px] font-black uppercase tracking-[.32em] text-[#7dd3fc]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .1 }}>Open ice · live scouting</motion.p>
+            <motion.p
+              className="text-[10px] font-black uppercase tracking-[.32em] text-[#7dd3fc]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              Open ice · live scouting
+            </motion.p>
             <motion.h1
               className="mt-3 font-display text-[clamp(3.6rem,13vw,9.5rem)] leading-[.76] tracking-[.025em] text-white"
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.12, type: "spring", stiffness: 100, damping: 18 }}
+              transition={{
+                delay: 0.12,
+                type: "spring",
+                stiffness: 100,
+                damping: 18,
+              }}
             >
-              DRAFT<br />
-              <span className="text-[#e11d2e]">YOUR</span><br />
+              DRAFT
+              <br />
+              <span className="text-[#e11d2e]">YOUR</span>
+              <br />
               PROFILE
             </motion.h1>
             <div className="mt-8 max-w-xl">
               <ScoutForm large />
               <p className="mt-3 text-[11px] uppercase tracking-[.12em] text-[#64748b]">
-                Try {["torvalds", "gaearon", "sindresorhus"].map((u, i) => (
-                  <span key={u}>{i > 0 && " · "}<Link className="text-[#7dd3fc] transition hover:text-white" href={`/u/${u}`}>@{u}</Link></span>
+                Try{" "}
+                {["torvalds", "gaearon", "sindresorhus"].map((u, i) => (
+                  <span key={u}>
+                    {i > 0 && " · "}
+                    <Link
+                      className="text-[#7dd3fc] transition hover:text-white"
+                      href={`/u/${u}`}
+                    >
+                      @{u}
+                    </Link>
+                  </span>
                 ))}
               </p>
             </div>
           </div>
 
           <div className="relative order-3 mt-8 border-t border-white/10 pt-5 lg:mt-0 lg:border-t-0 lg:border-l lg:pl-6 lg:pt-0">
-            <p className="text-[10px] font-black uppercase tracking-[.24em] text-[#94a3b8]">Draft board</p>
-            <p className="mt-2 font-display text-3xl tracking-[.1em] text-white">GITHUB<br /><span className="text-[#7dd3fc]">SCOUTING</span></p>
-            <div className="mt-5 border-l-2 border-[#e11d2e] pl-3 text-xs leading-relaxed text-[#94a3b8]">Commits. Stars. Pull requests. One card that tells the season.</div>
-            <div className="mt-5"><HowItWorksButton /></div>
+            <p className="text-[10px] font-black uppercase tracking-[.24em] text-[#94a3b8]">
+              Draft board
+            </p>
+            <p className="mt-2 font-display text-3xl tracking-[.1em] text-white">
+              GITHUB
+              <br />
+              <span className="text-[#7dd3fc]">SCOUTING</span>
+            </p>
+            <div className="mt-5 border-l-2 border-[#e11d2e] pl-3 text-xs leading-relaxed text-[#94a3b8]">
+              Commits. Stars. Pull requests. One card that tells the season.
+            </div>
+            <div className="mt-5">
+              <HowItWorksButton />
+            </div>
           </div>
         </div>
 
         <div className="mt-5 flex items-center overflow-hidden rounded-lg border border-white/10 bg-black/35">
-          <div className="shrink-0 bg-[#e11d2e] px-3 py-2 font-display text-sm tracking-[.14em] text-white">LIVE</div>
-          <p className="whitespace-nowrap px-4 text-[10px] font-bold uppercase tracking-[.2em] text-[#94a3b8]">Draft board open · public GitHub signals only · ratings update as your profile changes</p>
+          <div className="shrink-0 bg-[#e11d2e] px-3 py-2 font-display text-sm tracking-[.14em] text-white">
+            LIVE
+          </div>
+          <p className="whitespace-nowrap px-4 text-[10px] font-bold uppercase tracking-[.2em] text-[#94a3b8]">
+            Draft board open · public GitHub signals only · ratings update as
+            your profile changes
+          </p>
         </div>
 
         <div className="mt-12 flex w-full flex-wrap items-end justify-center gap-6 sm:gap-8">
@@ -107,8 +150,12 @@ export function HomeExperience({ cards }: { cards: ScoutCard[] }) {
               viewport={{ once: true, margin: "-40px" }}
               transition={{ delay: i * 0.1 }}
             >
-              <h3 className="font-display text-2xl tracking-wide text-white">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#94a3b8]">{item.body}</p>
+              <h3 className="font-display text-2xl tracking-wide text-white">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#94a3b8]">
+                {item.body}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -124,8 +171,12 @@ export function HomeExperience({ cards }: { cards: ScoutCard[] }) {
 function DraftMetric({ value, label }: { value: string; label: string }) {
   return (
     <div className="border-l border-white/10 bg-white/[.035] px-3 py-2.5">
-      <p className="font-display text-2xl tracking-[.08em] text-white">{value}</p>
-      <p className="mt-0.5 text-[8px] font-bold uppercase tracking-[.14em] text-[#64748b]">{label}</p>
+      <p className="font-display text-2xl tracking-[.08em] text-white">
+        {value}
+      </p>
+      <p className="mt-0.5 text-[8px] font-bold uppercase tracking-[.14em] text-[#64748b]">
+        {label}
+      </p>
     </div>
   );
 }
