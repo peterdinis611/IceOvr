@@ -1,0 +1,17 @@
+# IceOVR
+
+IceOVR turns public GitHub activity into hockey-inspired player cards, scouting reports, live season form, GitHub Cups, and shareable head-to-head comparisons.
+
+## Primary pages
+
+- `/` — Create a GitHub scouting card from a public username.
+- `/u/{username}` — Public player card, performance report, activity, and achievements.
+- `/compare?left={username}&right={username}` — Compare two public GitHub profiles.
+
+## Data and methodology
+
+IceOVR uses public GitHub profile and repository activity. Ratings are illustrative, are based on activity signals such as commits, stars, pull requests, issues, reviews, languages, and account history, and are not official GitHub or NHL ratings.
+
+## Privacy
+
+IceOVR only processes public GitHub data required to generate the requested report. Local scouting snapshots remain in the visitor's browser.

@@ -3,10 +3,15 @@ import { buildScoutCard } from "@/lib/scoring";
 import { synthesizeContributionWeeks } from "@/lib/contributions";
 import type { RawGitHubStats } from "@/lib/types";
 
-function withWeeks(raw: Omit<RawGitHubStats, "contributionWeeks">): RawGitHubStats {
+function withWeeks(
+  raw: Omit<RawGitHubStats, "contributionWeeks">,
+): RawGitHubStats {
   return {
     ...raw,
-    contributionWeeks: synthesizeContributionWeeks(raw.login, raw.commitsLastYear),
+    contributionWeeks: synthesizeContributionWeeks(
+      raw.login,
+      raw.commitsLastYear,
+    ),
   };
 }
 
@@ -78,5 +83,23 @@ const demos: RawGitHubStats[] = [
 
 export default function HomePage() {
   const cards = demos.map((d) => buildScoutCard(d));
-  return <HomeExperience cards={cards} />;
+  return (
+    <>
+      <HomeExperience cards={cards} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: "IceOVR",
+            applicationCategory: "DeveloperApplication",
+            operatingSystem: "Web",
+            description:
+              "GitHub scouting cards, reports, and profile comparisons based on public GitHub activity.",
+          }),
+        }}
+      />
+    </>
+  );
 }
