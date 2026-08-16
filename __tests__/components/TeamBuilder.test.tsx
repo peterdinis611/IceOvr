@@ -49,7 +49,7 @@ describe("TeamBuilder", () => {
     await user.click(screen.getByRole("button", { name: "ADD TO ROSTER" }));
 
     expect((await screen.findAllByText("@octocat")).length).toBeGreaterThan(0);
-    expect(screen.getByText("78 OVR")).toBeInTheDocument();
+    expect(await screen.findByText("78 OVR")).toBeInTheDocument();
     expect(playPuckShot).toHaveBeenCalled();
     expect(JSON.parse(window.localStorage.getItem("iceovr-team-v1") ?? "{}")).toMatchObject({
       name: "Slovak Pucks",

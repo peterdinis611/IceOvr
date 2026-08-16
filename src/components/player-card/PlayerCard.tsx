@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type MouseEvent, type SVGProps } from "react";
+import Image from "next/image";
+import { useRef, useState, type MouseEvent, type SVGProps } from "react";
 import { CardFrame } from "./CardFrame";
 import { TierGlow } from "./TierGlow";
 import { TIER_VISUAL } from "./tierStyles";
@@ -32,18 +33,26 @@ export function PlayerCard({
   const h = compact ? 336 : 420;
   const scale = compact ? 0.8 : 1;
 
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [hover, setHover] = useState(false);
+  const tiltRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<number | null>(null);
 
   function onMove(e: MouseEvent<HTMLElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - rect.left) / rect.width - 0.5;
     const py = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: py * -10, y: px * 12 });
+    if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    frameRef.current = requestAnimationFrame(() => {
+      tiltRef.current?.style.setProperty(
+        "transform",
+        `rotateX(${py * -10}deg) rotateY(${px * 12}deg) translateY(-4px) scale(1.02)`,
+      );
+    });
   }
 
   function onLeave() {
-    setTilt({ x: 0, y: 0 });
+    if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    tiltRef.current?.style.setProperty("transform", "rotateX(0deg) rotateY(0deg)");
     setHover(false);
   }
 
@@ -64,8 +73,8 @@ export function PlayerCard({
 
       <div
         className="relative h-full w-full transition-transform duration-200 ease-out"
+        ref={tiltRef}
         style={{
-          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) ${hover ? "translateY(-4px) scale(1.02)" : ""}`,
           transformStyle: "preserve-3d",
           boxShadow: hover
             ? `0 28px 56px ${visual.glow}, 0 8px 20px rgba(0,0,0,0.55)`
@@ -156,10 +165,13 @@ export function PlayerCard({
                 boxShadow: `0 0 0 5px rgba(0,0,0,.32), 0 0 28px ${visual.glow}`,
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={avatarUrl}
+              <Image
+                src={avatarUrl.includes("?") ? `${avatarUrl}&size=264` : `${avatarUrl}?size=264`}
                 alt={displayName}
+                width={132}
+                height={132}
+                sizes="132px"
+                priority={!compact}
                 className="h-full w-full object-cover object-top"
                 draggable={false}
                 style={{

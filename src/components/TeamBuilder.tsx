@@ -167,14 +167,14 @@ export function TeamBuilder() {
     }
 
     const controller = new AbortController();
-    void fetch(`/api/team-rating?players=${encodeURIComponent(usernames.join(","))}`, { signal: controller.signal })
+    const timer = window.setTimeout(() => void fetch(`/api/team-rating?players=${encodeURIComponent(usernames.join(","))}`, { signal: controller.signal })
       .then((response) => (response.ok ? response.json() : Promise.reject(new Error("Could not scout roster"))))
       .then((summary: TeamRating) => setRating(summary))
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
         setRating(null);
-      });
-    return () => controller.abort();
+      }), 350);
+    return () => { controller.abort(); window.clearTimeout(timer); };
   }, [ready, team]);
 
   function addPlayer(event: FormEvent) {
