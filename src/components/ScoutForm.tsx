@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import { useArenaAudio } from "@/components/ArenaAudioProvider";
 
 export function ScoutForm({
@@ -15,15 +15,16 @@ export function ScoutForm({
   const router = useRouter();
   const { playPuckShot } = useArenaAudio();
   const [username, setUsername] = useState(initial);
-  const [busy, setBusy] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     const clean = username.trim().replace(/^@/, "");
     if (!clean) return;
     playPuckShot();
-    setBusy(true);
-    router.push(`/u/${encodeURIComponent(clean)}`);
+    startTransition(() => {
+      router.push(`/u/${encodeURIComponent(clean)}`);
+    });
   }
 
   return (
@@ -48,19 +49,36 @@ export function ScoutForm({
           autoCapitalize="off"
           autoCorrect="off"
           spellCheck={false}
+          disabled={isPending}
+          aria-describedby={isPending ? "scout-search-status" : undefined}
         />
       </div>
       <motion.button
         type="submit"
-        disabled={busy}
+        disabled={isPending}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
         className={`relative shrink-0 overflow-hidden rounded-xl bg-[#e11d2e] px-4 font-display tracking-[0.12em] text-white shadow-[0_6px_20px_rgba(225,29,46,0.35)] disabled:opacity-60 ${
           large ? "h-14 text-xl px-6" : "h-10 text-sm"
         }`}
       >
-        <span className="relative z-10">{busy ? "…" : "SCOUT"}</span>
+        {isPending && (
+          <motion.span
+            aria-hidden
+            className="absolute inset-y-0 left-0 w-1/2 bg-white/20"
+            initial={{ x: "-120%" }}
+            animate={{ x: "240%" }}
+            transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+          />
+        )}
+        <span className="relative z-10 flex items-center justify-center gap-2">
+          {isPending && <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/35 border-t-white" />}
+          {isPending ? "SCOUTING…" : "SCOUT"}
+        </span>
       </motion.button>
+      <span id="scout-search-status" role="status" className="sr-only">
+        {isPending ? "Scouting GitHub profile. Loading report." : ""}
+      </span>
     </motion.form>
   );
 }

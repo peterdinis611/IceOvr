@@ -1,43 +1,68 @@
 "use client";
 
 import type { ScoutCard } from "@/lib/types";
+import { ContributionHeatmap } from "@/components/ContributionHeatmap";
 
 const LANGUAGE_COLORS = ["#38bdf8", "#a78bfa", "#34d399", "#fbbf24", "#fb7185", "#fb923c"];
 
-export function ReportInsights({ card }: { card: ScoutCard }) {
-  const languages = card.raw.languages?.slice(0, 5) ?? [];
-  const repositories = card.raw.repositories?.slice(0, 3) ?? [];
-  const activity = card.raw.recentActivity?.slice(0, 3) ?? [];
-
+export function ScoutingInsights({ card }: { card: ScoutCard }) {
   return (
     <div className="mt-5 grid gap-5">
       <div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
-        <ReportPanel eyebrow="Language breakdown" title="Code mix">
-          {languages.length ? <LanguageBreakdown languages={languages} /> : <EmptyState text="No repository language data is available yet." />}
-        </ReportPanel>
         <ReportPanel eyebrow="Strengths & focus" title="Scouting notes">
           <StrengthsAndFocus card={card} />
-        </ReportPanel>
-      </div>
-
-      <div className="grid gap-5 xl:grid-cols-[1.05fr_.95fr]">
-        <ReportPanel eyebrow="Repository spotlight" title="Top projects">
-          {repositories.length ? <RepositorySpotlight repositories={repositories} /> : <EmptyState text="No public repositories found for spotlighting." />}
-        </ReportPanel>
-        <ReportPanel eyebrow="Recent activity" title="Latest signals">
-          {activity.length ? <RecentActivity activity={activity} /> : <EmptyState text="No recent public activity was returned by GitHub." />}
-        </ReportPanel>
-      </div>
-
-      <div className="grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
-        <ReportPanel eyebrow="Contribution trend" title="Last 12 months">
-          <ContributionTrend card={card} />
         </ReportPanel>
         <ReportPanel eyebrow="Collaboration radar" title="Community profile">
           <CollaborationRadar card={card} />
         </ReportPanel>
       </div>
+      <ReportPanel eyebrow="Contribution trend" title="Season form">
+        <ContributionTrend card={card} />
+      </ReportPanel>
     </div>
+  );
+}
+
+export function ActivityReport({ card }: { card: ScoutCard }) {
+  const languages = card.raw.languages?.slice(0, 5) ?? [];
+  const repositories = card.raw.repositories?.slice(0, 3) ?? [];
+  const activity = card.raw.recentActivity?.slice(0, 3) ?? [];
+
+  return (
+    <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(145deg,rgba(12,30,47,.96),rgba(6,17,30,.94))] p-5 shadow-[0_20px_60px_rgba(0,0,0,.2)] sm:p-6">
+      <div className="absolute inset-x-0 top-0 h-px broadcast-stripe" />
+      <div className="relative border-b border-white/10 pb-5">
+        <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#7dd3fc]">GitHub activity room</p>
+        <h2 className="mt-1 font-display text-3xl tracking-[.08em] text-white">SEASON ACTIVITY</h2>
+        <p className="mt-2 text-sm text-[#94a3b8]">Live public GitHub signals, project impact, and recent momentum.</p>
+      </div>
+      <div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-3 sm:p-4">
+        <ContributionHeatmap weeks={card.contributionWeeks} total={card.raw.contributionsLifetime} />
+      </div>
+      <div className="mt-5 grid gap-5">
+      <div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
+        <ReportPanel eyebrow="Language breakdown" title="Code mix">
+          {languages.length ? <LanguageBreakdown languages={languages} /> : <EmptyState text="No repository language data is available yet." />}
+        </ReportPanel>
+        <ReportPanel eyebrow="Repository spotlight" title="Top projects">
+          {repositories.length ? <RepositorySpotlight repositories={repositories} /> : <EmptyState text="No public repositories found for spotlighting." />}
+        </ReportPanel>
+      </div>
+      <div className="grid gap-5 xl:grid-cols-[1.05fr_.95fr]">
+        <ReportPanel eyebrow="Recent activity" title="Latest signals">
+          {activity.length ? <RecentActivity activity={activity} /> : <EmptyState text="No recent public activity was returned by GitHub." />}
+        </ReportPanel>
+        <ReportPanel eyebrow="Profile ledger" title="Public footprint">
+          <div className="grid grid-cols-2 gap-2">
+            <Footprint label="Followers" value={card.raw.followers} />
+            <Footprint label="Repositories" value={card.raw.publicRepos} />
+            <Footprint label="Languages" value={card.raw.languageCount} />
+            <Footprint label="Account years" value={card.raw.accountYears} />
+          </div>
+        </ReportPanel>
+      </div>
+      </div>
+    </section>
   );
 }
 
@@ -181,6 +206,7 @@ function InsightList({ label, tone, items }: { label: string; tone: string; item
 }
 
 function EmptyState({ text }: { text: string }) { return <p className="rounded-lg border border-dashed border-white/10 px-3 py-5 text-center text-xs text-[#64748b]">{text}</p>; }
+function Footprint({ label, value }: { label: string; value: number }) { return <div className="rounded-lg bg-white/[.04] px-3 py-2.5"><p className="text-[9px] uppercase tracking-wide text-[#64748b]">{label}</p><p className="mt-1 text-lg font-bold text-white">{value.toLocaleString()}</p></div>; }
 function normalise(value: number, cap: number) { return Math.min(100, Math.round((value / cap) * 100)); }
 function polarPoint(index: number, value: number) { const angle = (-90 + index * 90) * (Math.PI / 180); const radius = value * 0.62; return `${80 + Math.cos(angle) * radius},${80 + Math.sin(angle) * radius}`; }
 function relativeDate(value: string) { const days = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 86_400_000)); return days === 0 ? "today" : days === 1 ? "yesterday" : `${days}d ago`; }

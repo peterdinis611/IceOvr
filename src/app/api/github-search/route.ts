@@ -20,11 +20,14 @@ export async function GET(request: Request) {
   const payload = (await response.json()) as {
     items: Array<{ login: string; avatar_url: string; html_url: string }>;
   };
-  return Response.json({
-    users: payload.items.map((user) => ({
-      login: user.login,
-      avatarUrl: user.avatar_url,
-      url: user.html_url,
-    })),
-  });
+  return Response.json(
+    {
+      users: payload.items.map((user) => ({
+        login: user.login,
+        avatarUrl: user.avatar_url,
+        url: user.html_url,
+      })),
+    },
+    { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } },
+  );
 }

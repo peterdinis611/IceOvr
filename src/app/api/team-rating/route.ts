@@ -35,12 +35,19 @@ export async function GET(request: Request) {
     ? Math.min(100, 48 + cards.length * 2 + languages.size * 3 + countries.size * 2)
     : null;
 
-  return Response.json({
-    ratings,
-    teamOvr,
-    chemistry,
-    scouted: cards.length,
-    requested: usernames.length,
-    connections,
-  });
+  return Response.json(
+    {
+      ratings,
+      teamOvr,
+      chemistry,
+      scouted: cards.length,
+      requested: usernames.length,
+      connections,
+    },
+    {
+      headers: {
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      },
+    },
+  );
 }

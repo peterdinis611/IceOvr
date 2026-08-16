@@ -4,9 +4,8 @@ import { motion } from "motion/react";
 import type { ScoutCard } from "@/lib/types";
 import { STAT_LABELS, TIER_META } from "@/lib/tiers";
 import { CountUp } from "@/components/CountUp";
-import { ContributionHeatmap } from "@/components/ContributionHeatmap";
 import { GitHubTrophies } from "@/components/GitHubTrophies";
-import { ReportInsights } from "@/components/ReportInsights";
+import { ScoutingInsights } from "@/components/ReportInsights";
 import { FlagBadge, LanguageBadge } from "@/components/Badges";
 import { RatingMethodologyButton } from "@/components/RatingMethodology";
 
@@ -34,14 +33,14 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            GitHub scout summary
+            Scouting department · live dossier
           </motion.p>
           <h2 className="mt-1 truncate font-display text-3xl tracking-[0.1em] text-white sm:text-4xl">
-            GITHUB PERFORMANCE
+            SCOUTING REPORT
           </h2>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#94a3b8]">
             <span>
-              {card.archetype} · {tier.label} tier
+              Projection: {card.archetype}
             </span>
             <FlagBadge code={card.countryCode} />
             <LanguageBadge language={card.topLanguage} />
@@ -52,12 +51,12 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
         </div>
         <div className="flex shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/25">
           <div className="border-r border-white/10 px-3 py-2.5 text-right">
-            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Overall</p>
-            <CountUp value={card.ovr} className="mt-0.5 block font-display text-3xl leading-none" style={{ color: tier.accent }} />
+            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Scout grade</p>
+            <p className="mt-1 font-display text-lg tracking-[.14em]" style={{ color: tier.accent }}>{tier.label}</p>
           </div>
           <div className="px-3 py-2.5 text-right">
-            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Data source</p>
-            <p className="mt-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#7dd3fc]">GitHub live</p>
+            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#64748b]">Projection</p>
+            <p className="mt-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#7dd3fc]">Core roster</p>
           </div>
         </div>
       </div>
@@ -103,14 +102,7 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
         })}
       </div>
 
-      <div className="mb-5 rounded-xl border border-white/10 bg-black/20 p-3 sm:p-4">
-        <ContributionHeatmap
-          weeks={card.contributionWeeks}
-          total={card.raw.contributionsLifetime}
-        />
-      </div>
-
-      <ReportInsights card={card} />
+      <ScoutingInsights card={card} />
 
       <div className="mb-5 mt-5">
         <GitHubTrophies card={card} />

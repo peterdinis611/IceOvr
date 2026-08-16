@@ -16,7 +16,7 @@ export function PlayerExperience({ card }: { card: ScoutCard }) {
 
   useEffect(() => {
     const shot = setTimeout(() => playPuckShot(), 400);
-    const t = setTimeout(() => setIntro(false), 1600);
+    const t = setTimeout(() => setIntro(false), 700);
     return () => {
       clearTimeout(shot);
       clearTimeout(t);
@@ -79,7 +79,7 @@ export function PlayerExperience({ card }: { card: ScoutCard }) {
       </AnimatePresence>
 
       <motion.section
-        className="relative z-10 mx-auto mt-1 w-full max-w-6xl overflow-hidden rounded-2xl border border-white/10 bg-[#071524]/75 px-5 py-5 shadow-[0_16px_50px_rgba(0,0,0,.2)] backdrop-blur-md sm:px-7"
+        className="relative z-10 mx-auto mt-1 w-full max-w-6xl overflow-hidden rounded-2xl border border-white/10 bg-[#071524]/75 px-5 py-4 shadow-[0_16px_50px_rgba(0,0,0,.2)] backdrop-blur-md sm:px-7"
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.18, duration: 0.45 }}
@@ -89,13 +89,13 @@ export function PlayerExperience({ card }: { card: ScoutCard }) {
           className="absolute inset-y-0 right-0 w-2/5 opacity-40"
           style={{ background: `linear-gradient(135deg, transparent, ${tier.accent}35)` }}
         />
-        <div className="relative flex flex-wrap items-end justify-between gap-4">
+        <div className="relative flex flex-wrap items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#7dd3fc]">GitHub scouting report</p>
-            <h1 className="mt-1 truncate font-display text-4xl tracking-[0.09em] text-white sm:text-5xl">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#7dd3fc]">Official scouting dossier · GitHub live</p>
+            <h1 className="mt-1 truncate font-display text-3xl tracking-[0.09em] text-white sm:text-4xl">
               {card.displayName}
             </h1>
-            <p className="mt-2 text-sm text-[#94a3b8]">
+            <p className="mt-1.5 text-sm text-[#94a3b8]">
               @{card.username}
               {card.topLanguage ? ` · ${card.topLanguage}` : ""}
               {card.location ? ` · ${card.location}` : ""}
@@ -103,12 +103,12 @@ export function PlayerExperience({ card }: { card: ScoutCard }) {
           </div>
           <div className="flex items-end gap-3">
             <div className="border-r border-white/10 pr-3 text-right">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#94a3b8]">Card tier</p>
+              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#94a3b8]">Scout grade</p>
               <p className="mt-1 font-display text-2xl tracking-[0.12em]" style={{ color: tier.accent }}>{tier.label}</p>
             </div>
             <div className="text-right">
-              <p className="font-display text-5xl leading-none text-white sm:text-6xl">{card.ovr}</p>
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#94a3b8]">Overall</p>
+              <p className="font-display text-4xl leading-none text-white sm:text-5xl">{card.ovr}</p>
+              <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[#94a3b8]">Player rating</p>
             </div>
           </div>
         </div>

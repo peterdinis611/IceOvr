@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import { useMemo } from "react";
 
 export function RinkAtmosphere({ subtle = false }: { subtle?: boolean }) {
@@ -55,21 +54,16 @@ export function RinkAtmosphere({ subtle = false }: { subtle?: boolean }) {
       )}
 
       {flakes.map((flake) => (
-        <motion.span
+        <span
           key={flake.id}
-          className="absolute top-[-10%] rounded-full bg-white"
+          className="rink-flake absolute top-[-10%] rounded-full bg-white"
           style={{
             left: flake.left,
             width: flake.size,
             height: flake.size,
             opacity: flake.opacity,
-          }}
-          animate={{ y: ["0vh", "110vh"], x: [0, flake.id % 2 === 0 ? 16 : -16] }}
-          transition={{
-            duration: flake.duration,
-            delay: flake.delay,
-            repeat: Infinity,
-            ease: "linear",
+            animationDelay: `${flake.delay}s`,
+            animationDuration: `${flake.duration}s`,
           }}
         />
       ))}

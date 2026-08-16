@@ -6,22 +6,15 @@ import {
 } from "./apollo";
 import type {
   GraphQLScoutUser,
-  ScoutContributionsUser,
-  ScoutProfileUser,
-  ScoutReposUser,
 } from "./graphql-types";
 import { mapGraphQLUser } from "./mappers";
-import {
-  SCOUT_CONTRIBUTIONS_QUERY,
-  SCOUT_PROFILE_QUERY,
-  SCOUT_REPOS_QUERY,
-} from "./queries";
+import { SCOUT_QUERY } from "./queries";
 import { fetchGitHubProfileViaRest } from "./rest";
 import { scoutCacheKey } from "@/lib/cache";
 
 /**
  * Scout a GitHub user.
- * Prefer Apollo GraphQL (3 parallel queries + TTL cache) when `GITHUB_TOKEN` is set;
+ * Prefer one Apollo GraphQL query + TTL cache when `GITHUB_TOKEN` is set;
  * otherwise fall back to public REST.
  */
 export async function fetchGitHubProfile(
@@ -53,49 +46,24 @@ async function fetchViaApollo(login: string): Promise<RawGitHubStats> {
   const variables = { login: key };
   const fetchPolicy = apolloFetchPolicyFor(key);
 
-  const [profileResult, reposResult, contribResult] = await Promise.all([
-    client.query<{ user: ScoutProfileUser | null }>({
-      query: SCOUT_PROFILE_QUERY,
-      variables,
-      fetchPolicy,
-      errorPolicy: "all",
-    }),
-    client.query<{ user: ScoutReposUser | null }>({
-      query: SCOUT_REPOS_QUERY,
-      variables,
-      fetchPolicy,
-      errorPolicy: "all",
-    }),
-    client.query<{ user: ScoutContributionsUser | null }>({
-      query: SCOUT_CONTRIBUTIONS_QUERY,
-      variables,
-      fetchPolicy,
-      errorPolicy: "all",
-    }),
-  ]);
+  const result = await client.query<{ user: GraphQLScoutUser | null }>({
+    query: SCOUT_QUERY,
+    variables,
+    fetchPolicy,
+    errorPolicy: "all",
+  });
 
-  const firstError =
-    profileResult.error ?? reposResult.error ?? contribResult.error;
-  if (firstError && !profileResult.data?.user) {
-    throw firstError;
+  if (result.error && !result.data?.user) {
+    throw result.error;
   }
 
-  const profile = profileResult.data?.user;
-  const repos = reposResult.data?.user;
-  const contrib = contribResult.data?.user;
-
-  if (!profile || !repos || !contrib) {
+  const user = result.data?.user;
+  if (!user) {
     throw new Error(`Player "${login}" not found in the league.`);
   }
 
-  const merged: GraphQLScoutUser = {
-    ...profile,
-    repositories: repos.repositories,
-    contributionsCollection: contrib.contributionsCollection,
-  };
-
   markApolloHydrated(key);
-  return mapGraphQLUser(merged);
+  return mapGraphQLUser(user);
 }
 
 export { mapGraphQLUser, mapContributionCalendar } from "./mappers";

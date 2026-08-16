@@ -15,116 +15,55 @@ export function HomeExperience({ cards }: { cards: ScoutCard[] }) {
       <RinkAtmosphere />
       <SiteHeader />
 
-      <section className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center px-6 pb-16 pt-6 text-center">
-        <motion.div
-          className="mb-5 inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#38bdf8]/25 bg-[#0b1524]/80 px-4 py-1.5"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.15 }}
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e11d2e] opacity-70" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#e11d2e]" />
-          </span>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#7dd3fc]">
-            Open ice · Live scouting
-          </span>
-        </motion.div>
+      <section className="relative z-10 mx-auto w-full max-w-6xl px-6 pb-16 pt-5">
+        <div className="relative grid overflow-hidden rounded-[28px] border border-white/10 bg-[#06121f]/80 px-5 py-7 shadow-[0_28px_90px_rgba(0,0,0,.3)] sm:px-8 sm:py-10 lg:grid-cols-[.78fr_1.5fr_.72fr] lg:items-end lg:gap-8">
+          <div className="pointer-events-none absolute inset-0 opacity-40 [background-image:linear-gradient(rgba(125,211,252,.045)_1px,transparent_1px),linear-gradient(90deg,rgba(125,211,252,.045)_1px,transparent_1px)] [background-size:32px_32px]" />
+          <div className="pointer-events-none absolute inset-y-0 left-[48%] w-px bg-[#e11d2e]/35" />
+          <div className="relative order-2 mt-8 border-t border-white/10 pt-5 lg:order-1 lg:mt-0 lg:border-t-0 lg:border-r lg:pr-6 lg:pt-0">
+            <p className="text-[10px] font-black uppercase tracking-[.28em] text-[#7dd3fc]">Player evaluation no. 026</p>
+            <p className="mt-4 max-w-[22ch] text-sm leading-relaxed text-[#94a3b8]">Turn public GitHub activity into a scouting profile built for the draft board.</p>
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              <DraftMetric value="06" label="Attributes" />
+              <DraftMetric value="99" label="Rating cap" />
+            </div>
+          </div>
 
-        <div className="relative">
-          <motion.div
-            className="pointer-events-none absolute inset-x-[-10%] top-1/2 h-16 -translate-y-1/2 bg-[linear-gradient(90deg,transparent,rgba(225,29,46,0.25),transparent)] blur-md"
-            initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.7 }}
-          />
-          <motion.h1
-            className="relative font-display text-6xl leading-[0.92] tracking-[0.04em] text-white sm:text-8xl md:text-9xl"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 90 }}
-          >
-            GET
-            <br />
-            <motion.span
-              className="inline-block text-[#e11d2e]"
-              animate={{
-                textShadow: [
-                  "0 0 0 rgba(225,29,46,0)",
-                  "0 0 28px rgba(225,29,46,0.75)",
-                  "0 0 0 rgba(225,29,46,0)",
-                ],
-              }}
-              transition={{ duration: 2.8, repeat: Infinity }}
+          <div className="relative order-1 lg:order-2">
+            <motion.p className="text-[10px] font-black uppercase tracking-[.32em] text-[#7dd3fc]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .1 }}>Open ice · live scouting</motion.p>
+            <motion.h1
+              className="mt-3 font-display text-[clamp(4.4rem,12vw,9.5rem)] leading-[.76] tracking-[.025em] text-white"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.12, type: "spring", stiffness: 100, damping: 18 }}
             >
-              DRAFTED.
-            </motion.span>
-          </motion.h1>
+              DRAFT<br />
+              <span className="text-[#e11d2e]">YOUR</span><br />
+              PROFILE
+            </motion.h1>
+            <div className="mt-8 max-w-xl">
+              <ScoutForm large />
+              <p className="mt-3 text-[11px] uppercase tracking-[.12em] text-[#64748b]">
+                Try {["torvalds", "gaearon", "sindresorhus"].map((u, i) => (
+                  <span key={u}>{i > 0 && " · "}<Link className="text-[#7dd3fc] transition hover:text-white" href={`/u/${u}`}>@{u}</Link></span>
+                ))}
+              </p>
+            </div>
+          </div>
+
+          <div className="relative order-3 mt-8 border-t border-white/10 pt-5 lg:mt-0 lg:border-t-0 lg:border-l lg:pl-6 lg:pt-0">
+            <p className="text-[10px] font-black uppercase tracking-[.24em] text-[#94a3b8]">Draft board</p>
+            <p className="mt-2 font-display text-3xl tracking-[.1em] text-white">GITHUB<br /><span className="text-[#7dd3fc]">SCOUTING</span></p>
+            <div className="mt-5 border-l-2 border-[#e11d2e] pl-3 text-xs leading-relaxed text-[#94a3b8]">Commits. Stars. Pull requests. One card that tells the season.</div>
+            <div className="mt-5"><HowItWorksButton /></div>
+          </div>
         </div>
 
-        <motion.p
-          className="mt-5 max-w-xl text-base leading-relaxed text-[#94a3b8] sm:text-lg"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          Your GitHub profile, turned into an NHL Ultimate Team-style GitHub card rated out of 99.
-          Commits, pull requests, stars, and streaks define your developer rating.
-        </motion.p>
-
-        <motion.div
-          className="mt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.48 }}
-        >
-          <HowItWorksButton />
-        </motion.div>
-
-        <div className="mt-8 flex w-full justify-center">
-          <ScoutForm large />
+        <div className="mt-5 flex items-center overflow-hidden rounded-lg border border-white/10 bg-black/35">
+          <div className="shrink-0 bg-[#e11d2e] px-3 py-2 font-display text-sm tracking-[.14em] text-white">LIVE</div>
+          <p className="whitespace-nowrap px-4 text-[10px] font-bold uppercase tracking-[.2em] text-[#94a3b8]">Draft board open · public GitHub signals only · ratings update as your profile changes</p>
         </div>
 
-        <motion.p
-          className="mt-4 text-sm text-[#64748b]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.55 }}
-        >
-          try{" "}
-          {["torvalds", "gaearon", "sindresorhus"].map((u, i) => (
-            <span key={u}>
-              {i > 0 && " · "}
-              <Link className="text-[#7dd3fc] transition hover:text-white hover:underline" href={`/u/${u}`}>
-                {u}
-              </Link>
-            </span>
-          ))}
-        </motion.p>
-
-        {/* broadcast lower-third */}
-        <motion.div
-          className="mt-10 flex w-full max-w-2xl items-center overflow-hidden rounded-xl border border-white/10 bg-black/40"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <div className="bg-[#e11d2e] px-4 py-3 font-display text-lg tracking-[0.16em] text-white">
-            LIVE
-          </div>
-          <div className="relative flex-1 overflow-hidden px-4 py-3">
-            <motion.p
-              className="whitespace-nowrap text-sm text-[#cbd5e1]"
-              animate={{ x: ["0%", "-55%"] }}
-              transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-            >
-              SCOUTING COMMIT LINES · STAR POWER MEASURED · BLUE-LINE DEFENSE ONLINE ·
-              X-FACTOR SPIKES DETECTED · DRAFT BOARD UPDATING ·
-            </motion.p>
-          </div>
-        </motion.div>
-
-        <div className="mt-14 flex w-full flex-wrap items-end justify-center gap-6 sm:gap-8">
+        <div className="mt-12 flex w-full flex-wrap items-end justify-center gap-6 sm:gap-8">
           {cards.map((card, i) => (
             <motion.div
               key={card.username}
@@ -179,5 +118,14 @@ export function HomeExperience({ cards }: { cards: ScoutCard[] }) {
         IceOVR · NHL-style GitHub cards · Not affiliated with NHL or EA
       </footer>
     </main>
+  );
+}
+
+function DraftMetric({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="border-l border-white/10 bg-white/[.035] px-3 py-2.5">
+      <p className="font-display text-2xl tracking-[.08em] text-white">{value}</p>
+      <p className="mt-0.5 text-[8px] font-bold uppercase tracking-[.14em] text-[#64748b]">{label}</p>
+    </div>
   );
 }

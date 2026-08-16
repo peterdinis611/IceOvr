@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-/** Core identity + social + PR/issue counts. */
-export const SCOUT_PROFILE_QUERY = gql`
-  query ScoutProfile($login: String!) {
+/** All data required for one scouting report, fetched in a single GitHub request. */
+export const SCOUT_QUERY = gql`
+  query Scout($login: String!) {
     user(login: $login) {
       login
       name
@@ -35,15 +35,6 @@ export const SCOUT_PROFILE_QUERY = gql`
       issues {
         totalCount
       }
-    }
-  }
-`;
-
-/** Owned repos — stars + primary languages. */
-export const SCOUT_REPOS_QUERY = gql`
-  query ScoutRepos($login: String!) {
-    user(login: $login) {
-      login
       repositories(
         first: 100
         ownerAffiliations: OWNER
@@ -62,15 +53,6 @@ export const SCOUT_REPOS_QUERY = gql`
           }
         }
       }
-    }
-  }
-`;
-
-/** Contribution calendar + commit totals. */
-export const SCOUT_CONTRIBUTIONS_QUERY = gql`
-  query ScoutContributions($login: String!) {
-    user(login: $login) {
-      login
       contributionsCollection {
         totalCommitContributions
         restrictedContributionsCount

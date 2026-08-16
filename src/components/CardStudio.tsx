@@ -1,12 +1,23 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import type { ScoutCard } from "@/lib/types";
 import { TIER_META } from "@/lib/tiers";
 import { PlayerCard } from "@/components/PlayerCard";
-import { ScoutReport } from "@/components/ScoutReport";
+import { STAT_LABELS } from "@/lib/tiers";
 import { useArenaAudio } from "@/components/ArenaAudioProvider";
+
+const ScoutReport = dynamic(
+  () => import("@/components/ScoutReport").then((module) => module.ScoutReport),
+  { loading: () => <TabLoading label="Preparing scouting dossier" /> },
+);
+
+const ActivityReport = dynamic(
+  () => import("@/components/ReportInsights").then((module) => module.ActivityReport),
+  { loading: () => <TabLoading label="Loading activity data" /> },
+);
 
 export function CardStudio({ card }: { card: ScoutCard }) {
   const { playPuckShot } = useArenaAudio();
@@ -14,6 +25,7 @@ export function CardStudio({ card }: { card: ScoutCard }) {
   const [copied, setCopied] = useState<"markdown" | "image" | "png" | null>(null);
   const [copyNotice, setCopyNotice] = useState<string | null>(null);
   const [sharingOpen, setSharingOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"overview" | "report" | "activity">("overview");
   const tier = TIER_META[card.tier];
 
   const configuredSite = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
@@ -77,7 +89,15 @@ export function CardStudio({ card }: { card: ScoutCard }) {
   }
 
   return (
-    <div className="relative z-10 mx-auto grid w-full max-w-6xl items-start gap-6 px-4 pb-16 pt-6 sm:px-6 lg:grid-cols-[350px_minmax(0,1fr)] lg:gap-8">
+    <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-16 pt-5 sm:px-6">
+      <nav aria-label="Player profile sections" className="mb-5 flex overflow-x-auto rounded-xl border border-white/10 bg-[#071524]/70 p-1.5 backdrop-blur-sm">
+        <ProfileTab active={activeTab === "overview"} onClick={() => setActiveTab("overview")} label="Overview" detail="Card & grades" />
+        <ProfileTab active={activeTab === "report"} onClick={() => setActiveTab("report")} label="Scouting report" detail="Dossier" />
+        <ProfileTab active={activeTab === "activity"} onClick={() => setActiveTab("activity")} label="Activity" detail="GitHub live" />
+      </nav>
+
+      {activeTab === "overview" && (
+        <div className="grid items-start gap-6 lg:grid-cols-[350px_minmax(0,1fr)] lg:gap-8">
       <aside className="rounded-2xl border border-white/10 bg-[#071524]/65 p-4 shadow-[0_18px_55px_rgba(0,0,0,.2)] backdrop-blur-sm lg:sticky lg:top-4">
         <div className="mb-3 flex items-center justify-between">
           <div>
@@ -137,9 +157,13 @@ export function CardStudio({ card }: { card: ScoutCard }) {
         </div>
       </aside>
 
-      <div className="min-w-0 space-y-6">
-        <ScoutReport card={card} />
+      <div className="min-w-0">
+        <OverviewPanel card={card} />
       </div>
+        </div>
+      )}
+      {activeTab === "report" && <ScoutReport card={card} />}
+      {activeTab === "activity" && <ActivityReport card={card} />}
       <AnimatePresence>
         {sharingOpen && (
           <ShareDialog
@@ -170,6 +194,85 @@ export function CardStudio({ card }: { card: ScoutCard }) {
       </AnimatePresence>
     </div>
   );
+}
+
+function ProfileTab({
+  active,
+  onClick,
+  label,
+  detail,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  detail: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`min-w-[150px] flex-1 rounded-lg px-3 py-2 text-left transition ${active ? "bg-[#7dd3fc]/12 text-white shadow-[inset_0_0_0_1px_rgba(125,211,252,.25)]" : "text-[#94a3b8] hover:bg-white/[.04] hover:text-white"}`}
+    >
+      <span className="block text-[10px] font-black uppercase tracking-[0.16em]">{label}</span>
+      <span className="mt-0.5 block text-[9px] uppercase tracking-[0.12em] text-[#64748b]">{detail}</span>
+    </button>
+  );
+}
+
+function TabLoading({ label }: { label: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#071524]/75 p-8 text-center text-xs font-bold uppercase tracking-[.2em] text-[#7dd3fc]">
+      <span className="mr-3 inline-block h-3 w-3 animate-spin rounded-full border-2 border-[#7dd3fc]/30 border-t-[#7dd3fc]" />
+      {label}
+    </div>
+  );
+}
+
+function OverviewPanel({ card }: { card: ScoutCard }) {
+  const tier = TIER_META[card.tier];
+  const topStat = [...STAT_LABELS]
+    .sort((a, b) => card.stats[b.key] - card.stats[a.key])[0];
+  return (
+    <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(145deg,rgba(12,30,47,.96),rgba(6,17,30,.94))] p-5 shadow-[0_20px_60px_rgba(0,0,0,.2)] sm:p-6">
+      <div className="absolute inset-x-0 top-0 h-px broadcast-stripe" />
+      <div className="relative border-b border-white/10 pb-5">
+        <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#7dd3fc]">Quick scout take</p>
+        <h2 className="mt-1 font-display text-3xl tracking-[.08em] text-white">PLAYER OVERVIEW</h2>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#94a3b8]">
+          {card.archetype} profile with a {topStat.name.toLowerCase()} grade of <span style={{ color: tier.accent }}>{card.stats[topStat.key]}</span>. The full dossier compares form, collaboration, and public GitHub impact.
+        </p>
+      </div>
+      <div className="mt-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+        {STAT_LABELS.map((stat) => {
+          const value = card.stats[stat.key];
+          const pct = Math.max(4, ((value - 40) / 59) * 100);
+          return (
+            <div key={stat.key} className="rounded-xl border border-white/10 bg-black/20 p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-[10px] font-bold uppercase tracking-[.15em] text-[#94a3b8]">{stat.short} · {stat.name}</p>
+                <p className="font-display text-2xl text-white">{value}</p>
+              </div>
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div className="h-full rounded-full" style={{ width: `${pct}%`, background: `linear-gradient(90deg,#38bdf8,${tier.accent})` }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <OverviewMetric label="Stars" value={card.raw.stars.toLocaleString()} />
+        <OverviewMetric label="Commits / yr" value={card.raw.commitsLastYear.toLocaleString()} />
+        <OverviewMetric label="Pull requests" value={card.raw.pullRequests.toLocaleString()} />
+        <OverviewMetric label="Public repos" value={card.raw.publicRepos.toLocaleString()} />
+      </div>
+    </section>
+  );
+}
+
+function OverviewMetric({ label, value }: { label: string; value: string }) {
+  return <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2.5"><p className="text-[9px] font-bold uppercase tracking-[.14em] text-[#64748b]">{label}</p><p className="mt-1 text-lg font-bold text-white">{value}</p></div>;
 }
 
 function ShareDialog({

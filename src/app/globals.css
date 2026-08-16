@@ -119,8 +119,45 @@ body {
   100% { transform: translateX(40%); opacity: 0; }
 }
 
+.scout-loader {
+  animation: scout-loader 1.1s ease-in-out infinite;
+}
+
+@keyframes scout-loader {
+  0% { transform: translateX(-110%); }
+  50% { transform: translateX(100%); }
+  100% { transform: translateX(310%); }
+}
+
+.heatmap-cell {
+  animation: heatmap-appear 0.24s ease-out both;
+}
+
+@keyframes heatmap-appear {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heatmap-cell {
+    animation: none;
+  }
+}
+
 .puck-float {
   animation: puck-float 4.5s ease-in-out infinite;
+}
+
+.rink-flake {
+  animation-name: rink-flake-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes rink-flake-fall {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(10px, 110vh, 0); }
 }
 
 @keyframes puck-float {
@@ -160,7 +197,9 @@ body {
   .ice-sheen,
   .glow-breathe,
   .broadcast-stripe,
+  .scout-loader,
   .puck-float,
+  .rink-flake,
   .spot-beam,
   .stat-fill,
   .player-card {

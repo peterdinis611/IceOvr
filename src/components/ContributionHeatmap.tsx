@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "motion/react";
 import type { ContributionWeek } from "@/lib/contributions";
 
 const LEVEL_COLORS = [
@@ -48,13 +45,11 @@ export function ContributionHeatmap({
           {shown.map((week, wi) => (
             <div key={wi} className="flex flex-col gap-[3px]">
               {week.map((day, di) => (
-                <motion.span
+                <span
                   key={`${day.date}-${di}`}
                   title={`${day.date}: ${day.count} contributions`}
-                  className={`h-[10px] w-[10px] rounded-[2px] ${LEVEL_COLORS[day.level]}`}
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: Math.min(0.8, (wi * 7 + di) * 0.002) }}
+                  className={`h-[10px] w-[10px] rounded-[2px] ${LEVEL_COLORS[day.level]} heatmap-cell`}
+                  style={{ animationDelay: `${Math.min(0.55, (wi * 7 + di) * 0.0015)}s` }}
                 />
               ))}
             </div>
