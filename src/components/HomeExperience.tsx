@@ -31,7 +31,7 @@ export function HomeExperience({ cards }: { cards: ScoutCard[] }) {
           <div className="relative order-1 lg:order-2">
             <motion.p className="text-[10px] font-black uppercase tracking-[.32em] text-[#7dd3fc]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .1 }}>Open ice · live scouting</motion.p>
             <motion.h1
-              className="mt-3 font-display text-[clamp(4.4rem,12vw,9.5rem)] leading-[.76] tracking-[.025em] text-white"
+              className="mt-3 font-display text-[clamp(3.6rem,13vw,9.5rem)] leading-[.76] tracking-[.025em] text-white"
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.12, type: "spring", stiffness: 100, damping: 18 }}

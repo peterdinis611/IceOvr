@@ -43,7 +43,7 @@ export function ContributionHeatmap({
       <div className="overflow-x-auto">
         <div className="inline-flex gap-[3px]">
           {shown.map((week, wi) => (
-            <div key={wi} className="flex flex-col gap-[3px]">
+            <div key={wi} className="heatmap-week flex flex-col gap-[3px]">
               {week.map((day, di) => (
                 <span
                   key={`${day.date}-${di}`}

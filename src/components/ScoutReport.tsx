@@ -6,6 +6,7 @@ import { STAT_LABELS, TIER_META } from "@/lib/tiers";
 import { CountUp } from "@/components/CountUp";
 import { GitHubTrophies } from "@/components/GitHubTrophies";
 import { ScoutingInsights } from "@/components/ReportInsights";
+import { SeasonPulse } from "@/components/SeasonPulse";
 import { FlagBadge, LanguageBadge } from "@/components/Badges";
 import { RatingMethodologyButton } from "@/components/RatingMethodology";
 
@@ -101,6 +102,8 @@ export function ScoutReport({ card }: { card: ScoutCard }) {
           );
         })}
       </div>
+
+      <SeasonPulse card={card} />
 
       <ScoutingInsights card={card} />
 

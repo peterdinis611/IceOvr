@@ -8,6 +8,10 @@ vi.mock("@/components/ArenaAudioProvider", () => ({
   useArenaAudio: () => ({ playPuckShot: vi.fn() }),
 }));
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: vi.fn() }),
+}));
+
 vi.mock("@/components/PlayerCard", () => ({
   PlayerCard: () => <div>Player card preview</div>,
 }));

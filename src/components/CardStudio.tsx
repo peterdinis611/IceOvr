@@ -8,6 +8,7 @@ import { TIER_META } from "@/lib/tiers";
 import { PlayerCard } from "@/components/PlayerCard";
 import { STAT_LABELS } from "@/lib/tiers";
 import { useArenaAudio } from "@/components/ArenaAudioProvider";
+import { ScoutRefresh } from "@/components/ScoutRefresh";
 
 const ScoutReport = dynamic(
   () => import("@/components/ScoutReport").then((module) => module.ScoutReport),
@@ -267,6 +268,7 @@ function OverviewPanel({ card }: { card: ScoutCard }) {
         <OverviewMetric label="Pull requests" value={card.raw.pullRequests.toLocaleString()} />
         <OverviewMetric label="Public repos" value={card.raw.publicRepos.toLocaleString()} />
       </div>
+      <ScoutRefresh card={card} />
     </section>
   );
 }
