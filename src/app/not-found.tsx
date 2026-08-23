@@ -39,7 +39,7 @@ export default function NotFound() {
         404
       </div>
       <motion.div
-        className="relative z-10 w-full max-w-2xl overflow-hidden rounded-2xl border border-white/10 bg-[#07111f]/75 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.42)] backdrop-blur-md sm:p-10"
+        className="arena-panel relative z-10 w-full max-w-2xl rounded-2xl p-6 sm:p-10"
         initial={{ opacity: 0, y: 24, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}

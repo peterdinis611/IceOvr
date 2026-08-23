@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Inter } from "next/font/google";
+import { Bebas_Neue, Manrope } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
 
@@ -9,7 +9,7 @@ const display = Bebas_Neue({
   variable: "--font-display",
 });
 
-const body = Inter({
+const body = Manrope({
   subsets: ["latin"],
   variable: "--font-body",
 });
