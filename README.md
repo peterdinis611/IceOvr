@@ -87,3 +87,20 @@ npm run test:watch
 ```
 
 Tests live in `__tests__/` (scoring, countries, languages, scout→card mapping, `PlayerCard`, Scout Lab dialog).
+
+## API stress test
+
+The k6 suite rotates through card generation, team ratings, and GitHub username search.
+
+```bash
+# Start the production server in another terminal first.
+npm run build && npm run start
+
+# Safe local default: ramps to 5 virtual users.
+npm run test:stress
+
+# Override the target and test identities when needed.
+BASE_URL=https://your-domain.com K6_USERNAME=octocat K6_PLAYERS=octocat,torvalds npm run test:stress
+```
+
+Do not run aggressive loads against a production deployment without a `GITHUB_TOKEN`; cold profiles can consume GitHub API rate limits.
