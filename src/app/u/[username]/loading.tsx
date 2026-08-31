@@ -1,3 +1,5 @@
+import { PuckSpinner } from "@/components/PuckSpinner";
+
 export default function PlayerLoading() {
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#020b14] px-6">
@@ -15,6 +17,9 @@ export default function PlayerLoading() {
         <p className="mt-3 text-sm text-[#94a3b8]">
           Reviewing public GitHub activity, form, and project impact.
         </p>
+        <div className="mt-5">
+          <PuckSpinner label="Preloading player data" />
+        </div>
         <div className="mt-7 h-2 overflow-hidden rounded-full border border-white/10 bg-white/5 p-px">
           <div className="scout-loader h-full w-1/2 rounded-full bg-[linear-gradient(90deg,#e11d2e,#7dd3fc)] shadow-[0_0_18px_rgba(125,211,252,.7)]" />
         </div>

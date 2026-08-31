@@ -2,13 +2,14 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import type { ScoutCard } from "@/lib/types";
 import { TIER_META } from "@/lib/tiers";
 import { PlayerCard } from "@/components/PlayerCard";
 import { STAT_LABELS } from "@/lib/tiers";
 import { useArenaAudio } from "@/components/ArenaAudioProvider";
 import { ScoutRefresh } from "@/components/ScoutRefresh";
+import { PuckSpinner } from "@/components/PuckSpinner";
 
 const ScoutReport = dynamic(
   () => import("@/components/ScoutReport").then((module) => module.ScoutReport),
@@ -205,8 +206,8 @@ export function CardStudio({ card }: { card: ScoutCard }) {
           </div>
         </div>
       )}
-      {activeTab === "report" && <ScoutReport card={card} />}
-      {activeTab === "activity" && <ActivityReport card={card} />}
+      {activeTab === "report" && <Suspense fallback={<TabLoading label="Preparing scouting dossier" />}><ScoutReport card={card} /></Suspense>}
+      {activeTab === "activity" && <Suspense fallback={<TabLoading label="Loading activity data" />}><ActivityReport card={card} /></Suspense>}
       <AnimatePresence>
         {sharingOpen && (
           <ShareDialog
@@ -273,8 +274,7 @@ function ProfileTab({
 function TabLoading({ label }: { label: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#071524]/75 p-8 text-center text-xs font-bold uppercase tracking-[.2em] text-[#7dd3fc]">
-      <span className="mr-3 inline-block h-3 w-3 animate-spin rounded-full border-2 border-[#7dd3fc]/30 border-t-[#7dd3fc]" />
-      {label}
+      <PuckSpinner label={label} />
     </div>
   );
 }

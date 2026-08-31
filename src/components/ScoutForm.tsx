@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 import { useArenaAudio } from "@/components/ArenaAudioProvider";
+import { PuckSpinner } from "@/components/PuckSpinner";
 
 export function ScoutForm({
   initial = "",
@@ -73,7 +74,7 @@ export function ScoutForm({
         )}
         <span className="relative z-10 flex items-center justify-center gap-2">
           {isPending && (
-            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/35 border-t-white" />
+            <PuckSpinner label="Scouting profile" size="sm" />
           )}
           {isPending ? "SCOUTING…" : "SCOUT"}
         </span>
