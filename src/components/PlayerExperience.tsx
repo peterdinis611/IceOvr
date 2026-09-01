@@ -83,7 +83,7 @@ export function PlayerExperience({ card }: { card: ScoutCard }) {
       </AnimatePresence>
 
       <motion.section
-        className="relative z-10 mx-auto mt-1 w-full max-w-6xl overflow-hidden rounded-2xl border border-white/10 bg-[#071524]/75 px-5 py-4 shadow-[0_16px_50px_rgba(0,0,0,.2)] backdrop-blur-md sm:px-7"
+        className="arena-panel relative z-10 mx-auto mt-1 w-full max-w-6xl rounded-2xl px-5 py-4 sm:px-7"
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.18, duration: 0.45 }}

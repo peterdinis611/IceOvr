@@ -57,6 +57,20 @@ body {
   background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.75), transparent);
 }
 
+.arena-panel::after {
+  position: absolute;
+  right: -8%;
+  bottom: -50%;
+  width: 42%;
+  height: 110%;
+  content: "";
+  opacity: 0.38;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 50%;
+  transform: rotate(-18deg);
+  pointer-events: none;
+}
+
 .draft-kicker {
   color: var(--ice);
   font-size: 0.625rem;
@@ -67,6 +81,12 @@ body {
 
 .rink-bg {
   background:
+    linear-gradient(
+      113deg,
+      transparent 0 47.5%,
+      rgba(125, 211, 252, 0.035) 47.6% 47.75%,
+      transparent 47.85% 100%
+    ),
     radial-gradient(
       ellipse 90% 55% at 50% -5%,
       rgba(56, 189, 248, 0.22),
@@ -104,6 +124,20 @@ body {
     100% 56px,
     100% 100%;
   animation: rink-pulse 6s ease-in-out infinite;
+}
+
+.ice-boards {
+  border: 1px solid rgba(226, 232, 240, 0.08);
+  box-shadow:
+    inset 0 0 0 7px rgba(125, 211, 252, 0.025),
+    inset 0 0 0 8px rgba(225, 29, 46, 0.08);
+}
+
+.ice-faceoff {
+  border: 1px solid rgba(125, 211, 252, 0.08);
+  box-shadow:
+    0 0 0 58px rgba(125, 211, 252, 0.015),
+    0 0 0 59px rgba(225, 29, 46, 0.07);
 }
 
 .studio-select {
@@ -245,6 +279,15 @@ body {
   animation: puck-spin 0.85s linear infinite;
 }
 
+.duel-round {
+  animation: duel-faceoff 0.32s ease-out both;
+}
+
+@keyframes duel-faceoff {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 @keyframes puck-spin {
   to { transform: rotate(360deg); }
 }
@@ -363,6 +406,7 @@ body {
   .broadcast-stripe,
   .scout-loader,
   .puck-spinner,
+  .duel-round,
   .puck-float,
   .rink-flake,
   .spot-beam,

@@ -42,6 +42,11 @@ export function RinkAtmosphere({ subtle = false }: { subtle?: boolean }) {
         />
       )}
       <div className="noise-overlay absolute inset-0" />
+      <div aria-hidden className="ice-boards absolute inset-3 rounded-[32px]" />
+      <div
+        aria-hidden
+        className="ice-faceoff absolute left-1/2 top-[28%] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full"
+      />
 
       <div className="spot-beam absolute left-[12%] top-0 h-[50vh] w-36 bg-[linear-gradient(180deg,rgba(125,211,252,0.14),transparent)] blur-3xl" />
       <div

@@ -17,6 +17,7 @@ export function CompareArena({
 }) {
   const [leftName, setLeftName] = useState("");
   const [rightName, setRightName] = useState("");
+  const [duelStarted, setDuelStarted] = useState(false);
 
   function submit(event: FormEvent) {
     event.preventDefault();
@@ -132,6 +133,55 @@ export function CompareArena({
           ))}
         </div>
       </div>
+      <DuelBoard left={left} right={right} started={duelStarted} onStart={() => setDuelStarted(true)} />
+    </section>
+  );
+}
+
+function DuelBoard({
+  left,
+  right,
+  started,
+  onStart,
+}: {
+  left: ScoutCard;
+  right: ScoutCard;
+  started: boolean;
+  onStart: () => void;
+}) {
+  const rounds = STAT_LABELS.map((stat) => ({
+    label: stat.name,
+    left: left.stats[stat.key],
+    right: right.stats[stat.key],
+  }));
+  const leftWins = rounds.filter((round) => round.left > round.right).length;
+  const rightWins = rounds.filter((round) => round.right > round.left).length;
+  const champion = leftWins === rightWins ? null : leftWins > rightWins ? left : right;
+
+  return (
+    <section className="arena-panel mt-6 rounded-2xl p-5 sm:p-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="draft-kicker">Ice duel</p>
+          <h2 className="mt-1 font-display text-3xl tracking-[.1em] text-white">DROP THE PUCK</h2>
+          <p className="mt-2 max-w-xl text-sm text-[#94a3b8]">Six attribute battles decide the matchup. Higher grade wins each shift.</p>
+        </div>
+        <button type="button" onClick={onStart} className="rounded-xl bg-[#e11d2e] px-5 py-3 font-display text-lg tracking-[.12em] text-white shadow-[0_8px_24px_rgba(225,29,46,.32)]">
+          {started ? "DUEL COMPLETE" : "START DUEL"}
+        </button>
+      </div>
+      {started && (
+        <div className="mt-5">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {rounds.map((round, index) => {
+              const leftWon = round.left > round.right;
+              const rightWon = round.right > round.left;
+              return <div key={round.label} className="duel-round rounded-lg border border-white/10 bg-black/20 p-3" style={{ animationDelay: `${index * 90}ms` }}><p className="text-[9px] font-black uppercase tracking-[.14em] text-[#64748b]">{round.label}</p><div className="mt-2 flex items-center justify-between"><span className={leftWon ? "font-display text-2xl text-[#7dd3fc]" : "text-lg font-bold text-white/50"}>{round.left}</span><span className="text-[10px] text-[#64748b]">VS</span><span className={rightWon ? "font-display text-2xl text-[#fda4af]" : "text-lg font-bold text-white/50"}>{round.right}</span></div></div>;
+            })}
+          </div>
+          <p className="mt-5 border-t border-white/10 pt-4 text-center font-display text-2xl tracking-[.1em] text-white">{champion ? `${champion.displayName} WINS ${leftWins}–${rightWins}` : "THE DUEL ENDS EVEN"}</p>
+        </div>
+      )}
     </section>
   );
 }

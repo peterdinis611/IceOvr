@@ -6,6 +6,8 @@ Turn any GitHub profile into an NHL Ultimate Team-style GitHub card — scored l
 
 Built with hockey aesthetics (not affiliated with NHL / EA).
 
+See [CHANGELOG.md](./CHANGELOG.md) for the latest additions and improvements.
+
 ## Scout attributes
 
 | Stat | Name | Scouted from |
