@@ -292,6 +292,28 @@ body {
   to { transform: rotate(360deg); }
 }
 
+.preload-puck {
+  animation: preload-shot 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.preload-ripple {
+  transform-origin: 304px 76px;
+  animation: preload-score 1.8s ease-out infinite;
+}
+
+@keyframes preload-shot {
+  0%, 18% { transform: translate(0, 0); opacity: 0; }
+  24% { opacity: 1; }
+  68% { transform: translate(222px, -42px); opacity: 1; }
+  100% { transform: translate(222px, -42px); opacity: 0; }
+}
+
+@keyframes preload-score {
+  0%, 62% { opacity: 0; transform: scale(0.4); }
+  72% { opacity: 1; transform: scale(1.5); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+
 @keyframes scout-loader {
   0% {
     transform: translateX(-110%);
@@ -406,6 +428,8 @@ body {
   .broadcast-stripe,
   .scout-loader,
   .puck-spinner,
+  .preload-puck,
+  .preload-ripple,
   .duel-round,
   .puck-float,
   .rink-flake,
