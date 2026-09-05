@@ -80,19 +80,16 @@ export function ScoutForm({
     "Opening the rink report…",
   ][analyzeStep];
 
-  const controlHeight = large ? "h-14" : "h-10";
-
   return (
     <div className={`w-full ${large ? "max-w-xl" : ""}`}>
       <form onSubmit={onSubmit} className="w-full">
-        <div
-          className={
-            large
-              ? "grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
-              : "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2"
-          }
-        >
-          <div className={`scout-input-shell relative min-w-0 ${controlHeight}`}>
+        {/* Always one row — prevents mobile stack misalignment */}
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-3">
+          <div
+            className={`scout-input-shell relative min-w-0 ${
+              large ? "h-12 sm:h-14" : "h-10"
+            }`}
+          >
             <span className="pointer-events-none absolute left-3 top-1/2 z-[1] -translate-y-1/2 text-[#64748b]">
               @
             </span>
@@ -108,7 +105,7 @@ export function ScoutForm({
                 error
                   ? "border-[#fda4af]/55 focus:border-[#fda4af]"
                   : "border-white/10 focus:border-transparent"
-              } ${large ? "text-lg" : "text-sm"}`}
+              } ${large ? "text-base sm:text-lg" : "text-sm"}`}
               autoCapitalize="off"
               autoCorrect="off"
               spellCheck={false}
@@ -120,8 +117,10 @@ export function ScoutForm({
           <button
             type="submit"
             disabled={isPending}
-            className={`scout-submit relative box-border inline-flex ${controlHeight} shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#e11d2e] px-4 font-display text-white shadow-[0_6px_20px_rgba(225,29,46,0.35)] transition hover:scale-[1.03] hover:shadow-[0_10px_28px_rgba(225,29,46,0.5)] active:scale-[0.97] disabled:opacity-60 disabled:hover:scale-100 ${
-              large ? "px-6 text-xl" : "text-sm"
+            className={`scout-submit relative box-border inline-flex shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#e11d2e] font-display text-white shadow-[0_6px_20px_rgba(225,29,46,0.35)] transition hover:scale-[1.03] hover:shadow-[0_10px_28px_rgba(225,29,46,0.5)] active:scale-[0.97] disabled:opacity-60 disabled:hover:scale-100 ${
+              large
+                ? "h-12 min-w-[5.75rem] px-4 text-lg sm:h-14 sm:min-w-[6.5rem] sm:px-6 sm:text-xl"
+                : "h-10 min-w-[4.5rem] px-3 text-sm"
             }`}
           >
             {isPending && (
@@ -133,7 +132,14 @@ export function ScoutForm({
             <span className="relative z-10 flex items-center justify-center gap-2 leading-none">
               {isPending && <PuckSpinner label="Scouting profile" size="sm" />}
               <span className="translate-y-[0.06em]">
-                {isPending ? "SCOUTING…" : "SCOUT"}
+                {isPending ? (
+                  <>
+                    <span className="sm:hidden">…</span>
+                    <span className="hidden sm:inline">SCOUTING…</span>
+                  </>
+                ) : (
+                  "SCOUT"
+                )}
               </span>
             </span>
           </button>
@@ -152,7 +158,7 @@ export function ScoutForm({
             </div>
             <p className="mt-1.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#7dd3fc]">
               <PuckSpinner label="Analyzing" size="sm" />
-              {analyzeCopy}
+              <span className="min-w-0 truncate">{analyzeCopy}</span>
             </p>
           </div>
         )}

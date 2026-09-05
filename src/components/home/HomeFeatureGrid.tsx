@@ -21,12 +21,12 @@ export function HomeFeatureGrid() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="relative z-10 border-t border-white/10 bg-black/35 py-14 backdrop-blur-sm">
-      <div className="mx-auto grid max-w-6xl gap-6 px-6 md:grid-cols-3">
+    <section className="relative z-10 border-t border-white/10 bg-black/35 py-10 backdrop-blur-sm sm:py-14">
+      <div className="mx-auto grid max-w-6xl gap-4 px-4 sm:gap-6 sm:px-6 md:grid-cols-3">
         {FEATURES.map((item, i) => (
           <motion.div
             key={item.title}
-            className="rounded-2xl border border-white/10 bg-[#0b1524]/70 p-6 text-left transition hover:border-[#38bdf8]/35 hover:shadow-[0_0_40px_rgba(56,189,248,0.12)]"
+            className="rounded-2xl border border-white/10 bg-[#0b1524]/70 p-5 text-left transition hover:border-[#38bdf8]/35 hover:shadow-[0_0_40px_rgba(56,189,248,0.12)] sm:p-6"
             initial={reduceMotion ? false : { opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}

@@ -156,7 +156,7 @@ export function CardStudio({ card }: { card: ScoutCard }) {
                 {tier.label}
               </span>
             </div>
-            <div className="relative flex justify-center py-1">
+            <div className="relative flex justify-center overflow-x-auto py-1">
               <div
                 aria-hidden
                 className="absolute inset-x-3 inset-y-5 opacity-50 blur-xl"
@@ -164,7 +164,7 @@ export function CardStudio({ card }: { card: ScoutCard }) {
                   background: `radial-gradient(circle at 50% 50%, ${tier.accent}35, transparent 60%)`,
                 }}
               />
-              <div className="relative">
+              <div className="relative origin-top scale-[0.88] sm:scale-100">
                 <PlayerCard card={card} style={style} reveal delay={0} />
               </div>
             </div>
@@ -267,12 +267,12 @@ function ProfileTab({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`min-w-[150px] flex-1 rounded-lg px-3 py-2 text-left transition ${active ? "bg-[#7dd3fc]/12 text-white shadow-[inset_0_0_0_1px_rgba(125,211,252,.25)]" : "text-[#94a3b8] hover:bg-white/[.04] hover:text-white"}`}
+      className={`min-w-0 flex-1 rounded-lg px-2.5 py-2 text-left transition sm:min-w-[140px] sm:px-3 ${active ? "bg-[#7dd3fc]/12 text-white shadow-[inset_0_0_0_1px_rgba(125,211,252,.25)]" : "text-[#94a3b8] hover:bg-white/[.04] hover:text-white"}`}
     >
-      <span className="block text-[10px] font-black uppercase tracking-[0.16em]">
+      <span className="block text-[9px] font-black uppercase tracking-[0.14em] sm:text-[10px] sm:tracking-[0.16em]">
         {label}
       </span>
-      <span className="mt-0.5 block text-[9px] uppercase tracking-[0.12em] text-[#64748b]">
+      <span className="mt-0.5 hidden text-[9px] uppercase tracking-[0.12em] text-[#64748b] sm:block">
         {detail}
       </span>
     </button>

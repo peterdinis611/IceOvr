@@ -221,7 +221,9 @@ function PlayerSide({
     <div
       className={`flex flex-col items-center ${alignment === "right" ? "lg:flex-row-reverse" : "lg:flex-row"} gap-4`}
     >
-      <PlayerCard card={card} size="sm" />
+      <div className="origin-top scale-[0.92] sm:scale-100">
+        <PlayerCard card={card} size="sm" />
+      </div>
       <div
         className={
           alignment === "right"

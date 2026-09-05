@@ -14,8 +14,8 @@ export function SiteHeader({
   sticky?: boolean;
 }) {
   return (
-    <StickyHeaderShell sticky={sticky}>
-      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+    <StickyHeaderShell sticky={sticky} stacked={showScout}>
+      <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto sm:gap-3">
         <Link
           href="/"
           className="group font-display text-2xl tracking-[0.12em] text-white sm:text-3xl"
@@ -32,13 +32,20 @@ export function SiteHeader({
         >
           VS
         </Link>
+        {!showScout && (
+          <div className="ml-auto flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-[#94a3b8] sm:hidden">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e11d2e] opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#e11d2e]" />
+            </span>
+            Live
+          </div>
+        )}
       </div>
 
-      <div className="min-w-0 flex-1">
+      <div className={`min-w-0 ${showScout ? "w-full sm:ml-auto sm:max-w-sm sm:flex-1" : "hidden flex-1 sm:block"}`}>
         {showScout ? (
-          <div className="ml-auto w-full max-w-sm">
-            <ScoutForm initial={scoutInitial} />
-          </div>
+          <ScoutForm initial={scoutInitial} />
         ) : (
           <div className="hidden items-center justify-end gap-5 sm:flex">
             <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-[#94a3b8]">

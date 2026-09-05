@@ -32,13 +32,13 @@ export function CardStylePicker({
               }`}
             >
               <span
-                className={`block text-[9px] font-black uppercase tracking-[0.08em] ${
+                className={`block text-[8px] font-black uppercase tracking-[0.06em] sm:text-[9px] sm:tracking-[0.08em] ${
                   active ? "text-white" : "text-[#94a3b8]"
                 }`}
               >
                 {meta.label}
               </span>
-              <span className="mt-0.5 block text-[8px] leading-snug text-[#64748b]">
+              <span className="mt-0.5 hidden text-[8px] leading-snug text-[#64748b] sm:block">
                 {meta.stock}
               </span>
             </button>

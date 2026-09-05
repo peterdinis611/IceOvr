@@ -73,8 +73,8 @@ export function RinkAtmosphere({
         />
       )}
       <div className="noise-overlay absolute inset-0" />
-      <div className="ice-boards absolute inset-3 rounded-[32px]" />
-      <div className="ice-faceoff absolute left-1/2 top-[28%] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+      <div className="ice-boards absolute inset-2 rounded-[22px] sm:inset-3 sm:rounded-[32px]" />
+      <div className="ice-faceoff absolute left-1/2 top-[28%] h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-72 sm:w-72" />
       <div className="radar-sweep absolute inset-0 opacity-25" />
 
       {parallax ? (
