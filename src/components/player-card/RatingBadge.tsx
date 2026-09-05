@@ -1,5 +1,3 @@
-"use client";
-
 import type { CardTier } from "./types";
 import { TIER_VISUAL } from "./tierStyles";
 
@@ -25,8 +23,8 @@ export function RatingBadge({
           width: compact ? 56 : 72,
           height: compact ? 56 : 72,
           background: visual.ovrFill,
-          clipPath: "polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)",
-          boxShadow: `0 4px 14px ${visual.glow}`,
+          border: "2px solid #1a1208",
+          boxShadow: "2px 2px 0 rgba(0,0,0,0.25)",
           fontSize: compact ? 26 : 34,
           fontFamily: "var(--font-display), Impact, sans-serif",
           lineHeight: 1,

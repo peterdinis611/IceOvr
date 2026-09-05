@@ -1,5 +1,3 @@
-"use client";
-
 import type { ScoutCard } from "@/lib/types";
 import { getMilestone, getSeasonForm } from "@/lib/season";
 

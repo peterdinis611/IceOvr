@@ -1,10 +1,31 @@
-"use client";
-
 import type { ReactNode } from "react";
+import type { CardStyleId } from "./cardStyles";
 import type { CardTier } from "./types";
-import { TIER_VISUAL } from "./tierStyles";
+import {
+  ARENA_TIER_VISUAL,
+  BRUTAL_TIER_VISUAL,
+  isFoilTier,
+  TIER_STRIPES,
+  TIER_VISUAL,
+} from "./tierStyles";
 
 export function CardFrame({
+  tier,
+  style = "retro",
+  children,
+  className = "",
+}: {
+  tier: CardTier;
+  style?: CardStyleId;
+  children: ReactNode;
+  className?: string;
+}) {
+  if (style === "arena") return <ArenaFrame tier={tier} className={className}>{children}</ArenaFrame>;
+  if (style === "brutal") return <BrutalFrame tier={tier} className={className}>{children}</BrutalFrame>;
+  return <RetroFrame tier={tier} className={className}>{children}</RetroFrame>;
+}
+
+function RetroFrame({
   tier,
   children,
   className = "",
@@ -14,99 +35,143 @@ export function CardFrame({
   className?: string;
 }) {
   const visual = TIER_VISUAL[tier];
-  const isLegend = tier === "legend";
-  const isElite = tier === "elite";
+  const foil = isFoilTier(tier);
+  const [stripeA, stripeB] = TIER_STRIPES[tier];
 
   return (
     <div
-      className={`relative h-full w-full overflow-hidden rounded-[16px] p-[5px] ${className}`}
+      className={`relative h-full w-full overflow-hidden ${className}`}
       style={{
+        borderRadius: 4,
+        padding: foil ? 5 : 4,
         background: visual.frame,
-        backgroundSize: isLegend ? "300% 300%" : undefined,
-        animation: isLegend ? "iceovr-holo 6s linear infinite" : undefined,
-        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.4)`,
+        backgroundSize: foil ? "280% 280%" : undefined,
+        animation: foil ? "retro-foil-shift 7s linear infinite" : undefined,
+        boxShadow: foil
+          ? `inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.2)`
+          : `inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 0 rgba(0,0,0,0.18)`,
       }}
     >
-      {isLegend && (
+      {foil && (
         <style>{`
-          @keyframes iceovr-holo {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-          @keyframes iceovr-holo-sheen {
-            0% { transform: translateX(-120%) skewX(-18deg); }
-            100% { transform: translateX(220%) skewX(-18deg); }
+          @keyframes retro-foil-shift {
+            0% { background-position: 0% 40%; }
+            50% { background-position: 100% 60%; }
+            100% { background-position: 0% 40%; }
           }
         `}</style>
       )}
 
-      {/* Bevel highlight */}
       <div
-        aria-hidden
-        className="pointer-events-none absolute inset-[3px] rounded-[13px]"
+        className="relative h-full w-full overflow-hidden"
         style={{
-          background:
-            "linear-gradient(155deg, rgba(255,255,255,0.45) 0%, transparent 32%, transparent 68%, rgba(0,0,0,0.4) 100%)",
+          borderRadius: 2,
+          background: visual.inner,
+          boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.12)",
         }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-[2px] rounded-[14px] opacity-45"
-        style={{
-          backgroundImage:
-            "linear-gradient(115deg, rgba(255,255,255,.32) 0 1px, transparent 1px 28px), linear-gradient(25deg, transparent 0 52%, rgba(0,0,0,.4) 52% 53%, transparent 53%)",
-          backgroundSize: "36px 36px, 100% 100%",
-          mixBlendMode: "overlay",
-        }}
-      />
-
-      <div
-        className="relative h-full w-full overflow-hidden rounded-[11px]"
-        style={{ background: visual.inner }}
       >
-        {/* Elite diagonal light bars */}
-        {isElite && (
-          <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden opacity-40">
-            <div className="absolute -left-1/4 top-0 h-full w-1/3 rotate-12 bg-gradient-to-r from-transparent via-cyan-400/25 to-transparent" />
-            <div className="absolute right-0 top-0 h-full w-1/4 -rotate-12 bg-gradient-to-l from-transparent via-violet-400/20 to-transparent" />
-          </div>
-        )}
-
-        {/* Legend particle / noise texture */}
-        {isLegend && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-multiply"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E\")",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.55]"
+          style={{
+            backgroundImage: `repeating-linear-gradient(-32deg, transparent 0 14px, ${stripeA}33 14px 22px, transparent 22px 36px, ${stripeB}28 36px 42px)`,
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{ boxShadow: "inset 0 0 28px rgba(90,60,30,0.12), inset 0 0 2px rgba(0,0,0,0.2)" }}
+        />
+        {foil && (
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.12] mix-blend-overlay"
+            className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay"
             style={{
-              backgroundImage:
-                "radial-gradient(circle at 20% 30%, #fff 0.5px, transparent 0.6px), radial-gradient(circle at 70% 60%, #fff 0.5px, transparent 0.6px), radial-gradient(circle at 40% 80%, #fff 0.4px, transparent 0.5px)",
-              backgroundSize: "48px 48px, 36px 36px, 28px 28px",
+              background:
+                "linear-gradient(125deg, transparent 30%, rgba(255,255,255,0.55) 48%, transparent 62%)",
+              backgroundSize: "200% 200%",
+              animation: "retro-foil-shift 4.5s ease-in-out infinite",
             }}
           />
         )}
-
-        {/* Ornamental corners (legend) */}
-        {isLegend && (
-          <>
-            <Corner className="left-1.5 top-1.5" />
-            <Corner className="right-1.5 top-1.5 rotate-90" />
-            <Corner className="bottom-1.5 left-1.5 -rotate-90" />
-            <Corner className="bottom-1.5 right-1.5 rotate-180" />
-          </>
-        )}
-
         {children}
       </div>
     </div>
   );
 }
 
-function Corner({ className = "" }: { className?: string }) {
+function ArenaFrame({
+  tier,
+  children,
+  className = "",
+}: {
+  tier: CardTier;
+  children: ReactNode;
+  className?: string;
+}) {
+  const visual = ARENA_TIER_VISUAL[tier];
+  const foil = isFoilTier(tier);
+
   return (
     <div
-      aria-hidden
-      className={`pointer-events-none absolute h-4 w-4 border-l-2 border-t-2 border-amber-200/70 ${className}`}
-    />
+      className={`relative h-full w-full overflow-hidden rounded-[14px] p-[5px] ${className}`}
+      style={{
+        background: visual.frame,
+        backgroundSize: foil ? "240% 240%" : undefined,
+        animation: foil ? "retro-foil-shift 8s linear infinite" : undefined,
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.28)",
+      }}
+    >
+      <div
+        className="relative h-full w-full overflow-hidden rounded-[10px]"
+        style={{ background: visual.inner }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              "linear-gradient(90deg, transparent 49%, rgba(225,29,46,0.18) 49.5%, rgba(225,29,46,0.18) 50.5%, transparent 51%), radial-gradient(circle at 50% 38%, transparent 20%, rgba(125,211,252,0.08) 21%, transparent 22%)",
+          }}
+        />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function BrutalFrame({
+  tier,
+  children,
+  className = "",
+}: {
+  tier: CardTier;
+  children: ReactNode;
+  className?: string;
+}) {
+  const visual = BRUTAL_TIER_VISUAL[tier];
+
+  return (
+    <div
+      className={`relative h-full w-full overflow-hidden ${className}`}
+      style={{
+        borderRadius: 0,
+        padding: 4,
+        background: visual.frame,
+        boxShadow: `4px 4px 0 #000, inset 0 0 0 1px rgba(0,0,0,0.4)`,
+      }}
+    >
+      <div className="relative h-full w-full overflow-hidden" style={{ background: visual.inner }}>
+        {children}
+      </div>
+    </div>
   );
 }

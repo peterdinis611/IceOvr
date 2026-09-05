@@ -28,17 +28,14 @@ describe("PlayerCard", () => {
   it("renders identity, rating, tier and core stats", () => {
     render(<PlayerCard {...baseProps()} />);
 
-    expect(screen.getByLabelText(/LINUS TORVALDS IceOVR card/i)).toBeInTheDocument();
-    expect(screen.getByText("LINUS TORVALDS")).toBeInTheDocument();
-    expect(screen.getByText("@torvalds")).toBeInTheDocument();
-    expect(screen.getByText("88")).toBeInTheDocument();
+    expect(screen.getByLabelText(/LINUS TORVALDS IceOVR card, 88 overall/i)).toBeInTheDocument();
+    expect(screen.getAllByText("LINUS TORVALDS").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("@torvalds").length).toBeGreaterThan(0);
     expect(screen.getByText("ELITE")).toBeInTheDocument();
-    expect(screen.getByText("Commits")).toBeInTheDocument();
-    expect(screen.getByText("PRs")).toBeInTheDocument();
-    expect(screen.getByText("Stars")).toBeInTheDocument();
-    expect(screen.getByText("Streak")).toBeInTheDocument();
-    expect(screen.getByText("Repos")).toBeInTheDocument();
-    expect(screen.getByText("180k")).toBeInTheDocument();
+    for (const label of ["Commits", "PRs", "Stars", "Streak", "Repos"]) {
+      expect(screen.getAllByText(label).length).toBeGreaterThan(0);
+    }
+    expect(screen.getAllByText("180k").length).toBeGreaterThan(0);
   });
 
   it("shows language team mark when icon URL is provided", () => {
@@ -53,10 +50,30 @@ describe("PlayerCard", () => {
     expect(screen.getByAltText("Rust")).toBeInTheDocument();
   });
 
-  it("applies legend holographic frame styling", () => {
-    const { container } = render(<PlayerCard {...baseProps({ tier: "legend", rating: 95 })} />);
+  it("applies legend foil stock styling on retro edition", () => {
+    const { container } = render(
+      <PlayerCard {...baseProps({ tier: "legend", rating: 95, style: "retro" })} />,
+    );
     expect(screen.getByText("LEGEND")).toBeInTheDocument();
+    expect(screen.getByText("FOIL")).toBeInTheDocument();
     expect(container.querySelector('[aria-label*="legend"]')).toBeTruthy();
+  });
+
+  it("marks lower tiers as matte cardboard on retro edition", () => {
+    render(<PlayerCard {...baseProps({ tier: "gold", rating: 78, style: "retro" })} />);
+    expect(screen.getByText("MATTE")).toBeInTheDocument();
+  });
+
+  it("switches to arena night edition", () => {
+    render(<PlayerCard {...baseProps({ style: "arena" })} />);
+    expect(screen.getByText("ARENA")).toBeInTheDocument();
+    expect(screen.getByLabelText(/arena style/i)).toBeInTheDocument();
+  });
+
+  it("switches to puck stamp edition", () => {
+    render(<PlayerCard {...baseProps({ style: "brutal" })} />);
+    expect(screen.getByText("PUCK STAMP")).toBeInTheDocument();
+    expect(screen.getByText("RAW")).toBeInTheDocument();
   });
 
   it("responds to mouse tilt without crashing", async () => {

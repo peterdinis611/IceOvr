@@ -1,5 +1,3 @@
-"use client";
-
 import { getLanguageMeta, languageIconUrl } from "@/lib/languages";
 import { getCountry, flagImageUrl, hasKnownCountry } from "@/lib/countries";
 

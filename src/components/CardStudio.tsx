@@ -10,6 +10,11 @@ import { STAT_LABELS } from "@/lib/tiers";
 import { useArenaAudio } from "@/components/ArenaAudioProvider";
 import { ScoutRefresh } from "@/components/ScoutRefresh";
 import { PuckSpinner } from "@/components/PuckSpinner";
+import {
+  CARD_STYLE_META,
+  CardStylePicker,
+  useCardStyle,
+} from "@/components/player-card";
 
 const ScoutReport = dynamic(
   () => import("@/components/ScoutReport").then((module) => module.ScoutReport),
@@ -26,6 +31,7 @@ const ActivityReport = dynamic(
 
 export function CardStudio({ card }: { card: ScoutCard }) {
   const { playPuckShot } = useArenaAudio();
+  const { style, setStyle } = useCardStyle();
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState<"markdown" | "image" | "png" | null>(
     null,
@@ -44,7 +50,7 @@ export function CardStudio({ card }: { card: ScoutCard }) {
       ? window.location.origin
       : "http://localhost:3000");
 
-  const pngPath = `/api/card/${card.username}`;
+  const pngPath = `/api/card/${card.username}?style=${style}`;
   const publicPng = `${site}/${card.username}.png`;
   const markdown = `[![IceOVR card](${publicPng})](${site}/u/${card.username})`;
   const localEmbed = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(site);
@@ -159,15 +165,17 @@ export function CardStudio({ card }: { card: ScoutCard }) {
                 }}
               />
               <div className="relative">
-                <PlayerCard card={card} reveal delay={0} />
+                <PlayerCard card={card} style={style} reveal delay={0} />
               </div>
             </div>
+
+            <CardStylePicker value={style} onChange={setStyle} />
 
             <div className="mt-4 w-full space-y-3">
               <p className="text-center text-[11px] uppercase tracking-[0.2em] text-[#94a3b8]">
                 <span style={{ color: tier.accent }}>{tier.label}</span>
                 {" · "}
-                auto-scouted from GitHub
+                {CARD_STYLE_META[style].label}
               </p>
 
               <motion.button

@@ -1,9 +1,7 @@
-"use client";
-
 import type { CardTier } from "./types";
-import { TIER_VISUAL } from "./tierStyles";
+import { isFoilTier, TIER_VISUAL } from "./tierStyles";
 
-/** Soft outer aura that intensifies on hover (parent group). */
+/** Soft cardboard halo — stronger only for foil tiers. */
 export function TierGlow({
   tier,
   active = false,
@@ -12,15 +10,17 @@ export function TierGlow({
   active?: boolean;
 }) {
   const visual = TIER_VISUAL[tier];
+  const foil = isFoilTier(tier);
 
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute -inset-3 rounded-[22px] transition-opacity duration-300"
+      className="pointer-events-none absolute -inset-2 transition-opacity duration-300"
       style={{
-        opacity: active ? 0.95 : tier === "gold" || tier === "elite" || tier === "legend" ? 0.55 : 0.35,
-        background: `radial-gradient(ellipse at center, ${visual.glow}, transparent 70%)`,
-        filter: active ? "blur(10px)" : "blur(14px)",
+        borderRadius: 6,
+        opacity: active ? (foil ? 0.9 : 0.55) : foil ? 0.5 : 0.22,
+        background: `radial-gradient(ellipse at center, ${visual.glow}, transparent 72%)`,
+        filter: active ? "blur(8px)" : "blur(12px)",
       }}
     />
   );

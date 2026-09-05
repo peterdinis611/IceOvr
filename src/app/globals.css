@@ -79,6 +79,127 @@ body {
   text-transform: uppercase;
 }
 
+.scout-input-shell {
+  display: block;
+  line-height: 0;
+}
+
+.scout-input-shell::before {
+  position: absolute;
+  z-index: 0;
+  inset: -1px;
+  content: "";
+  opacity: 0;
+  border-radius: 0.78rem;
+  background: linear-gradient(105deg, #e11d2e, #f8fafc, #7dd3fc);
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.scout-input-shell:focus-within::before {
+  opacity: 1;
+}
+
+.scout-input-shell > input,
+.scout-input-shell > span {
+  position: relative;
+  z-index: 1;
+}
+
+.scout-submit {
+  margin: 0;
+  line-height: 1;
+  letter-spacing: 0.12em;
+}
+
+.scout-analyze-bar {
+  transition: width 420ms ease;
+}
+
+.your-glow {
+  text-shadow:
+    0 0 18px rgba(225, 29, 46, 0.55),
+    0 0 42px rgba(225, 29, 46, 0.28);
+  animation: your-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes your-pulse {
+  0%,
+  100% {
+    text-shadow:
+      0 0 14px rgba(225, 29, 46, 0.4),
+      0 0 28px rgba(225, 29, 46, 0.18);
+    filter: brightness(1);
+  }
+  50% {
+    text-shadow:
+      0 0 22px rgba(225, 29, 46, 0.7),
+      0 0 48px rgba(225, 29, 46, 0.35);
+    filter: brightness(1.12);
+  }
+}
+
+.live-badge {
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.82;
+    transform: scale(1.04);
+  }
+}
+
+.radar-sweep {
+  background: conic-gradient(
+    from 0deg at 50% 42%,
+    transparent 0deg,
+    rgba(125, 211, 252, 0.08) 40deg,
+    transparent 90deg,
+    transparent 360deg
+  );
+  animation: radar-spin 12s linear infinite;
+  mask-image: radial-gradient(circle at 50% 42%, black 0%, transparent 62%);
+}
+
+@keyframes radar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.card-flipper {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+.card-flipper.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.card-holo {
+  transform: translateX(-120%) skewX(-12deg);
+  opacity: 0;
+  transition:
+    transform 0.65s ease,
+    opacity 0.25s ease;
+}
+
+.card-holo-active .card-holo {
+  transform: translateX(220%) skewX(-12deg);
+  opacity: 1;
+}
+
 .rink-bg {
   background:
     linear-gradient(
@@ -435,8 +556,25 @@ body {
   .rink-flake,
   .spot-beam,
   .stat-fill,
-  .player-card {
+  .player-card,
+  .your-glow,
+  .live-badge,
+  .radar-sweep,
+  .card-flipper,
+  .card-holo {
     animation: none !important;
     transition: none !important;
+  }
+
+  .card-flipper.is-flipped {
+    transform: none;
+  }
+
+  .card-flipper.is-flipped .card-face:first-child {
+    display: none;
+  }
+
+  .card-flipper.is-flipped .card-face:last-child {
+    transform: none;
   }
 }

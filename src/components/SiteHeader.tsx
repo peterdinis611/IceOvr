@@ -1,24 +1,20 @@
-"use client";
-
 import Link from "next/link";
-import { motion } from "motion/react";
 import { ScoutForm } from "@/components/ScoutForm";
 import { SoundToggle } from "@/components/SoundToggle";
+import { StickyHeaderShell } from "@/components/StickyHeaderShell";
 
+/** Server Component — chrome with client islands for sound, scout, sticky blur. */
 export function SiteHeader({
   showScout = false,
   scoutInitial = "",
+  sticky = false,
 }: {
   showScout?: boolean;
   scoutInitial?: string;
+  sticky?: boolean;
 }) {
   return (
-    <motion.header
-      className="relative z-30 mx-auto flex w-full max-w-6xl shrink-0 items-center gap-3 px-4 py-4 sm:px-6"
-      initial={{ opacity: 0, y: -12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
+    <StickyHeaderShell sticky={sticky}>
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         <Link
           href="/"
@@ -55,6 +51,6 @@ export function SiteHeader({
           </div>
         )}
       </div>
-    </motion.header>
+    </StickyHeaderShell>
   );
 }

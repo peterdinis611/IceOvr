@@ -1,5 +1,3 @@
-"use client";
-
 import type { LucideIcon } from "lucide-react";
 import type { CardTier } from "./types";
 import { TIER_VISUAL } from "./tierStyles";
@@ -46,9 +44,9 @@ export function StatBar({
             {display}
           </span>
         </div>
-        <div className={`h-1.5 overflow-hidden rounded-full ${visual.barTrack}`}>
+        <div className={`h-1.5 overflow-hidden border border-[#1a1208]/20 ${visual.barTrack}`}>
           <div
-            className={`h-full rounded-full bg-gradient-to-r ${visual.barFill}`}
+            className={`h-full bg-gradient-to-r ${visual.barFill}`}
             style={{ width: `${pct}%` }}
           />
         </div>
