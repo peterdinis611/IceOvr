@@ -80,6 +80,8 @@ export function ScoutForm({
     "Opening the rink report…",
   ][analyzeStep];
 
+  const showClear = username.length > 0 && !isPending;
+
   return (
     <div className={`w-full ${large ? "max-w-xl" : ""}`}>
       <form onSubmit={onSubmit} className="w-full">
@@ -101,7 +103,7 @@ export function ScoutForm({
               }}
               placeholder={typedHint || "username"}
               aria-invalid={Boolean(error)}
-              className={`box-border h-full w-full rounded-xl border bg-[#0b1524] pl-8 pr-3 text-white outline-none transition placeholder:text-[#64748b] ${
+              className={`box-border h-full w-full rounded-xl border bg-[#0b1524] pl-8 pr-10 text-white outline-none transition placeholder:text-[#64748b] ${
                 error
                   ? "border-[#fda4af]/55 focus:border-[#fda4af]"
                   : "border-white/10 focus:border-transparent"
@@ -112,6 +114,30 @@ export function ScoutForm({
               disabled={isPending}
               aria-describedby={isPending || error ? "scout-search-status" : undefined}
             />
+
+            {showClear && (
+              <button
+                type="button"
+                onClick={() => {
+                  setUsername("");
+                  if (error) setError(null);
+                }}
+                aria-label="Clear username"
+                className="absolute right-2 top-1/2 z-[1] flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-[#64748b] transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7dd3fc]"
+              >
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className="h-4 w-4"
+                  aria-hidden
+                >
+                  <path d="M6 6l8 8M14 6l-8 8" />
+                </svg>
+              </button>
+            )}
           </div>
 
           <button
