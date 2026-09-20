@@ -45,4 +45,25 @@ describe("CardStudio profile tabs", () => {
       await screen.findByText("Activity report content"),
     ).toBeInTheDocument();
   });
+
+  it("opens share pack with style-aware social links and README badge", async () => {
+    const user = userEvent.setup();
+    render(<CardStudio card={makeScoutCard()} />);
+
+    await user.click(screen.getByRole("button", { name: /Share card/i }));
+    expect(screen.getByText(/Share pack/i)).toBeInTheDocument();
+
+    const x = screen.getByRole("link", { name: /Post on X/i });
+    const linkedIn = screen.getByRole("link", { name: /LinkedIn/i });
+    expect(x).toHaveAttribute(
+      "href",
+      expect.stringContaining("twitter.com/intent/tweet"),
+    );
+    expect(linkedIn).toHaveAttribute(
+      "href",
+      expect.stringContaining("linkedin.com/sharing"),
+    );
+    expect(screen.getByText(/README badge ·/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/\?style=/).length).toBeGreaterThan(0);
+  });
 });

@@ -27,6 +27,12 @@ export function SiteHeader({
         </Link>
         <SoundToggle />
         <Link
+          href="/board"
+          className="rounded border border-white/10 px-2 py-1 text-[9px] font-black uppercase tracking-[.14em] text-[#94a3b8] transition hover:border-[#e11d2e]/45 hover:text-[#fda4af]"
+        >
+          Board
+        </Link>
+        <Link
           href="/compare"
           className="rounded border border-white/10 px-2 py-1 text-[9px] font-black uppercase tracking-[.14em] text-[#94a3b8] transition hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc]"
         >

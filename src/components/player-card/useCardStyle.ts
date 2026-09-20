@@ -10,9 +10,20 @@ import {
 
 export function useCardStyle(initial?: CardStyleId) {
   const [style, setStyleState] = useState<CardStyleId>(initial ?? DEFAULT_CARD_STYLE);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(Boolean(initial));
 
   useEffect(() => {
+    if (initial) {
+      try {
+        window.localStorage.setItem(CARD_STYLE_STORAGE_KEY, initial);
+      } catch {
+        // ignore
+      }
+      setStyleState(initial);
+      setReady(true);
+      return;
+    }
+
     try {
       const saved = window.localStorage.getItem(CARD_STYLE_STORAGE_KEY);
       setStyleState(parseCardStyle(saved));
@@ -20,7 +31,7 @@ export function useCardStyle(initial?: CardStyleId) {
       // ignore
     }
     setReady(true);
-  }, []);
+  }, [initial]);
 
   function setStyle(next: CardStyleId) {
     setStyleState(next);

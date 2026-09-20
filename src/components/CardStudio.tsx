@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
-import { Suspense, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import type { ScoutCard } from "@/lib/types";
 import { TIER_META } from "@/lib/tiers";
 import { PlayerCard } from "@/components/PlayerCard";
@@ -13,8 +13,10 @@ import { PuckSpinner } from "@/components/PuckSpinner";
 import {
   CARD_STYLE_META,
   CardStylePicker,
+  type CardStyleId,
   useCardStyle,
 } from "@/components/player-card";
+import { buildCardSharePayload } from "@/lib/share";
 
 const ScoutReport = dynamic(
   () => import("@/components/ScoutReport").then((module) => module.ScoutReport),
@@ -29,9 +31,15 @@ const ActivityReport = dynamic(
   { loading: () => <TabLoading label="Loading activity data" /> },
 );
 
-export function CardStudio({ card }: { card: ScoutCard }) {
+export function CardStudio({
+  card,
+  initialStyle,
+}: {
+  card: ScoutCard;
+  initialStyle?: CardStyleId;
+}) {
   const { playPuckShot } = useArenaAudio();
-  const { style, setStyle } = useCardStyle();
+  const { style, setStyle } = useCardStyle(initialStyle);
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState<"markdown" | "image" | "png" | null>(
     null,
@@ -50,9 +58,11 @@ export function CardStudio({ card }: { card: ScoutCard }) {
       ? window.location.origin
       : "http://localhost:3000");
 
+  const share = useMemo(
+    () => buildCardSharePayload(card, style, site),
+    [card, style, site],
+  );
   const pngPath = `/api/card/${card.username}?style=${style}`;
-  const publicPng = `${site}/${card.username}.png`;
-  const markdown = `[![IceOVR card](${publicPng})](${site}/u/${card.username})`;
   const localEmbed = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(site);
 
   async function downloadCard() {
@@ -107,7 +117,7 @@ export function CardStudio({ card }: { card: ScoutCard }) {
       setTimeout(() => setCopied(null), 1800);
       setTimeout(() => setCopyNotice(null), 2400);
     } catch {
-      await copyEmbed(publicPng, "image");
+      await copyEmbed(share.publicPng, "image");
     }
   }
 
@@ -220,13 +230,17 @@ export function CardStudio({ card }: { card: ScoutCard }) {
         {sharingOpen && (
           <ShareDialog
             localEmbed={localEmbed}
-            publicPng={publicPng}
-            markdown={markdown}
+            edition={share.edition}
+            publicPng={share.publicPng}
+            pageUrl={share.pageUrl}
+            markdown={share.markdown}
+            twitterUrl={share.twitterUrl}
+            linkedInUrl={share.linkedInUrl}
             copied={copied}
             onClose={() => setSharingOpen(false)}
             onCopyPng={() => void copyPngImage()}
-            onCopyImage={() => void copyEmbed(publicPng, "image")}
-            onCopyMarkdown={() => void copyEmbed(markdown, "markdown")}
+            onCopyImage={() => void copyEmbed(share.publicPng, "image")}
+            onCopyMarkdown={() => void copyEmbed(share.markdown, "markdown")}
           />
         )}
       </AnimatePresence>
@@ -370,8 +384,12 @@ function OverviewMetric({ label, value }: { label: string; value: string }) {
 
 function ShareDialog({
   localEmbed,
+  edition,
   publicPng,
+  pageUrl,
   markdown,
+  twitterUrl,
+  linkedInUrl,
   copied,
   onClose,
   onCopyPng,
@@ -379,8 +397,12 @@ function ShareDialog({
   onCopyMarkdown,
 }: {
   localEmbed: boolean;
+  edition: string;
   publicPng: string;
+  pageUrl: string;
   markdown: string;
+  twitterUrl: string;
+  linkedInUrl: string;
   copied: "markdown" | "image" | "png" | null;
   onClose: () => void;
   onCopyPng: () => void;
@@ -405,11 +427,14 @@ function ShareDialog({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#7dd3fc]">
-              Share center
+              Share pack · {edition}
             </p>
             <h3 className="mt-1 font-display text-2xl tracking-wide text-white">
               YOUR LIVE CARD
             </h3>
+            <p className="mt-1 text-xs text-[#94a3b8]">
+              OG preview, social posts, and README badge use this edition.
+            </p>
           </div>
           <button
             type="button"
@@ -426,15 +451,38 @@ function ShareDialog({
             deployed HTTPS domain before sharing.
           </p>
         )}
+
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <a
+            href={twitterUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex h-11 items-center justify-center rounded-xl border border-white/15 bg-black/30 text-[11px] font-black uppercase tracking-[0.16em] text-white transition hover:border-[#7dd3fc]/40 hover:bg-[#7dd3fc]/10"
+          >
+            Post on X
+          </a>
+          <a
+            href={linkedInUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex h-11 items-center justify-center rounded-xl border border-white/15 bg-black/30 text-[11px] font-black uppercase tracking-[0.16em] text-white transition hover:border-[#7dd3fc]/40 hover:bg-[#7dd3fc]/10"
+          >
+            LinkedIn
+          </a>
+        </div>
+
         <div className="mt-4 overflow-hidden rounded-xl border border-[#7dd3fc]/20 bg-gradient-to-br from-[#0c2131] to-black/30">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#7dd3fc]/30 bg-[#7dd3fc]/10 font-display text-lg tracking-wide text-[#7dd3fc]">
-                PNG
+                OG
               </div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#7dd3fc]">
-                Live card image
-              </p>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#7dd3fc]">
+                  Style preview image
+                </p>
+                <p className="mt-0.5 text-[10px] text-[#64748b]">{edition} edition</p>
+              </div>
             </div>
             <div className="flex gap-2">
               <button
@@ -453,17 +501,26 @@ function ShareDialog({
               </button>
             </div>
           </div>
+          <div className="border-b border-white/10 bg-black/20 px-4 py-3">
+            <img
+              src={publicPng}
+              alt={`${edition} IceOVR card preview`}
+              className="mx-auto max-h-48 w-auto rounded-lg border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,.45)]"
+            />
+          </div>
           <code className="block overflow-x-auto whitespace-nowrap px-4 py-3 text-xs leading-relaxed text-[#d8f5ff]">
             {publicPng}
           </code>
         </div>
+
         <EmbedRow
-          label="GitHub README markdown"
+          label={`README badge · ${edition}`}
           value={markdown}
           button={copied === "markdown" ? "Copied!" : "Copy markdown"}
           onCopy={onCopyMarkdown}
           code
         />
+        <EmbedRow label="Profile link" value={pageUrl} button="Copy link" onCopy={() => void navigator.clipboard?.writeText(pageUrl)} />
       </motion.section>
     </motion.div>
   );

@@ -2,11 +2,18 @@ import { ArenaIntro } from "@/components/ArenaIntro";
 import { CardStudio } from "@/components/CardStudio";
 import { RinkAtmosphere } from "@/components/RinkAtmosphere";
 import { SiteHeader } from "@/components/SiteHeader";
+import type { CardStyleId } from "@/components/player-card/cardStyles";
 import type { ScoutCard } from "@/lib/types";
 import { TIER_META } from "@/lib/tiers";
 
 /** Server Component — player shell with intro + studio as client islands. */
-export function PlayerExperience({ card }: { card: ScoutCard }) {
+export function PlayerExperience({
+  card,
+  initialStyle,
+}: {
+  card: ScoutCard;
+  initialStyle?: CardStyleId;
+}) {
   const tier = TIER_META[card.tier];
 
   return (
@@ -67,7 +74,7 @@ export function PlayerExperience({ card }: { card: ScoutCard }) {
         </div>
       </section>
 
-      <CardStudio card={card} />
+      <CardStudio card={card} initialStyle={initialStyle} />
     </main>
   );
 }

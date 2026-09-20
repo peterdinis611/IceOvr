@@ -107,7 +107,7 @@ export function ArenaFront({
             height={128}
             sizes="128px"
             priority={!compact}
-            className="h-full w-full object-cover object-top"
+            className="h-full w-full object-contain object-center"
             draggable={false}
           />
         </div>

@@ -206,7 +206,7 @@ function renderRetroPng({ card, tierKey, langIcon, stats }: PngInput) {
                 width={370}
                 height={200}
                 alt=""
-                style={{ objectFit: "cover", objectPosition: "top", width: "100%", height: "100%" }}
+                style={{ objectFit: "contain", objectPosition: "center", width: "100%", height: "100%" }}
               />
             </div>
 
@@ -352,7 +352,7 @@ function renderArenaPng({ card, tierKey, langIcon, stats }: PngInput) {
               }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={card.avatarUrl} width={140} height={140} alt="" style={{ objectFit: "cover" }} />
+              <img src={card.avatarUrl} width={140} height={140} alt="" style={{ objectFit: "contain", objectPosition: "center" }} />
             </div>
             <div style={{ marginTop: 14, fontSize: 24, fontWeight: 900, letterSpacing: 1, display: "flex" }}>
               {card.displayName}
@@ -463,8 +463,8 @@ function renderBrutalPng({ card, tierKey, stats }: PngInput) {
                 height={194}
                 alt=""
                 style={{
-                  objectFit: "cover",
-                  objectPosition: "top",
+                  objectFit: "contain",
+                  objectPosition: "center",
                   width: "100%",
                   height: "100%",
                   filter: "grayscale(1) contrast(1.2)",

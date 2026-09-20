@@ -125,7 +125,7 @@ export function RetroFront({
                 fill
                 sizes={compact ? "180px" : "240px"}
                 priority={!compact}
-                className="object-cover object-top"
+                className="object-contain object-center"
                 draggable={false}
                 style={{ filter: "contrast(1.05) saturate(0.92)" }}
               />

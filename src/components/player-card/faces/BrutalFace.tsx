@@ -91,7 +91,7 @@ export function BrutalFront({
               fill
               sizes={compact ? "180px" : "240px"}
               priority={!compact}
-              className="object-cover object-top grayscale contrast-125"
+              className="object-contain object-center grayscale contrast-125"
               draggable={false}
             />
             <div
