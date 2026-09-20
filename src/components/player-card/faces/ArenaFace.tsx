@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { CountUp } from "@/components/CountUp";
 import { CardFrame } from "../CardFrame";
+import { CardPortrait } from "../CardPortrait";
 import {
   attributeScore,
   CARD_STATS,
@@ -100,15 +101,11 @@ export function ArenaFront({
             background: `radial-gradient(circle at 35% 25%, ${visual.accent}55, #061018 70%)`,
           }}
         >
-          <Image
-            src={avatarUrl.includes("?") ? `${avatarUrl}&size=264` : `${avatarUrl}?size=264`}
+          <CardPortrait
+            src={avatarUrl}
             alt={displayName}
-            width={128}
-            height={128}
             sizes="128px"
             priority={!compact}
-            className="h-full w-full object-contain object-center"
-            draggable={false}
           />
         </div>
 
@@ -131,8 +128,13 @@ export function ArenaFront({
                 style={{ color: visual.accent }}
               >
                 {teamIconUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={teamIconUrl} alt={teamLabel ?? ""} width={12} height={12} />
+                  <Image
+                    src={teamIconUrl}
+                    alt={teamLabel ?? ""}
+                    width={12}
+                    height={12}
+                    unoptimized
+                  />
                 )}
                 {teamLabel?.toUpperCase()}
               </span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Image from "next/image";
 import { motion } from "motion/react";
 import { useArenaAudio } from "@/components/ArenaAudioProvider";
 
@@ -354,8 +355,13 @@ export function TeamBuilder() {
                     }}
                     className="flex w-full items-center gap-2 px-2 py-2 text-left text-xs text-white transition hover:bg-white/10"
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={suggestion.avatarUrl} alt="" className="h-6 w-6 rounded-full" />
+                    <Image
+                      src={suggestion.avatarUrl}
+                      alt=""
+                      width={24}
+                      height={24}
+                      className="h-6 w-6 rounded-full"
+                    />
                     <span className="font-semibold">@{suggestion.login}</span>
                   </button>
                 ))}
@@ -573,8 +579,14 @@ function RosterSlot({
       <span className={`absolute right-2 top-2 font-display text-white/45 ${compact ? "text-lg" : "text-2xl"}`}>{slot.label}</span>
       {username ? (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`https://github.com/${encodeURIComponent(username)}.png?size=96`} alt="" className={`rounded-full border border-white/20 object-cover ${compact ? "h-8 w-8" : "h-11 w-11"}`} />
+          <Image
+            src={`https://github.com/${encodeURIComponent(username)}.png?size=96`}
+            alt=""
+            width={compact ? 32 : 44}
+            height={compact ? 32 : 44}
+            className={`rounded-full border border-white/20 object-cover ${compact ? "h-8 w-8" : "h-11 w-11"}`}
+            unoptimized
+          />
           <span className={`mt-2 block truncate font-bold text-white ${compact ? "text-[11px]" : "text-sm"}`}>@{username}</span>
           <span className="mt-0.5 block text-[9px] uppercase tracking-[0.15em] text-[#7dd3fc]">
             {rating ? `${rating} OVR` : "Scouting…"}

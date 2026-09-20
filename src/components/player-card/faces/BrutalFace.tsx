@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { CountUp } from "@/components/CountUp";
 import { CardFrame } from "../CardFrame";
+import { CardPortrait } from "../CardPortrait";
 import {
   attributeScore,
   CARD_STATS,
@@ -85,18 +86,16 @@ export function BrutalFront({
 
         <div className="relative mx-0 flex-1 border-b-4 border-[#0a0908]" style={{ background: visual.accent }}>
           <div className="absolute inset-2 overflow-hidden bg-[#0a0908]">
-            <Image
-              src={avatarUrl.includes("?") ? `${avatarUrl}&size=320` : `${avatarUrl}?size=320`}
+            <CardPortrait
+              src={avatarUrl}
               alt={displayName}
-              fill
               sizes={compact ? "180px" : "240px"}
               priority={!compact}
-              className="object-contain object-center grayscale contrast-125"
-              draggable={false}
+              imageClassName="grayscale contrast-125"
             />
             <div
               aria-hidden
-              className="absolute inset-0 opacity-30 mix-blend-multiply"
+              className="absolute inset-0 opacity-25 mix-blend-multiply"
               style={{
                 backgroundImage:
                   "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.35) 3px, rgba(0,0,0,.35) 4px)",
@@ -116,8 +115,13 @@ export function BrutalFront({
             {(teamIconUrl || teamLabel) && (
               <span className="flex items-center gap-1 text-[8px] font-black tracking-[0.1em]" style={{ color: visual.accent }}>
                 {teamIconUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={teamIconUrl} alt={teamLabel ?? ""} width={12} height={12} />
+                  <Image
+                    src={teamIconUrl}
+                    alt={teamLabel ?? ""}
+                    width={12}
+                    height={12}
+                    unoptimized
+                  />
                 )}
                 {teamLabel?.toUpperCase()}
               </span>

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { CountUp } from "@/components/CountUp";
 import { CardFrame } from "../CardFrame";
+import { CardPortrait } from "../CardPortrait";
 import {
   attributeScore,
   CARD_STATS,
@@ -118,16 +119,13 @@ export function RetroFront({
               className="absolute -right-6 top-0 h-full w-16 -skew-x-12 opacity-40"
               style={{ background: stripeB }}
             />
-            <div className="absolute inset-x-3 bottom-0 top-2 overflow-hidden border border-black/20 bg-[#1a1208]/10">
-              <Image
-                src={avatarUrl.includes("?") ? `${avatarUrl}&size=320` : `${avatarUrl}?size=320`}
+            <div className="absolute inset-x-2 bottom-1.5 top-1.5 overflow-hidden border-2 border-white/90 bg-[#1a1208]/25 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.25)]">
+              <CardPortrait
+                src={avatarUrl}
                 alt={displayName}
-                fill
                 sizes={compact ? "180px" : "240px"}
                 priority={!compact}
-                className="object-contain object-center"
-                draggable={false}
-                style={{ filter: "contrast(1.05) saturate(0.92)" }}
+                imageClassName="contrast-[1.05] saturate-[0.95]"
               />
             </div>
           </div>
@@ -158,8 +156,13 @@ export function RetroFront({
                 style={{ color: visual.accent }}
               >
                 {teamIconUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={teamIconUrl} alt={teamLabel ?? ""} width={12} height={12} />
+                  <Image
+                    src={teamIconUrl}
+                    alt={teamLabel ?? ""}
+                    width={12}
+                    height={12}
+                    unoptimized
+                  />
                 )}
                 {teamLabel?.toUpperCase()}
               </span>

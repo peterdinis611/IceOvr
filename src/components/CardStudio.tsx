@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { Suspense, useMemo, useState } from "react";
 import type { ScoutCard } from "@/lib/types";
 import { TIER_META } from "@/lib/tiers";
@@ -231,6 +232,7 @@ export function CardStudio({
           <ShareDialog
             localEmbed={localEmbed}
             edition={share.edition}
+            previewSrc={pngPath}
             publicPng={share.publicPng}
             pageUrl={share.pageUrl}
             markdown={share.markdown}
@@ -385,6 +387,7 @@ function OverviewMetric({ label, value }: { label: string; value: string }) {
 function ShareDialog({
   localEmbed,
   edition,
+  previewSrc,
   publicPng,
   pageUrl,
   markdown,
@@ -398,6 +401,7 @@ function ShareDialog({
 }: {
   localEmbed: boolean;
   edition: string;
+  previewSrc: string;
   publicPng: string;
   pageUrl: string;
   markdown: string;
@@ -502,11 +506,16 @@ function ShareDialog({
             </div>
           </div>
           <div className="border-b border-white/10 bg-black/20 px-4 py-3">
-            <img
-              src={publicPng}
-              alt={`${edition} IceOVR card preview`}
-              className="mx-auto max-h-48 w-auto rounded-lg border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,.45)]"
-            />
+            <div className="relative mx-auto h-48 w-[148px] overflow-hidden rounded-lg border border-white/10 bg-black/30 shadow-[0_12px_40px_rgba(0,0,0,.45)]">
+              <Image
+                src={previewSrc}
+                alt={`${edition} IceOVR card preview`}
+                fill
+                sizes="148px"
+                unoptimized
+                className="object-contain object-center"
+              />
+            </div>
           </div>
           <code className="block overflow-x-auto whitespace-nowrap px-4 py-3 text-xs leading-relaxed text-[#d8f5ff]">
             {publicPng}

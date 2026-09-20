@@ -198,16 +198,10 @@ function renderRetroPng({ card, tierKey, langIcon, stats }: PngInput) {
                 display: "flex",
                 overflow: "hidden",
                 background: `linear-gradient(135deg, ${stripeA} 0 38%, ${stripeB} 38% 62%, ${stripeA} 62% 100%)`,
+                position: "relative",
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={card.avatarUrl}
-                width={370}
-                height={200}
-                alt=""
-                style={{ objectFit: "contain", objectPosition: "center", width: "100%", height: "100%" }}
-              />
+              <PortraitFill src={card.avatarUrl} width={370} height={200} />
             </div>
 
             <div
@@ -349,10 +343,10 @@ function renderArenaPng({ card, tierKey, langIcon, stats }: PngInput) {
                 boxShadow: `0 0 28px ${visual.glow}`,
                 display: "flex",
                 background: "#0b1220",
+                position: "relative",
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={card.avatarUrl} width={140} height={140} alt="" style={{ objectFit: "contain", objectPosition: "center" }} />
+              <PortraitFill src={card.avatarUrl} width={140} height={140} />
             </div>
             <div style={{ marginTop: 14, fontSize: 24, fontWeight: 900, letterSpacing: 1, display: "flex" }}>
               {card.displayName}
@@ -455,21 +449,16 @@ function renderBrutalPng({ card, tierKey, stats }: PngInput) {
           </div>
 
           <div style={{ height: 210, display: "flex", background: visual.accent, padding: 8 }}>
-            <div style={{ flex: 1, display: "flex", overflow: "hidden", background: "#0a0908" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={card.avatarUrl}
-                width={370}
-                height={194}
-                alt=""
-                style={{
-                  objectFit: "contain",
-                  objectPosition: "center",
-                  width: "100%",
-                  height: "100%",
-                  filter: "grayscale(1) contrast(1.2)",
-                }}
-              />
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                overflow: "hidden",
+                background: "#0a0908",
+                position: "relative",
+              }}
+            >
+              <PortraitFill src={card.avatarUrl} width={370} height={194} grayscale />
             </div>
           </div>
 
@@ -521,6 +510,66 @@ function renderBrutalPng({ card, tierKey, stats }: PngInput) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function PortraitFill({
+  src,
+  width,
+  height,
+  grayscale = false,
+}: {
+  src: string;
+  width: number;
+  height: number;
+  grayscale?: boolean;
+}) {
+  const filter = grayscale ? "grayscale(1) contrast(1.15)" : undefined;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+      }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        width={width}
+        height={height}
+        alt=""
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center",
+          opacity: 0.55,
+          filter: grayscale ? "grayscale(1) blur(12px)" : "blur(14px)",
+          transform: "scale(1.2)",
+        }}
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        width={Math.min(width, height)}
+        height={Math.min(width, height)}
+        alt=""
+        style={{
+          position: "relative",
+          width: Math.min(width, height),
+          height: Math.min(width, height),
+          objectFit: "contain",
+          objectPosition: "center",
+          filter,
+        }}
+      />
     </div>
   );
 }

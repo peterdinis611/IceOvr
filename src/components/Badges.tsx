@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getLanguageMeta, languageIconUrl } from "@/lib/languages";
 import { getCountry, flagImageUrl, hasKnownCountry } from "@/lib/countries";
 
@@ -15,8 +16,7 @@ export function FlagBadge({
 
   return (
     <span className="inline-flex items-center gap-1.5" title={country.name}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={src}
         alt={country.name}
         width={size}
@@ -49,8 +49,14 @@ export function LanguageBadge({
       title={meta.name}
     >
       {icon ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={icon} alt={meta.name} width={size} height={size} className="rounded-sm" />
+        <Image
+          src={icon}
+          alt={meta.name}
+          width={size}
+          height={size}
+          className="rounded-sm"
+          unoptimized
+        />
       ) : (
         <span
           className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-sm text-[9px] font-bold"
