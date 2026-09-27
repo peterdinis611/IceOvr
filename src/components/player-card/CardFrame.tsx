@@ -1,10 +1,17 @@
 import type { ReactNode } from "react";
 import type { CardStyleId } from "./cardStyles";
+import {
+  DEFAULT_CUSTOM_THEME,
+  resolveCustomVisual,
+  type CustomCardTheme,
+} from "./customTheme";
 import type { CardTier } from "./types";
 import {
   ARENA_TIER_VISUAL,
   BRUTAL_TIER_VISUAL,
+  FROST_TIER_VISUAL,
   isFoilTier,
+  NEON_TIER_VISUAL,
   TIER_STRIPES,
   TIER_VISUAL,
 } from "./tierStyles";
@@ -12,16 +19,27 @@ import {
 export function CardFrame({
   tier,
   style = "retro",
+  customTheme,
   children,
   className = "",
 }: {
   tier: CardTier;
   style?: CardStyleId;
+  customTheme?: CustomCardTheme;
   children: ReactNode;
   className?: string;
 }) {
   if (style === "arena") return <ArenaFrame tier={tier} className={className}>{children}</ArenaFrame>;
   if (style === "brutal") return <BrutalFrame tier={tier} className={className}>{children}</BrutalFrame>;
+  if (style === "frost") return <FrostFrame tier={tier} className={className}>{children}</FrostFrame>;
+  if (style === "neon") return <NeonFrame tier={tier} className={className}>{children}</NeonFrame>;
+  if (style === "custom") {
+    return (
+      <CustomFrame tier={tier} theme={customTheme ?? DEFAULT_CUSTOM_THEME} className={className}>
+        {children}
+      </CustomFrame>
+    );
+  }
   return <RetroFrame tier={tier} className={className}>{children}</RetroFrame>;
 }
 
@@ -167,6 +185,100 @@ function BrutalFrame({
         padding: 4,
         background: visual.frame,
         boxShadow: `4px 4px 0 #000, inset 0 0 0 1px rgba(0,0,0,0.4)`,
+      }}
+    >
+      <div className="relative h-full w-full overflow-hidden" style={{ background: visual.inner }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function FrostFrame({
+  tier,
+  children,
+  className = "",
+}: {
+  tier: CardTier;
+  children: ReactNode;
+  className?: string;
+}) {
+  const visual = FROST_TIER_VISUAL[tier];
+  const foil = isFoilTier(tier);
+
+  return (
+    <div
+      className={`relative h-full w-full overflow-hidden rounded-[20px] p-[5px] ${className}`}
+      style={{
+        background: visual.frame,
+        backgroundSize: foil ? "220% 220%" : undefined,
+        animation: foil ? "retro-foil-shift 9s linear infinite" : undefined,
+        boxShadow: `0 0 0 1px rgba(255,255,255,0.35), 0 12px 36px ${visual.glow}`,
+      }}
+    >
+      <div
+        className="relative h-full w-full overflow-hidden rounded-[16px]"
+        style={{ background: visual.inner }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 15%, rgba(255,255,255,0.75), transparent 35%), radial-gradient(circle at 80% 0%, rgba(255,255,255,0.35), transparent 30%)",
+          }}
+        />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function NeonFrame({
+  tier,
+  children,
+  className = "",
+}: {
+  tier: CardTier;
+  children: ReactNode;
+  className?: string;
+}) {
+  const visual = NEON_TIER_VISUAL[tier];
+
+  return (
+    <div
+      className={`relative h-full w-full overflow-hidden rounded-sm p-[3px] ${className}`}
+      style={{
+        background: visual.frame,
+        boxShadow: `0 0 24px ${visual.glow}, inset 0 0 0 1px rgba(255,255,255,0.15)`,
+      }}
+    >
+      <div className="relative h-full w-full overflow-hidden" style={{ background: visual.inner }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function CustomFrame({
+  tier: _tier,
+  theme,
+  children,
+  className = "",
+}: {
+  tier: CardTier;
+  theme: CustomCardTheme;
+  children: ReactNode;
+  className?: string;
+}) {
+  const visual = resolveCustomVisual(theme, "CUSTOM");
+
+  return (
+    <div
+      className={`relative h-full w-full overflow-hidden rounded-md p-[4px] ${className}`}
+      style={{
+        background: visual.frame,
+        boxShadow: `0 0 20px ${visual.glow}`,
       }}
     >
       <div className="relative h-full w-full overflow-hidden" style={{ background: visual.inner }}>

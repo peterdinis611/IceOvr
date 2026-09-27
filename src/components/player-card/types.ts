@@ -20,8 +20,10 @@ export type PlayerCardProps = {
   teamLabel?: string | null;
   teamIconUrl?: string | null;
   size?: "sm" | "lg";
-  /** Visual edition: cardboard, dark arena, or brutal stamp */
+  /** Visual edition */
   style?: import("./cardStyles").CardStyleId;
+  /** Theme knobs when style is custom */
+  customTheme?: import("./customTheme").CustomCardTheme;
   reveal?: boolean;
   delay?: number;
   className?: string;

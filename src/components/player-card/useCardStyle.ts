@@ -7,9 +7,19 @@ import {
   parseCardStyle,
   type CardStyleId,
 } from "./cardStyles";
+import {
+  CUSTOM_THEME_STORAGE_KEY,
+  DEFAULT_CUSTOM_THEME,
+  parseCustomTheme,
+  sanitizeCustomTheme,
+  type CustomCardTheme,
+} from "./customTheme";
 
-export function useCardStyle(initial?: CardStyleId) {
+export function useCardStyle(initial?: CardStyleId, initialTheme?: CustomCardTheme) {
   const [style, setStyleState] = useState<CardStyleId>(initial ?? DEFAULT_CARD_STYLE);
+  const [customTheme, setCustomThemeState] = useState<CustomCardTheme>(
+    initialTheme ?? DEFAULT_CUSTOM_THEME,
+  );
   const [ready, setReady] = useState(Boolean(initial));
 
   useEffect(() => {
@@ -20,18 +30,36 @@ export function useCardStyle(initial?: CardStyleId) {
         // ignore
       }
       setStyleState(initial);
-      setReady(true);
-      return;
+    } else {
+      try {
+        const saved = window.localStorage.getItem(CARD_STYLE_STORAGE_KEY);
+        setStyleState(parseCardStyle(saved));
+      } catch {
+        // ignore
+      }
     }
 
-    try {
-      const saved = window.localStorage.getItem(CARD_STYLE_STORAGE_KEY);
-      setStyleState(parseCardStyle(saved));
-    } catch {
-      // ignore
+    if (initialTheme) {
+      try {
+        window.localStorage.setItem(
+          CUSTOM_THEME_STORAGE_KEY,
+          JSON.stringify(sanitizeCustomTheme(initialTheme)),
+        );
+      } catch {
+        // ignore
+      }
+      setCustomThemeState(sanitizeCustomTheme(initialTheme));
+    } else {
+      try {
+        const savedTheme = window.localStorage.getItem(CUSTOM_THEME_STORAGE_KEY);
+        if (savedTheme) setCustomThemeState(parseCustomTheme(savedTheme));
+      } catch {
+        // ignore
+      }
     }
+
     setReady(true);
-  }, [initial]);
+  }, [initial, initialTheme]);
 
   function setStyle(next: CardStyleId) {
     setStyleState(next);
@@ -42,5 +70,15 @@ export function useCardStyle(initial?: CardStyleId) {
     }
   }
 
-  return { style, setStyle, ready };
+  function setCustomTheme(next: CustomCardTheme) {
+    const clean = sanitizeCustomTheme(next);
+    setCustomThemeState(clean);
+    try {
+      window.localStorage.setItem(CUSTOM_THEME_STORAGE_KEY, JSON.stringify(clean));
+    } catch {
+      // ignore
+    }
+  }
+
+  return { style, setStyle, customTheme, setCustomTheme, ready };
 }

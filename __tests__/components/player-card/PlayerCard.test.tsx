@@ -76,6 +76,37 @@ describe("PlayerCard", () => {
     expect(screen.getByText("RAW")).toBeInTheDocument();
   });
 
+  it("switches to ice glass edition", () => {
+    render(<PlayerCard {...baseProps({ style: "frost" })} />);
+    expect(screen.getByText("ICE GLASS")).toBeInTheDocument();
+    expect(screen.getByLabelText(/frost style/i)).toBeInTheDocument();
+  });
+
+  it("switches to neon rink edition", () => {
+    render(<PlayerCard {...baseProps({ style: "neon" })} />);
+    expect(screen.getByText("NEON RINK")).toBeInTheDocument();
+    expect(screen.getByLabelText(/neon style/i)).toBeInTheDocument();
+  });
+
+  it("renders custom studio stock mark", () => {
+    render(
+      <PlayerCard
+        {...baseProps({
+          style: "custom",
+          customTheme: {
+            accent: "#34d399",
+            secondary: "#7dd3fc",
+            ink: "dark",
+            photo: "band",
+            stock: "MYCUT",
+          },
+        })}
+      />,
+    );
+    expect(screen.getAllByText("MYCUT").length).toBeGreaterThan(0);
+    expect(screen.getByLabelText(/custom style/i)).toBeInTheDocument();
+  });
+
   it("responds to mouse tilt without crashing", async () => {
     const user = userEvent.setup();
     const { container } = render(<PlayerCard {...baseProps()} />);

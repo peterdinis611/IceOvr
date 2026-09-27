@@ -14,7 +14,10 @@ import { PuckSpinner } from "@/components/PuckSpinner";
 import {
   CARD_STYLE_META,
   CardStylePicker,
+  CustomCardDesigner,
+  encodeCustomTheme,
   type CardStyleId,
+  type CustomCardTheme,
   useCardStyle,
 } from "@/components/player-card";
 import { buildCardSharePayload } from "@/lib/share";
@@ -35,12 +38,17 @@ const ActivityReport = dynamic(
 export function CardStudio({
   card,
   initialStyle,
+  initialTheme,
 }: {
   card: ScoutCard;
   initialStyle?: CardStyleId;
+  initialTheme?: CustomCardTheme;
 }) {
   const { playPuckShot } = useArenaAudio();
-  const { style, setStyle } = useCardStyle(initialStyle);
+  const { style, setStyle, customTheme, setCustomTheme } = useCardStyle(
+    initialStyle,
+    initialTheme,
+  );
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState<"markdown" | "image" | "png" | null>(
     null,
@@ -60,10 +68,13 @@ export function CardStudio({
       : "http://localhost:3000");
 
   const share = useMemo(
-    () => buildCardSharePayload(card, style, site),
-    [card, style, site],
+    () => buildCardSharePayload(card, style, site, customTheme),
+    [card, style, site, customTheme],
   );
-  const pngPath = `/api/card/${card.username}?style=${style}`;
+  const pngPath =
+    style === "custom"
+      ? `/api/card/${card.username}?style=custom&theme=${encodeURIComponent(encodeCustomTheme(customTheme))}`
+      : `/api/card/${card.username}?style=${style}`;
   const localEmbed = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(site);
 
   async function downloadCard() {
@@ -176,11 +187,20 @@ export function CardStudio({
                 }}
               />
               <div className="relative origin-top scale-[0.88] sm:scale-100">
-                <PlayerCard card={card} style={style} reveal delay={0} />
+                <PlayerCard
+                  card={card}
+                  style={style}
+                  customTheme={customTheme}
+                  reveal
+                  delay={0}
+                />
               </div>
             </div>
 
             <CardStylePicker value={style} onChange={setStyle} />
+            {style === "custom" && (
+              <CustomCardDesigner theme={customTheme} onChange={setCustomTheme} />
+            )}
 
             <div className="mt-4 w-full space-y-3">
               <p className="text-center text-[11px] uppercase tracking-[0.2em] text-[#94a3b8]">

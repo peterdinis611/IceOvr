@@ -14,7 +14,11 @@ export function CardStylePicker({
       <legend className="text-[9px] font-black uppercase tracking-[0.2em] text-[#64748b]">
         Card edition
       </legend>
-      <div className="mt-2 grid grid-cols-3 gap-1.5" role="radiogroup" aria-label="Card visual style">
+      <div
+        className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3"
+        role="radiogroup"
+        aria-label="Card visual style"
+      >
         {CARD_STYLE_IDS.map((id) => {
           const meta = CARD_STYLE_META[id];
           const active = value === id;

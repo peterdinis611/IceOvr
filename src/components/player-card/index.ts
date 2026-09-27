@@ -6,6 +6,7 @@ export { RatingBadge } from "./RatingBadge";
 export { StatBar } from "./StatBar";
 export { TierGlow } from "./TierGlow";
 export { CardStylePicker } from "./CardStylePicker";
+export { CustomCardDesigner } from "./CustomCardDesigner";
 export { useCardStyle } from "./useCardStyle";
 export {
   CARD_STYLE_IDS,
@@ -14,3 +15,9 @@ export {
   parseCardStyle,
   type CardStyleId,
 } from "./cardStyles";
+export {
+  DEFAULT_CUSTOM_THEME,
+  encodeCustomTheme,
+  parseCustomTheme,
+  type CustomCardTheme,
+} from "./customTheme";

@@ -1,4 +1,11 @@
-export const CARD_STYLE_IDS = ["retro", "arena", "brutal"] as const;
+export const CARD_STYLE_IDS = [
+  "retro",
+  "arena",
+  "brutal",
+  "frost",
+  "neon",
+  "custom",
+] as const;
 
 export type CardStyleId = (typeof CARD_STYLE_IDS)[number];
 
@@ -22,6 +29,21 @@ export const CARD_STYLE_META: Record<
     label: "Puck Stamp",
     tagline: "Raw cuts · ink stamp · zero fluff",
     stock: "Stamp",
+  },
+  frost: {
+    label: "Ice Glass",
+    tagline: "Frosted crystal · soft light · winter steel",
+    stock: "Crystal",
+  },
+  neon: {
+    label: "Neon Rink",
+    tagline: "Black ice · arcade glow · scan lines",
+    stock: "Neon",
+  },
+  custom: {
+    label: "Custom Studio",
+    tagline: "Your accent · layout · stock mark",
+    stock: "Studio",
   },
 };
 

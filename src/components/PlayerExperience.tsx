@@ -3,6 +3,7 @@ import { CardStudio } from "@/components/CardStudio";
 import { RinkAtmosphere } from "@/components/RinkAtmosphere";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { CardStyleId } from "@/components/player-card/cardStyles";
+import type { CustomCardTheme } from "@/components/player-card/customTheme";
 import type { ScoutCard } from "@/lib/types";
 import { TIER_META } from "@/lib/tiers";
 
@@ -10,9 +11,11 @@ import { TIER_META } from "@/lib/tiers";
 export function PlayerExperience({
   card,
   initialStyle,
+  initialTheme,
 }: {
   card: ScoutCard;
   initialStyle?: CardStyleId;
+  initialTheme?: CustomCardTheme;
 }) {
   const tier = TIER_META[card.tier];
 
@@ -74,7 +77,11 @@ export function PlayerExperience({
         </div>
       </section>
 
-      <CardStudio card={card} initialStyle={initialStyle} />
+      <CardStudio
+        card={card}
+        initialStyle={initialStyle}
+        initialTheme={initialTheme}
+      />
     </main>
   );
 }

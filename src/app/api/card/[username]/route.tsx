@@ -4,9 +4,17 @@ import { languageIconUrl } from "@/lib/languages";
 import { computeStreak } from "@/components/player-card/fromScout";
 import { parseCardStyle } from "@/components/player-card/cardStyles";
 import {
+  DEFAULT_CUSTOM_THEME,
+  parseCustomTheme,
+  resolveCustomVisual,
+  type CustomCardTheme,
+} from "@/components/player-card/customTheme";
+import {
   ARENA_TIER_VISUAL,
   BRUTAL_TIER_VISUAL,
+  FROST_TIER_VISUAL,
   isFoilTier,
+  NEON_TIER_VISUAL,
   tierFromRating,
   TIER_STRIPES,
   TIER_VISUAL,
@@ -22,7 +30,11 @@ export async function GET(
 ) {
   const { username: raw } = await context.params;
   const username = decodeURIComponent(raw).replace(/\.png$/i, "");
-  const style = parseCardStyle(new URL(request.url).searchParams.get("style"));
+  const url = new URL(request.url);
+  const style = parseCardStyle(url.searchParams.get("style"));
+  const customTheme = parseCustomTheme(
+    url.searchParams.get("theme") ?? undefined,
+  );
 
   try {
     const card = await scoutPlayer(username);
@@ -37,12 +49,19 @@ export async function GET(
       { label: "REPOS", value: card.raw.publicRepos, max: 80 },
     ];
 
+    const input = { card, tierKey, langIcon, stats };
     const body =
       style === "arena"
-        ? renderArenaPng({ card, tierKey, langIcon, stats })
+        ? renderArenaPng(input)
         : style === "brutal"
-          ? renderBrutalPng({ card, tierKey, langIcon, stats })
-          : renderRetroPng({ card, tierKey, langIcon, stats });
+          ? renderBrutalPng(input)
+          : style === "frost"
+            ? renderFrostPng(input)
+            : style === "neon"
+              ? renderNeonPng(input)
+              : style === "custom"
+                ? renderCustomPng({ ...input, theme: customTheme })
+                : renderRetroPng(input);
 
     return new ImageResponse(body, {
       width: 640,
@@ -507,6 +526,362 @@ function renderBrutalPng({ card, tierKey, stats }: PngInput) {
           >
             <span style={{ color: visual.accent }}>ICEOVR</span>
             <span style={{ color: "rgba(255,255,255,0.5)" }}>BRUTAL CUT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function renderFrostPng({ card, tierKey, stats }: PngInput) {
+  const visual = FROST_TIER_VISUAL[tierKey];
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(160deg, #0c1929, #111827)",
+      }}
+    >
+      <div
+        style={{
+          width: 400,
+          height: 560,
+          borderRadius: 28,
+          display: "flex",
+          padding: 6,
+          background: visual.frame,
+          boxShadow: `0 0 40px ${visual.glow}`,
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            borderRadius: 22,
+            display: "flex",
+            flexDirection: "column",
+            padding: 18,
+            background: visual.inner,
+            color: "#0f172a",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ fontSize: 56, fontWeight: 900, lineHeight: 0.9, display: "flex" }}>
+                {card.ovr}
+              </div>
+              <div style={{ fontSize: 11, letterSpacing: 3, color: visual.accent, fontWeight: 900, display: "flex" }}>
+                OVR
+              </div>
+            </div>
+            <div
+              style={{
+                alignSelf: "flex-start",
+                borderRadius: 999,
+                background: "rgba(255,255,255,0.65)",
+                padding: "4px 10px",
+                fontSize: 11,
+                fontWeight: 900,
+                letterSpacing: 2,
+                display: "flex",
+              }}
+            >
+              {visual.label}
+            </div>
+          </div>
+          <div
+            style={{
+              marginTop: 16,
+              height: 180,
+              borderRadius: 24,
+              overflow: "hidden",
+              border: "2px solid rgba(255,255,255,0.8)",
+              display: "flex",
+              position: "relative",
+              background: "rgba(255,255,255,0.35)",
+            }}
+          >
+            <PortraitFill src={card.avatarUrl} width={360} height={180} />
+          </div>
+          <div
+            style={{
+              marginTop: 12,
+              borderRadius: 16,
+              background: "rgba(255,255,255,0.5)",
+              padding: "10px 12px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ fontSize: 22, fontWeight: 900, display: "flex" }}>{card.displayName}</div>
+            <div style={{ marginTop: 4, fontSize: 12, color: "rgba(15,23,42,0.55)", display: "flex" }}>
+              @{card.username}
+            </div>
+          </div>
+          <StatRows stats={stats} ink accent={visual.accent} />
+          <div
+            style={{
+              marginTop: "auto",
+              display: "flex",
+              justifyContent: "space-between",
+              paddingTop: 10,
+              borderTop: "1px solid rgba(15,23,42,0.15)",
+              fontSize: 10,
+              letterSpacing: 2,
+              fontWeight: 900,
+            }}
+          >
+            <span style={{ color: visual.accent }}>ICEOVR</span>
+            <span style={{ color: "rgba(15,23,42,0.45)" }}>ICE GLASS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function renderNeonPng({ card, tierKey, stats }: PngInput) {
+  const visual = NEON_TIER_VISUAL[tierKey];
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#020617",
+      }}
+    >
+      <div
+        style={{
+          width: 400,
+          height: 560,
+          display: "flex",
+          padding: 4,
+          background: visual.frame,
+          boxShadow: `0 0 36px ${visual.glow}`,
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            padding: 16,
+            background: visual.inner,
+            color: "#fff",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div
+                style={{
+                  fontSize: 58,
+                  fontWeight: 900,
+                  lineHeight: 0.85,
+                  display: "flex",
+                  color: "#fff",
+                }}
+              >
+                {card.ovr}
+              </div>
+              <div style={{ fontSize: 11, letterSpacing: 3, color: visual.accent, fontWeight: 900, display: "flex" }}>
+                OVR
+              </div>
+            </div>
+            <div
+              style={{
+                background: visual.accent,
+                color: "#000",
+                padding: "4px 10px",
+                fontSize: 11,
+                fontWeight: 900,
+                letterSpacing: 2,
+                display: "flex",
+                height: 28,
+              }}
+            >
+              {visual.label}
+            </div>
+          </div>
+          <div
+            style={{
+              marginTop: 14,
+              height: 200,
+              border: `2px solid ${visual.accent}`,
+              display: "flex",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <PortraitFill src={card.avatarUrl} width={360} height={200} />
+          </div>
+          <div
+            style={{
+              marginTop: 12,
+              border: "1px solid rgba(255,255,255,0.15)",
+              background: "rgba(0,0,0,0.55)",
+              padding: "10px 12px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ fontSize: 22, fontWeight: 900, display: "flex" }}>{card.displayName}</div>
+            <div style={{ marginTop: 4, fontSize: 12, color: visual.accent, display: "flex" }}>
+              @{card.username}
+            </div>
+          </div>
+          <StatRows stats={stats} accent={visual.accent} />
+          <div
+            style={{
+              marginTop: "auto",
+              display: "flex",
+              justifyContent: "space-between",
+              paddingTop: 10,
+              borderTop: "1px solid rgba(255,255,255,0.12)",
+              fontSize: 10,
+              letterSpacing: 2,
+              fontWeight: 900,
+            }}
+          >
+            <span style={{ color: visual.accent }}>ICEOVR</span>
+            <span style={{ color: "rgba(255,255,255,0.45)" }}>NEON RINK</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function renderCustomPng({
+  card,
+  tierKey,
+  stats,
+  theme = DEFAULT_CUSTOM_THEME,
+}: PngInput & { theme?: CustomCardTheme }) {
+  const visual = resolveCustomVisual(theme, tierKey.toUpperCase());
+  const ink = visual.ink;
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#020617",
+      }}
+    >
+      <div
+        style={{
+          width: 400,
+          height: 560,
+          display: "flex",
+          padding: 5,
+          background: visual.frame,
+          boxShadow: `0 0 32px ${visual.glow}`,
+          borderRadius: 8,
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            padding: 16,
+            background: visual.inner,
+            color: ink,
+            borderRadius: 4,
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                background: visual.ovrFill,
+                color: "#0a0a0a",
+                padding: "6px 10px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ fontSize: 42, fontWeight: 900, lineHeight: 1, display: "flex" }}>{card.ovr}</div>
+              <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: 2, display: "flex" }}>OVR</div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+              <div
+                style={{
+                  background: visual.accent,
+                  color: "#0a0a0a",
+                  padding: "4px 10px",
+                  fontSize: 11,
+                  fontWeight: 900,
+                  letterSpacing: 2,
+                  display: "flex",
+                }}
+              >
+                {visual.label}
+              </div>
+              <div style={{ fontSize: 10, letterSpacing: 2, fontWeight: 900, color: visual.muted, display: "flex" }}>
+                {visual.stock}
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              marginTop: 14,
+              height: 200,
+              border: `2px solid ${visual.secondary}`,
+              display: "flex",
+              position: "relative",
+              overflow: "hidden",
+              background: "#0a0908",
+            }}
+          >
+            <PortraitFill
+              src={card.avatarUrl}
+              width={360}
+              height={200}
+              grayscale={visual.photo === "stamp"}
+            />
+          </div>
+          <div
+            style={{
+              marginTop: 12,
+              border: `1px solid ${visual.border}`,
+              padding: "10px 12px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              background: visual.panel,
+            }}
+          >
+            <div style={{ fontSize: 22, fontWeight: 900, display: "flex" }}>{card.displayName}</div>
+            <div style={{ marginTop: 4, fontSize: 12, color: visual.muted, display: "flex" }}>
+              @{card.username}
+            </div>
+          </div>
+          <StatRows stats={stats} accent={visual.accent} ink={theme.ink === "light"} />
+          <div
+            style={{
+              marginTop: "auto",
+              display: "flex",
+              justifyContent: "space-between",
+              paddingTop: 10,
+              borderTop: `1px solid ${visual.border}`,
+              fontSize: 10,
+              letterSpacing: 2,
+              fontWeight: 900,
+            }}
+          >
+            <span style={{ color: visual.accent }}>ICEOVR</span>
+            <span style={{ color: visual.muted }}>CUSTOM STUDIO</span>
           </div>
         </div>
       </div>

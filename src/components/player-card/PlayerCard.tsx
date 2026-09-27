@@ -3,11 +3,24 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import type { CardStyleId } from "./cardStyles";
 import { DEFAULT_CARD_STYLE } from "./cardStyles";
+import {
+  DEFAULT_CUSTOM_THEME,
+  type CustomCardTheme,
+} from "./customTheme";
 import { ArenaBack, ArenaFront } from "./faces/ArenaFace";
 import { BrutalBack, BrutalFront } from "./faces/BrutalFace";
+import { CustomBack, CustomFront } from "./faces/CustomFace";
+import { FrostBack, FrostFront } from "./faces/FrostFace";
+import { NeonBack, NeonFront } from "./faces/NeonFace";
 import { RetroBack, RetroFront } from "./faces/RetroFace";
 import { TierGlow } from "./TierGlow";
-import { ARENA_TIER_VISUAL, BRUTAL_TIER_VISUAL, TIER_VISUAL } from "./tierStyles";
+import {
+  ARENA_TIER_VISUAL,
+  BRUTAL_TIER_VISUAL,
+  FROST_TIER_VISUAL,
+  NEON_TIER_VISUAL,
+  TIER_VISUAL,
+} from "./tierStyles";
 import type { PlayerCardProps } from "./types";
 
 export function PlayerCard({
@@ -21,6 +34,7 @@ export function PlayerCard({
   teamIconUrl,
   size = "lg",
   style = DEFAULT_CARD_STYLE,
+  customTheme = DEFAULT_CUSTOM_THEME,
   className = "",
 }: PlayerCardProps) {
   const visual =
@@ -28,7 +42,17 @@ export function PlayerCard({
       ? ARENA_TIER_VISUAL[tier]
       : style === "brutal"
         ? BRUTAL_TIER_VISUAL[tier]
-        : TIER_VISUAL[tier];
+        : style === "frost"
+          ? FROST_TIER_VISUAL[tier]
+          : style === "neon"
+            ? NEON_TIER_VISUAL[tier]
+            : style === "custom"
+              ? {
+                  ...TIER_VISUAL[tier],
+                  accent: customTheme.accent,
+                  glow: `${customTheme.accent}66`,
+                }
+              : TIER_VISUAL[tier];
 
   const compact = size === "sm";
   const w = compact ? 240 : 300;
@@ -93,6 +117,7 @@ export function PlayerCard({
     compact,
     scale,
     hover,
+    customTheme,
   };
 
   return (
@@ -135,6 +160,7 @@ export function PlayerCard({
               stats={stats}
               tier={tier}
               teamLabel={teamLabel}
+              customTheme={customTheme}
             />
           </div>
         </div>
@@ -148,7 +174,11 @@ export function PlayerCard({
             ? "border-2 border-black bg-white text-black shadow-[2px_2px_0_#000] hover:translate-x-px hover:translate-y-px hover:shadow-none"
             : style === "retro"
               ? "border-2 border-[#1a1208] bg-[#f5ead4] text-[#1a1208] shadow-[2px_2px_0_rgba(0,0,0,0.25)] hover:translate-x-px hover:translate-y-px hover:shadow-none"
-              : "rounded border border-white/20 bg-black/55 text-white/80 backdrop-blur-sm hover:border-[#7dd3fc]/5 hover:text-[#7dd3fc]"
+              : style === "frost"
+                ? "rounded-full border border-white/70 bg-white/70 text-slate-700 backdrop-blur-sm hover:bg-white"
+                : style === "neon"
+                  ? "border border-cyan-300/50 bg-black/70 text-cyan-200 hover:border-cyan-200 hover:text-white"
+                  : "rounded border border-white/20 bg-black/55 text-white/80 backdrop-blur-sm hover:border-[#7dd3fc]/5 hover:text-[#7dd3fc]"
         }`}
       >
         {flipped ? "Front" : "Flip"}
@@ -157,9 +187,17 @@ export function PlayerCard({
   );
 }
 
-function CardFront({ style, ...props }: { style: CardStyleId } & Parameters<typeof RetroFront>[0]) {
+function CardFront({
+  style,
+  ...props
+}: { style: CardStyleId } & Parameters<typeof RetroFront>[0] & {
+    customTheme?: CustomCardTheme;
+  }) {
   if (style === "arena") return <ArenaFront {...props} />;
   if (style === "brutal") return <BrutalFront {...props} />;
+  if (style === "frost") return <FrostFront {...props} />;
+  if (style === "neon") return <NeonFront {...props} />;
+  if (style === "custom") return <CustomFront {...props} />;
   return <RetroFront {...props} />;
 }
 
@@ -170,6 +208,7 @@ function CardBack({
   stats,
   tier,
   teamLabel,
+  customTheme,
 }: {
   style: CardStyleId;
   username: string;
@@ -177,10 +216,14 @@ function CardBack({
   stats: PlayerCardProps["stats"];
   tier: PlayerCardProps["tier"];
   teamLabel?: string | null;
+  customTheme?: CustomCardTheme;
 }) {
-  const props = { username, displayName, stats, tier, teamLabel };
+  const props = { username, displayName, stats, tier, teamLabel, customTheme };
   if (style === "arena") return <ArenaBack {...props} />;
   if (style === "brutal") return <BrutalBack {...props} />;
+  if (style === "frost") return <FrostBack {...props} />;
+  if (style === "neon") return <NeonBack {...props} />;
+  if (style === "custom") return <CustomBack {...props} />;
   return <RetroBack {...props} />;
 }
 
