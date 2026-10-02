@@ -1,104 +1,119 @@
 import Link from "next/link";
 import { HomeDemoCards } from "@/components/home/HomeDemoCards";
 import { HomeFeatureGrid } from "@/components/home/HomeFeatureGrid";
-import { HomeDraftMetrics, HomeHeroHeadline } from "@/components/home/HomeHeroMotion";
-import { HowItWorksButton } from "@/components/RatingMethodology";
+import { HomeHeroHeadline } from "@/components/home/HomeHeroMotion";
 import { RinkAtmosphere } from "@/components/RinkAtmosphere";
 import { ScoutForm } from "@/components/ScoutForm";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { ScoutCard } from "@/lib/types";
 
-/** Server Component — home shell with client islands for motion, form, and cards. */
+/** Server Component — floodlight rink landing. */
 export function HomeExperience({ cards }: { cards: ScoutCard[] }) {
   return (
     <main className="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto scroll-smooth">
       <RinkAtmosphere parallax />
       <SiteHeader sticky />
 
-      <section className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-12 pt-3 sm:px-6 sm:pb-16 sm:pt-5">
-        <div className="arena-panel relative grid overflow-hidden rounded-[22px] px-4 py-6 sm:rounded-[28px] sm:px-8 sm:py-10 lg:grid-cols-[.78fr_1.5fr_.72fr] lg:items-end lg:gap-8">
-          <div className="pointer-events-none absolute inset-0 opacity-40 [background-image:linear-gradient(rgba(125,211,252,.045)_1px,transparent_1px),linear-gradient(90deg,rgba(125,211,252,.045)_1px,transparent_1px)] [background-size:28px_28px] sm:[background-size:32px_32px]" />
-          <div className="radar-sweep pointer-events-none absolute inset-0 opacity-20 sm:opacity-30" />
-          <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-[#e11d2e]/35 lg:block" />
+      <section className="relative z-10 mx-auto flex min-h-[min(90vh,940px)] w-full max-w-6xl flex-col justify-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8">
+        <div className="press-slash absolute inset-0" aria-hidden />
+        <span className="watermark-num" aria-hidden>
+          99
+        </span>
 
-          <div className="relative order-2 mt-7 border-t border-white/10 pt-5 md:grid md:grid-cols-2 md:gap-6 lg:order-1 lg:mt-0 lg:block lg:border-t-0 lg:border-r lg:pr-6 lg:pt-0">
-            <div>
-              <p className="draft-kicker">Player evaluation no. 026</p>
-              <p className="mt-3 max-w-[34ch] text-sm leading-relaxed text-[#94a3b8] sm:mt-4 lg:max-w-[22ch]">
-                Turn public GitHub activity into a scouting profile built for the draft board.
-              </p>
-              <HomeDraftMetrics />
-            </div>
-            <div className="mt-6 border-t border-white/10 pt-5 md:mt-0 md:border-t-0 md:pt-0 lg:hidden">
-              <p className="text-[10px] font-black uppercase tracking-[.24em] text-[#94a3b8]">Draft board</p>
-              <p className="mt-2 font-display text-3xl tracking-[.1em] text-white">
-                GITHUB
-                <br />
-                <span className="text-[#7dd3fc]">SCOUTING</span>
-              </p>
-              <div className="mt-4 border-l-2 border-[#e11d2e] pl-3 text-xs leading-relaxed text-[#94a3b8]">
-                Commits. Stars. Pull requests. One card that tells the season.
-              </div>
-              <div className="mt-4">
-                <HowItWorksButton />
-              </div>
-            </div>
-          </div>
-
-          <div className="relative order-1 lg:order-2">
+        <div className="relative grid items-end gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+          <div>
             <HomeHeroHeadline />
-            <div className="mt-6 w-full max-w-xl sm:mt-8">
-              <ScoutForm large showAnalyzing />
-              <p className="mt-3 flex flex-wrap gap-x-2 gap-y-1 text-[11px] uppercase tracking-[.12em] text-[#64748b]">
-                <span className="shrink-0">Try</span>
-                {["torvalds", "gaearon", "sindresorhus"].map((u) => (
-                  <Link
-                    key={u}
-                    className="text-[#7dd3fc] transition hover:text-white"
-                    href={`/u/${u}`}
-                  >
-                    @{u}
-                  </Link>
-                ))}
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/search" className="jersey-cta h-14 px-6 text-xl">
+                Drop the puck
+              </Link>
+              <Link href="/board" className="jersey-cta-ghost h-14 px-6 text-xl">
+                Draft board
+              </Link>
+            </div>
+
+            <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.16em] text-[var(--steel)]">
+              <span className="faceoff-dot" aria-hidden />
+              <span>Warm-up skates</span>
+              {["torvalds", "gaearon", "sindresorhus"].map((u) => (
+                <Link
+                  key={u}
+                  href={`/u/${u}`}
+                  className="text-[var(--ice)] transition hover:text-[var(--kraft)]"
+                >
+                  @{u}
+                </Link>
+              ))}
+            </p>
+          </div>
+
+          <div className="ticket-stub relative z-10 p-5 sm:p-6 lg:-rotate-1 lg:translate-y-4">
+            <div className="flex items-start justify-between gap-3 pl-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--ink)]/55">
+                  Faceoff circle · gate C
+                </p>
+                <p className="mt-2 font-display text-3xl tracking-[0.06em] text-[var(--ink)] sm:text-4xl">
+                  SCOUT A PLAYER
+                </p>
+              </div>
+              <p className="font-display text-4xl leading-none tracking-[0.04em] text-[var(--goal-red)]">
+                26
               </p>
             </div>
-          </div>
-
-          {/* Desktop-only right rail — tablet merges into left column above */}
-          <div className="relative order-3 mt-8 hidden border-t border-white/10 pt-5 lg:mt-0 lg:block lg:border-t-0 lg:border-l lg:pl-6 lg:pt-0">
-            <p className="text-[10px] font-black uppercase tracking-[.24em] text-[#94a3b8]">Draft board</p>
-            <p className="mt-2 font-display text-3xl tracking-[.1em] text-white">
-              GITHUB
-              <br />
-              <span className="text-[#7dd3fc]">SCOUTING</span>
+            <p className="mt-1 max-w-[28ch] pl-4 text-sm leading-relaxed text-[var(--ink)]/70">
+              Drop a GitHub handle. We grade the public season like a first-round pick.
             </p>
-            <div className="mt-5 border-l-2 border-[#e11d2e] pl-3 text-xs leading-relaxed text-[#94a3b8]">
-              Commits. Stars. Pull requests. One card that tells the season.
-            </div>
-            <div className="mt-5">
-              <HowItWorksButton />
+            <div className="mt-4 pl-4 [&_.scout-input-shell>input]:border-[rgba(10,9,8,0.2)] [&_.scout-input-shell>input]:bg-[#fffdf8] [&_.scout-input-shell>input]:text-[var(--ink)] [&_.scout-input-shell>input]:placeholder:text-[rgba(10,9,8,0.35)]">
+              <ScoutForm large showAnalyzing withSuggestions />
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="relative mt-4 flex items-center overflow-hidden rounded-lg border border-white/10 bg-black/35 sm:mt-5">
-          <div className="live-badge shrink-0 bg-[#e11d2e] px-2.5 py-2 font-display text-sm tracking-[.14em] text-white sm:px-3">
-            LIVE
+      <div className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <div className="scoreboard">
+          <div className="scoreboard-cell bg-[var(--goal-red)]">
+            <span className="scoreboard-label !text-white/70">Period</span>
+            <span className="font-display text-2xl tracking-[0.08em] text-white">1st</span>
           </div>
-          <div className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <p className="whitespace-nowrap px-4 text-[10px] font-bold uppercase tracking-[.2em] text-[#94a3b8]">
-              Draft board open · public GitHub signals only · ratings update as your profile changes
+          <div className="min-w-0 overflow-hidden self-center">
+            <p className="ticker-marquee whitespace-nowrap px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--steel)]">
+              Boards up · center ice lit · public GitHub only · six attributes · five tiers · shareable PNG cards · no whistle on private repos
             </p>
           </div>
+          <div className="scoreboard-cell hidden sm:flex">
+            <span className="scoreboard-label">Clock</span>
+            <span className="period-clock">20:00</span>
+          </div>
         </div>
+      </div>
 
+      <section className="relative z-10 mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b-2 border-[var(--kraft)]/15 pb-4">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--ice)]">
+              Locker room · sample cards
+            </p>
+            <h2 className="mt-1 font-display text-4xl tracking-[0.06em] text-[var(--kraft)] sm:text-5xl">
+              TONIGHT&apos;S LINEUP
+            </h2>
+          </div>
+          <Link
+            href="/board"
+            className="text-[11px] font-black uppercase tracking-[0.16em] text-[var(--steel)] transition hover:text-[var(--ice)]"
+          >
+            Open draft board →
+          </Link>
+        </div>
         <HomeDemoCards cards={cards} />
       </section>
 
       <HomeFeatureGrid />
 
-      <footer className="relative z-10 border-t border-white/10 px-4 py-6 text-center text-[10px] uppercase tracking-[0.18em] text-[#64748b] sm:px-6 sm:text-xs sm:tracking-[0.2em]">
-        IceOVR · NHL-style GitHub cards · Not affiliated with NHL or EA
+      <footer className="relative z-10 border-t border-[var(--kraft)]/12 px-4 py-6 text-center text-[10px] uppercase tracking-[0.18em] text-[var(--steel)] sm:px-6">
+        IceOVR · Center-ice GitHub scouting · Not affiliated with NHL or EA
       </footer>
     </main>
   );

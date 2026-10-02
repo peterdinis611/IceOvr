@@ -60,38 +60,38 @@ export function ScoutRefresh({ card }: { card: ScoutCard }) {
   const progress = ((60 - cooldown) / 60) * 100;
 
   return (
-    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4">
-      <div className="text-xs text-[#94a3b8]">
-        <p className="font-bold uppercase tracking-[.12em] text-[#7dd3fc]">
-          Scout refresh
+    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--kraft)]/12 pt-4">
+      <div className="text-xs text-[var(--steel)]">
+        <p className="font-bold uppercase tracking-[.12em] text-[var(--ice)]">
+          Between periods
         </p>
         <p className="mt-1">
           {snapshot
             ? changed
-              ? "New profile signals detected since your last local scout."
+              ? "New profile signals since your last local scout."
               : "No score change since your last local scout."
             : "Your next visit will track local profile changes."}
         </p>
       </div>
       {cooldown ? (
         <div
-          className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-[#7dd3fc]/30 bg-[#7dd3fc]/5 px-2.5 py-2 text-[#7dd3fc]"
+          className="relative flex items-center gap-2 overflow-hidden border border-[var(--ice)]/35 bg-[var(--ice)]/8 px-2.5 py-2 text-[var(--ice)]"
           role="status"
           aria-live="polite"
         >
           <span
             aria-hidden
-            className="absolute inset-y-0 left-0 bg-[#7dd3fc]/10"
+            className="absolute inset-y-0 left-0 bg-[var(--ice)]/10"
             style={{ width: `${progress}%` }}
           />
           <span
             aria-hidden
             className="relative grid h-6 w-6 place-items-center rounded-full"
             style={{
-              background: `conic-gradient(#7dd3fc ${progress}%, rgba(125,211,252,.12) 0)`,
+              background: `conic-gradient(var(--ice) ${progress}%, rgba(255,183,3,.12) 0)`,
             }}
           >
-            <span className="grid h-4 w-4 place-items-center rounded-full bg-[#071524]">
+            <span className="grid h-4 w-4 place-items-center rounded-full bg-[#12100c]">
               <PuckSpinner label="Cooldown in progress" size="sm" />
             </span>
           </span>
@@ -106,7 +106,7 @@ export function ScoutRefresh({ card }: { card: ScoutCard }) {
             setCooldown(60);
             router.refresh();
           }}
-          className="rounded-lg border border-[#7dd3fc]/30 bg-[#7dd3fc]/5 px-3 py-2 text-[10px] font-black uppercase tracking-[.14em] text-[#7dd3fc] transition hover:border-[#7dd3fc]/60 hover:bg-[#7dd3fc]/12"
+          className="jersey-cta-ghost px-3 py-2 text-[10px]"
         >
           Re-scout now
         </button>

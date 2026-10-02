@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ScoutForm } from "@/components/ScoutForm";
+import { SiteNavLinks } from "@/components/SiteNavLinks";
 import { SoundToggle } from "@/components/SoundToggle";
 import { StickyHeaderShell } from "@/components/StickyHeaderShell";
 
-/** Server Component — chrome with client islands for sound, scout, sticky blur. */
+/** Server Component — arena scoreboard chrome. */
 export function SiteHeader({
   showScout = false,
   scoutInitial = "",
@@ -18,48 +19,51 @@ export function SiteHeader({
       <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto sm:gap-3">
         <Link
           href="/"
-          className="group font-display text-2xl tracking-[0.12em] text-white sm:text-3xl"
+          className="group font-display text-2xl tracking-[0.12em] text-[var(--kraft)] sm:text-3xl"
         >
           ICE
-          <span className="text-[#e11d2e] transition group-hover:drop-shadow-[0_0_12px_rgba(225,29,46,0.8)]">
+          <span className="text-[var(--goal-red)] transition group-hover:drop-shadow-[0_0_12px_rgba(225,29,46,0.8)]">
             OVR
           </span>
         </Link>
         <SoundToggle />
-        <Link
-          href="/board"
-          className="rounded border border-white/10 px-2 py-1 text-[9px] font-black uppercase tracking-[.14em] text-[#94a3b8] transition hover:border-[#e11d2e]/45 hover:text-[#fda4af]"
-        >
-          Board
-        </Link>
-        <Link
-          href="/compare"
-          className="rounded border border-white/10 px-2 py-1 text-[9px] font-black uppercase tracking-[.14em] text-[#94a3b8] transition hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc]"
-        >
-          VS
-        </Link>
+        <SiteNavLinks />
         {!showScout && (
-          <div className="ml-auto flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-[#94a3b8] sm:hidden">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e11d2e] opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#e11d2e]" />
-            </span>
-            Live
+          <div className="ml-auto flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-[var(--steel)] sm:hidden">
+            <span className="faceoff-dot" aria-hidden />
+            1st
           </div>
         )}
       </div>
 
-      <div className={`min-w-0 ${showScout ? "w-full sm:ml-auto sm:max-w-sm sm:flex-1" : "hidden flex-1 sm:block"}`}>
+      <div
+        className={`min-w-0 ${showScout ? "w-full sm:ml-auto sm:max-w-sm sm:flex-1" : "hidden flex-1 sm:block"}`}
+      >
         {showScout ? (
           <ScoutForm initial={scoutInitial} />
         ) : (
-          <div className="hidden items-center justify-end gap-5 sm:flex">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-[#94a3b8]">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e11d2e] opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#e11d2e]" />
-              </span>
-              Arena live
+          <div className="hidden items-center justify-end gap-4 sm:flex">
+            <div className="flex items-center gap-3 border border-[var(--kraft)]/15 bg-black/35 px-3 py-1.5">
+              <div className="text-center">
+                <p className="text-[8px] font-black uppercase tracking-[0.2em] text-[var(--steel)]">
+                  Period
+                </p>
+                <p className="font-display text-lg leading-none tracking-[0.08em] text-[var(--kraft)]">
+                  1
+                </p>
+              </div>
+              <div className="h-6 w-px bg-[var(--kraft)]/20" aria-hidden />
+              <div className="text-center">
+                <p className="text-[8px] font-black uppercase tracking-[0.2em] text-[var(--steel)]">
+                  Clock
+                </p>
+                <p className="period-clock text-base leading-none">20:00</p>
+              </div>
+              <div className="h-6 w-px bg-[var(--kraft)]/20" aria-hidden />
+              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-[var(--steel)]">
+                <span className="faceoff-dot" aria-hidden />
+                Live
+              </div>
             </div>
           </div>
         )}

@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ScoutCard } from "@/lib/types";
 import { TIER_META } from "@/lib/tiers";
 import { PlayerCard } from "@/components/PlayerCard";
@@ -14,7 +14,6 @@ import { PuckSpinner } from "@/components/PuckSpinner";
 import {
   CARD_STYLE_META,
   CardStylePicker,
-  CustomCardDesigner,
   encodeCustomTheme,
   type CardStyleId,
   type CustomCardTheme,
@@ -35,6 +34,18 @@ const ActivityReport = dynamic(
   { loading: () => <TabLoading label="Loading activity data" /> },
 );
 
+const CustomCardDesigner = dynamic(
+  () =>
+    import("@/components/player-card/CustomCardDesigner").then(
+      (module) => module.CustomCardDesigner,
+    ),
+  {
+    loading: () => (
+      <div className="mt-3 h-40 animate-pulse rounded-xl border border-white/10 bg-black/20" />
+    ),
+  },
+);
+
 export function CardStudio({
   card,
   initialStyle,
@@ -45,7 +56,7 @@ export function CardStudio({
   initialTheme?: CustomCardTheme;
 }) {
   const { playPuckShot } = useArenaAudio();
-  const { style, setStyle, customTheme, setCustomTheme } = useCardStyle(
+  const { style, setStyle, customTheme, setCustomTheme, ready } = useCardStyle(
     initialStyle,
     initialTheme,
   );
@@ -58,6 +69,7 @@ export function CardStudio({
   const [activeTab, setActiveTab] = useState<
     "overview" | "report" | "activity"
   >("overview");
+  const noticeTimers = useRef<number[]>([]);
   const tier = TIER_META[card.tier];
 
   const configuredSite = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
@@ -71,11 +83,31 @@ export function CardStudio({
     () => buildCardSharePayload(card, style, site, customTheme),
     [card, style, site, customTheme],
   );
-  const pngPath =
-    style === "custom"
-      ? `/api/card/${card.username}?style=custom&theme=${encodeURIComponent(encodeCustomTheme(customTheme))}`
-      : `/api/card/${card.username}?style=${style}`;
+  const pngPath = useMemo(
+    () =>
+      style === "custom"
+        ? `/api/card/${card.username}?style=custom&theme=${encodeURIComponent(encodeCustomTheme(customTheme))}`
+        : `/api/card/${card.username}?style=${style}`,
+    [card.username, style, customTheme],
+  );
   const localEmbed = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(site);
+
+  useEffect(() => {
+    return () => {
+      for (const timer of noticeTimers.current) window.clearTimeout(timer);
+    };
+  }, []);
+
+  function flashNotice(message: string, kind: "markdown" | "image" | "png") {
+    for (const timer of noticeTimers.current) window.clearTimeout(timer);
+    noticeTimers.current = [];
+    setCopied(kind);
+    setCopyNotice(message);
+    noticeTimers.current.push(
+      window.setTimeout(() => setCopied(null), 1800),
+      window.setTimeout(() => setCopyNotice(null), 2400),
+    );
+  }
 
   async function downloadCard() {
     playPuckShot();
@@ -102,12 +134,10 @@ export function CardStudio({
   async function copyEmbed(value: string, kind: "markdown" | "image") {
     try {
       await navigator.clipboard.writeText(value);
-      setCopied(kind);
-      setCopyNotice(
+      flashNotice(
         kind === "image" ? "Card image URL copied" : "GitHub Markdown copied",
+        kind,
       );
-      setTimeout(() => setCopied(null), 1800);
-      setTimeout(() => setCopyNotice(null), 2400);
     } catch {
       // ignore
     }
@@ -124,10 +154,7 @@ export function CardStudio({
       await navigator.clipboard.write([
         new ClipboardItem({ "image/png": image }),
       ]);
-      setCopied("png");
-      setCopyNotice("PNG image copied to clipboard");
-      setTimeout(() => setCopied(null), 1800);
-      setTimeout(() => setCopyNotice(null), 2400);
+      flashNotice("PNG image copied to clipboard", "png");
     } catch {
       await copyEmbed(share.publicPng, "image");
     }
@@ -137,7 +164,7 @@ export function CardStudio({
     <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-16 pt-5 sm:px-6">
       <nav
         aria-label="Player profile sections"
-        className="mb-5 flex overflow-x-auto rounded-xl border border-white/10 bg-[#071524]/70 p-1.5 backdrop-blur-sm"
+        className="mb-5 flex overflow-x-auto border-2 border-[var(--kraft)]/15 bg-[#12100c]/85 p-1.5"
       >
         <ProfileTab
           active={activeTab === "overview"}
@@ -155,30 +182,34 @@ export function CardStudio({
           active={activeTab === "activity"}
           onClick={() => setActiveTab("activity")}
           label="Activity"
-          detail="GitHub live"
+          detail="Shift chart"
         />
       </nav>
 
       {activeTab === "overview" && (
         <div className="grid items-start gap-6 lg:grid-cols-[350px_minmax(0,1fr)] lg:gap-8">
-          <aside className="rounded-2xl border border-white/10 bg-[#071524]/65 p-4 shadow-[0_18px_55px_rgba(0,0,0,.2)] backdrop-blur-sm lg:sticky lg:top-4">
-            <div className="mb-3 flex items-center justify-between">
+          <aside className="border-2 border-[var(--kraft)]/15 bg-[#12100c]/90 p-4 shadow-[8px_12px_0_rgba(0,0,0,.35)] lg:sticky lg:top-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#7dd3fc]">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[var(--ice)]">
                   Card vault
                 </p>
-                <p className="mt-1 text-xs text-[#94a3b8]">
-                  Live collectible preview
+                <p className="mt-1 text-xs text-[var(--steel)]">
+                  Live collectible on ice
                 </p>
               </div>
               <span
-                className="rounded border border-white/10 bg-black/25 px-2 py-1 text-[9px] font-black tracking-[0.16em]"
+                className="border border-[var(--kraft)]/20 bg-black/40 px-2 py-1 text-[9px] font-black tracking-[0.16em]"
                 style={{ color: tier.accent }}
               >
                 {tier.label}
               </span>
             </div>
-            <div className="relative flex justify-center overflow-x-auto py-1">
+            <div
+              className={`relative flex justify-center overflow-x-auto py-1 transition-opacity duration-200 ${
+                ready ? "opacity-100" : "opacity-60"
+              }`}
+            >
               <div
                 aria-hidden
                 className="absolute inset-x-3 inset-y-5 opacity-50 blur-xl"
@@ -203,7 +234,7 @@ export function CardStudio({
             )}
 
             <div className="mt-4 w-full space-y-3">
-              <p className="text-center text-[11px] uppercase tracking-[0.2em] text-[#94a3b8]">
+              <p className="text-center text-[11px] uppercase tracking-[0.2em] text-[var(--steel)]">
                 <span style={{ color: tier.accent }}>{tier.label}</span>
                 {" · "}
                 {CARD_STYLE_META[style].label}
@@ -215,7 +246,7 @@ export function CardStudio({
                 whileTap={{ scale: 0.98 }}
                 disabled={downloading}
                 onClick={() => void downloadCard()}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#e11d2e] font-display text-lg tracking-[0.14em] text-white shadow-[0_8px_28px_rgba(225,29,46,0.4)] disabled:opacity-60"
+                className="jersey-cta flex h-12 w-full gap-2 text-lg disabled:opacity-60"
               >
                 {downloading ? "DOWNLOADING…" : "DOWNLOAD PNG"}
               </motion.button>
@@ -225,14 +256,14 @@ export function CardStudio({
                   href={pngPath}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-10 items-center justify-center rounded-lg border border-white/15 bg-black/20 text-center text-[10px] font-black uppercase tracking-[0.14em] text-[#cbd5e1] transition hover:border-[#7dd3fc]/45 hover:text-white"
+                  className="jersey-cta-ghost flex h-10 items-center justify-center text-center text-[10px]"
                 >
                   Open PNG ↗
                 </a>
                 <button
                   type="button"
                   onClick={() => setSharingOpen(true)}
-                  className="h-10 rounded-lg border border-[#7dd3fc]/30 bg-[#7dd3fc]/5 text-[10px] font-black uppercase tracking-[0.14em] text-[#7dd3fc] transition hover:bg-[#7dd3fc]/15 hover:text-white"
+                  className="h-10 border-2 border-[var(--ice)]/40 bg-[var(--ice)]/10 text-[10px] font-black uppercase tracking-[0.14em] text-[var(--ice)] transition hover:bg-[var(--ice)]/20 hover:text-[var(--kraft)]"
                 >
                   Share card
                 </button>
@@ -270,12 +301,12 @@ export function CardStudio({
         {copyNotice && (
           <motion.div
             role="status"
-            className="fixed bottom-5 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#7dd3fc]/30 bg-[#071524]/95 px-4 py-2.5 text-xs font-bold text-[#d8f5ff] shadow-[0_12px_36px_rgba(0,0,0,.42)] backdrop-blur-md"
+            className="fixed bottom-5 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-2 border-2 border-[var(--ice)]/40 bg-[#12100c]/95 px-4 py-2.5 text-xs font-bold text-[var(--kraft)] shadow-[0_12px_36px_rgba(0,0,0,.42)] backdrop-blur-md"
             initial={{ opacity: 0, y: 14, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.96 }}
           >
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#7dd3fc] text-[10px] text-[#06111c]">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--ice)] text-[10px] text-[var(--ink)]">
               ✓
             </span>
             {copyNotice}
@@ -303,12 +334,20 @@ function ProfileTab({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`min-w-0 flex-1 rounded-lg px-2.5 py-2 text-left transition sm:min-w-[140px] sm:px-3 ${active ? "bg-[#7dd3fc]/12 text-white shadow-[inset_0_0_0_1px_rgba(125,211,252,.25)]" : "text-[#94a3b8] hover:bg-white/[.04] hover:text-white"}`}
+      className={`min-w-0 flex-1 px-2.5 py-2 text-left transition sm:min-w-[140px] sm:px-3 ${
+        active
+          ? "bg-[var(--goal-red)] text-white shadow-[inset_0_-2px_0_rgba(255,183,3,0.7)]"
+          : "text-[var(--steel)] hover:bg-white/[.04] hover:text-[var(--kraft)]"
+      }`}
     >
       <span className="block text-[9px] font-black uppercase tracking-[0.14em] sm:text-[10px] sm:tracking-[0.16em]">
         {label}
       </span>
-      <span className="mt-0.5 hidden text-[9px] uppercase tracking-[0.12em] text-[#64748b] sm:block">
+      <span
+        className={`mt-0.5 hidden text-[9px] uppercase tracking-[0.12em] sm:block ${
+          active ? "text-white/70" : "text-[var(--steel)]"
+        }`}
+      >
         {detail}
       </span>
     </button>
@@ -317,7 +356,7 @@ function ProfileTab({
 
 function TabLoading({ label }: { label: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#071524]/75 p-8 text-center text-xs font-bold uppercase tracking-[.2em] text-[#7dd3fc]">
+    <div className="border-2 border-[var(--kraft)]/15 bg-[#12100c]/85 p-8 text-center text-xs font-bold uppercase tracking-[.2em] text-[var(--ice)]">
       <PuckSpinner label={label} />
     </div>
   );
@@ -325,20 +364,24 @@ function TabLoading({ label }: { label: string }) {
 
 function OverviewPanel({ card }: { card: ScoutCard }) {
   const tier = TIER_META[card.tier];
-  const topStat = [...STAT_LABELS].sort(
-    (a, b) => card.stats[b.key] - card.stats[a.key],
-  )[0];
+  const topStat = useMemo(() => {
+    let best: (typeof STAT_LABELS)[number] = STAT_LABELS[0];
+    for (const stat of STAT_LABELS) {
+      if (card.stats[stat.key] > card.stats[best.key]) best = stat;
+    }
+    return best;
+  }, [card.stats]);
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(145deg,rgba(12,30,47,.96),rgba(6,17,30,.94))] p-5 shadow-[0_20px_60px_rgba(0,0,0,.2)] sm:p-6">
+    <section className="relative overflow-hidden border-2 border-[var(--kraft)]/15 bg-[linear-gradient(145deg,rgba(18,16,12,.96),rgba(7,6,5,.98))] p-5 shadow-[8px_12px_0_rgba(0,0,0,.3)] sm:p-6">
       <div className="absolute inset-x-0 top-0 h-px broadcast-stripe" />
-      <div className="relative border-b border-white/10 pb-5">
-        <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#7dd3fc]">
+      <div className="relative border-b border-[var(--kraft)]/12 pb-5">
+        <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--ice)]">
           Quick scout take
         </p>
-        <h2 className="mt-1 font-display text-3xl tracking-[.08em] text-white">
+        <h2 className="mt-1 font-display text-3xl tracking-[.08em] text-[var(--kraft)]">
           PLAYER OVERVIEW
         </h2>
-        <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#94a3b8]">
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-[var(--steel)]">
           {card.archetype} profile with a {topStat.name.toLowerCase()} grade of{" "}
           <span style={{ color: tier.accent }}>{card.stats[topStat.key]}</span>.
           The full dossier compares form, collaboration, and public GitHub
@@ -352,20 +395,20 @@ function OverviewPanel({ card }: { card: ScoutCard }) {
           return (
             <div
               key={stat.key}
-              className="rounded-xl border border-white/10 bg-black/20 p-3"
+              className="border border-[var(--kraft)]/12 bg-black/35 p-3"
             >
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[10px] font-bold uppercase tracking-[.15em] text-[#94a3b8]">
+                <p className="text-[10px] font-bold uppercase tracking-[.15em] text-[var(--steel)]">
                   {stat.short} · {stat.name}
                 </p>
-                <p className="font-display text-2xl text-white">{value}</p>
+                <p className="font-display text-2xl text-[var(--kraft)]">{value}</p>
               </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className="mt-2 h-1.5 overflow-hidden bg-[var(--kraft)]/10">
                 <div
-                  className="h-full rounded-full"
+                  className="h-full"
                   style={{
                     width: `${pct}%`,
-                    background: `linear-gradient(90deg,#38bdf8,${tier.accent})`,
+                    background: `linear-gradient(90deg,var(--goal-red),${tier.accent})`,
                   }}
                 />
               </div>
@@ -395,11 +438,13 @@ function OverviewPanel({ card }: { card: ScoutCard }) {
 
 function OverviewMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2.5">
-      <p className="text-[9px] font-bold uppercase tracking-[.14em] text-[#64748b]">
+    <div className="border border-[var(--kraft)]/12 bg-black/35 px-3 py-2.5">
+      <p className="text-[9px] font-bold uppercase tracking-[.14em] text-[var(--steel)]">
         {label}
       </p>
-      <p className="mt-1 text-lg font-bold text-white">{value}</p>
+      <p className="mt-1 font-display text-xl tracking-[0.04em] text-[var(--kraft)]">
+        {value}
+      </p>
     </div>
   );
 }
@@ -433,37 +478,61 @@ function ShareDialog({
   onCopyImage: () => void;
   onCopyMarkdown: () => void;
 }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose]);
+
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]/75 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="share-dialog-title"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[#050403]/80 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
       <motion.section
-        className="w-full max-w-2xl rounded-2xl border border-white/15 bg-[#0b1524] p-5 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-6"
-        initial={{ opacity: 0, scale: 0.96, y: 12 }}
+        className="max-h-[92dvh] w-full max-w-2xl overflow-y-auto rounded-t-2xl border-2 border-[var(--kraft)]/20 bg-[#12100c] p-5 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:rounded-none sm:p-6"
+        initial={{ opacity: 0, scale: 0.96, y: 18 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 12 }}
+        exit={{ opacity: 0, scale: 0.96, y: 18 }}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#7dd3fc]">
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[var(--ice)]">
               Share pack · {edition}
             </p>
-            <h3 className="mt-1 font-display text-2xl tracking-wide text-white">
+            <h3
+              id="share-dialog-title"
+              className="mt-1 font-display text-2xl tracking-wide text-[var(--kraft)]"
+            >
               YOUR LIVE CARD
             </h3>
-            <p className="mt-1 text-xs text-[#94a3b8]">
+            <p className="mt-1 text-xs text-[var(--steel)]">
               OG preview, social posts, and README badge use this edition.
             </p>
           </div>
           <button
+            ref={closeRef}
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-white/15 px-2.5 py-1 text-xs text-[#94a3b8] transition hover:text-white"
+            className="border border-[var(--kraft)]/20 px-2.5 py-1 text-xs text-[var(--steel)] transition hover:text-[var(--kraft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ice)]/60"
           >
             Close
           </button>
@@ -481,7 +550,7 @@ function ShareDialog({
             href={twitterUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex h-11 items-center justify-center rounded-xl border border-white/15 bg-black/30 text-[11px] font-black uppercase tracking-[0.16em] text-white transition hover:border-[#7dd3fc]/40 hover:bg-[#7dd3fc]/10"
+            className="flex h-11 items-center justify-center border border-[var(--kraft)]/20 bg-black/40 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--kraft)] transition hover:border-[var(--ice)]/50 hover:bg-[var(--ice)]/10"
           >
             Post on X
           </a>
@@ -489,44 +558,44 @@ function ShareDialog({
             href={linkedInUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex h-11 items-center justify-center rounded-xl border border-white/15 bg-black/30 text-[11px] font-black uppercase tracking-[0.16em] text-white transition hover:border-[#7dd3fc]/40 hover:bg-[#7dd3fc]/10"
+            className="flex h-11 items-center justify-center border border-[var(--kraft)]/20 bg-black/40 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--kraft)] transition hover:border-[var(--ice)]/50 hover:bg-[var(--ice)]/10"
           >
             LinkedIn
           </a>
         </div>
 
-        <div className="mt-4 overflow-hidden rounded-xl border border-[#7dd3fc]/20 bg-gradient-to-br from-[#0c2131] to-black/30">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+        <div className="mt-4 overflow-hidden border border-[var(--kraft)]/15 bg-gradient-to-br from-[#1a1612] to-black/40">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--kraft)]/12 px-4 py-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#7dd3fc]/30 bg-[#7dd3fc]/10 font-display text-lg tracking-wide text-[#7dd3fc]">
+              <div className="flex h-9 w-9 items-center justify-center border border-[var(--ice)]/40 bg-[var(--ice)]/10 font-display text-lg tracking-wide text-[var(--ice)]">
                 OG
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#7dd3fc]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--ice)]">
                   Style preview image
                 </p>
-                <p className="mt-0.5 text-[10px] text-[#64748b]">{edition} edition</p>
+                <p className="mt-0.5 text-[10px] text-[var(--steel)]">{edition} edition</p>
               </div>
             </div>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={onCopyPng}
-                className="rounded-md bg-[#7dd3fc] px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-[#06111c]"
+                className="bg-[var(--ice)] px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-[var(--ink)]"
               >
                 {copied === "png" ? "Image copied!" : "Copy PNG"}
               </button>
               <button
                 type="button"
                 onClick={onCopyImage}
-                className="rounded-md border border-white/15 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-[#cbd5e1]"
+                className="border border-[var(--kraft)]/20 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-[var(--kraft)]"
               >
                 {copied === "image" ? "URL copied!" : "Copy URL"}
               </button>
             </div>
           </div>
-          <div className="border-b border-white/10 bg-black/20 px-4 py-3">
-            <div className="relative mx-auto h-48 w-[148px] overflow-hidden rounded-lg border border-white/10 bg-black/30 shadow-[0_12px_40px_rgba(0,0,0,.45)]">
+          <div className="border-b border-[var(--kraft)]/12 bg-black/30 px-4 py-3">
+            <div className="relative mx-auto h-48 w-[148px] overflow-hidden border border-[var(--kraft)]/15 bg-black/40 shadow-[0_12px_40px_rgba(0,0,0,.45)]">
               <Image
                 src={previewSrc}
                 alt={`${edition} IceOVR card preview`}
@@ -537,7 +606,7 @@ function ShareDialog({
               />
             </div>
           </div>
-          <code className="block overflow-x-auto whitespace-nowrap px-4 py-3 text-xs leading-relaxed text-[#d8f5ff]">
+          <code className="block overflow-x-auto whitespace-nowrap px-4 py-3 text-xs leading-relaxed text-[var(--kraft)]">
             {publicPng}
           </code>
         </div>
@@ -569,21 +638,21 @@ function EmbedRow({
   code?: boolean;
 }) {
   return (
-    <div className="mt-4 rounded-xl border border-white/10 bg-black/25 p-3">
+    <div className="mt-4 border border-[var(--kraft)]/12 bg-black/35 p-3">
       <div className="mb-2 flex items-center justify-between gap-3">
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#94a3b8]">
+        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--steel)]">
           {label}
         </p>
         <button
           type="button"
           onClick={onCopy}
-          className="shrink-0 text-[10px] font-bold uppercase tracking-[0.15em] text-[#7dd3fc] transition hover:text-white"
+          className="shrink-0 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--ice)] transition hover:text-[var(--kraft)]"
         >
           {button}
         </button>
       </div>
       <code
-        className={`block overflow-x-auto whitespace-nowrap text-xs leading-relaxed ${code ? "text-[#7dd3fc]" : "text-[#cbd5e1]"}`}
+        className={`block overflow-x-auto whitespace-nowrap text-xs leading-relaxed ${code ? "text-[var(--ice)]" : "text-[var(--kraft)]"}`}
       >
         {value}
       </code>

@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #020617;
-  --foreground: #f8fafc;
-  --ice: #7dd3fc;
-  --rink: #0b1524;
+  --background: #070605;
+  --foreground: #f4efe6;
+  --ice: #ffb703;
+  --flood: #f59e0b;
+  --kraft: #efe6d2;
+  --rink: #12100c;
   --goal-red: #e11d2e;
-  --ink: #06111c;
-  --steel: #94a3b8;
-  --line: rgba(148, 163, 184, 0.16);
+  --ink: #0a0908;
+  --steel: #a39a8b;
+  --line: rgba(239, 230, 210, 0.14);
 }
 
 @theme inline {
@@ -21,6 +23,63 @@
 html,
 body {
   min-height: 100%;
+}
+
+/* Rink scrollbar — kickplate track, sodium thumb */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ice) #1a1612;
+}
+
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(225, 29, 46, 0.35) 0 2px,
+      transparent 2px
+    ),
+    #12100c;
+  border-left: 1px solid rgba(239, 230, 210, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 183, 3, 0.12);
+}
+
+*::-webkit-scrollbar-thumb {
+  background:
+    linear-gradient(
+      180deg,
+      #ffd060 0%,
+      var(--ice) 35%,
+      var(--flood) 70%,
+      #c27803 100%
+    );
+  border: 2px solid #0a0908;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 0 1px rgba(225, 29, 46, 0.25);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background:
+    linear-gradient(
+      180deg,
+      #ffe08a 0%,
+      #ffc933 40%,
+      var(--goal-red) 100%
+    );
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: var(--goal-red);
+}
+
+*::-webkit-scrollbar-corner {
+  background: #12100c;
 }
 
 body {
@@ -43,8 +102,8 @@ body {
   position: relative;
   overflow: hidden;
   border: 1px solid var(--line);
-  background: linear-gradient(145deg, rgba(8, 26, 43, 0.96), rgba(3, 12, 22, 0.96));
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(145deg, rgba(18, 16, 12, 0.96), rgba(7, 6, 5, 0.98));
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
 .arena-panel::before {
@@ -54,7 +113,7 @@ body {
   left: 12%;
   height: 1px;
   content: "";
-  background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.75), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 183, 3, 0.7), transparent);
 }
 
 .arena-panel::after {
@@ -64,8 +123,8 @@ body {
   width: 42%;
   height: 110%;
   content: "";
-  opacity: 0.38;
-  border: 1px solid rgba(125, 211, 252, 0.18);
+  opacity: 0.28;
+  border: 1px solid rgba(255, 183, 3, 0.18);
   border-radius: 50%;
   transform: rotate(-18deg);
   pointer-events: none;
@@ -91,7 +150,7 @@ body {
   content: "";
   opacity: 0;
   border-radius: 0.78rem;
-  background: linear-gradient(105deg, #e11d2e, #f8fafc, #7dd3fc);
+  background: linear-gradient(105deg, #e11d2e, #efe6d2, #ffb703);
   transition: opacity 180ms ease;
   pointer-events: none;
 }
@@ -114,6 +173,7 @@ body {
 
 .scout-analyze-bar {
   transition: width 420ms ease;
+  background: linear-gradient(90deg, #e11d2e, #efe6d2, #ffb703) !important;
 }
 
 .your-glow {
@@ -143,6 +203,22 @@ body {
   animation: live-pulse 1.6s ease-in-out infinite;
 }
 
+.ticker-marquee {
+  display: inline-block;
+  min-width: 100%;
+  animation: ticker-scroll 28s linear infinite;
+  padding-left: 100%;
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
 @keyframes live-pulse {
   0%,
   100% {
@@ -159,7 +235,7 @@ body {
   background: conic-gradient(
     from 0deg at 50% 42%,
     transparent 0deg,
-    rgba(125, 211, 252, 0.08) 40deg,
+    rgba(255, 183, 3, 0.1) 40deg,
     transparent 90deg,
     transparent 360deg
   );
@@ -203,27 +279,119 @@ body {
 .rink-bg {
   background:
     linear-gradient(
-      113deg,
-      transparent 0 47.5%,
-      rgba(125, 211, 252, 0.035) 47.6% 47.75%,
-      transparent 47.85% 100%
+      128deg,
+      transparent 0 46%,
+      rgba(255, 183, 3, 0.045) 46.2% 46.45%,
+      transparent 46.6% 100%
     ),
     radial-gradient(
-      ellipse 90% 55% at 50% -5%,
-      rgba(56, 189, 248, 0.22),
+      ellipse 80% 50% at 70% -8%,
+      rgba(255, 183, 3, 0.2),
       transparent 55%
     ),
     radial-gradient(
-      ellipse 50% 40% at 15% 80%,
-      rgba(225, 29, 46, 0.14),
-      transparent 50%
+      ellipse 55% 42% at 8% 88%,
+      rgba(225, 29, 46, 0.16),
+      transparent 52%
     ),
     radial-gradient(
-      ellipse 45% 35% at 90% 70%,
-      rgba(59, 130, 246, 0.1),
+      ellipse 40% 30% at 92% 60%,
+      rgba(245, 158, 11, 0.08),
       transparent 45%
     ),
-    linear-gradient(180deg, #01040d 0%, #07101c 42%, #0a1628 100%);
+    linear-gradient(180deg, #050403 0%, #0c0a08 45%, #12100c 100%);
+}
+
+/* Floodlight press-box compositions (landing + search) */
+.press-slash {
+  position: absolute;
+  inset: -10% -20%;
+  background: linear-gradient(
+    118deg,
+    transparent 42%,
+    rgba(255, 183, 3, 0.07) 42.2%,
+    rgba(255, 183, 3, 0.12) 46%,
+    transparent 46.3%
+  );
+  pointer-events: none;
+}
+
+.ticket-stub {
+  position: relative;
+  background: var(--kraft);
+  color: var(--ink);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 14px),
+    96% 100%,
+    92% calc(100% - 14px),
+    88% 100%,
+    84% calc(100% - 14px),
+    80% 100%,
+    76% calc(100% - 14px),
+    72% 100%,
+    68% calc(100% - 14px),
+    64% 100%,
+    60% calc(100% - 14px),
+    56% 100%,
+    52% calc(100% - 14px),
+    48% 100%,
+    44% calc(100% - 14px),
+    40% 100%,
+    36% calc(100% - 14px),
+    32% 100%,
+    28% calc(100% - 14px),
+    24% 100%,
+    20% calc(100% - 14px),
+    16% 100%,
+    12% calc(100% - 14px),
+    8% 100%,
+    4% calc(100% - 14px),
+    0 100%
+  );
+  box-shadow: 8px 12px 0 rgba(0, 0, 0, 0.45);
+}
+
+.ticket-stub::before {
+  position: absolute;
+  top: 12px;
+  bottom: 18px;
+  left: 14px;
+  width: 2px;
+  content: "";
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(10, 9, 8, 0.35) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+.on-air-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px solid var(--goal-red);
+  background: rgba(225, 29, 46, 0.12);
+  padding: 0.35rem 0.7rem;
+  color: #fda4af;
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.watermark-num {
+  position: absolute;
+  right: -4%;
+  top: -8%;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(10rem, 28vw, 22rem);
+  line-height: 0.75;
+  letter-spacing: -0.04em;
+  color: rgba(239, 230, 210, 0.045);
+  pointer-events: none;
+  user-select: none;
 }
 
 .rink-lines {
@@ -232,13 +400,13 @@ body {
     linear-gradient(
       0deg,
       transparent 0%,
-      rgba(125, 211, 252, 0.05) 50%,
+      rgba(255, 183, 3, 0.05) 50%,
       transparent 100%
     ),
     radial-gradient(
       circle at 50% 42%,
       transparent 18%,
-      rgba(255, 255, 255, 0.035) 18.5%,
+      rgba(239, 230, 210, 0.035) 18.5%,
       transparent 19%
     );
   background-size:
@@ -247,18 +415,197 @@ body {
   animation: rink-pulse 6s ease-in-out infinite;
 }
 
-.ice-boards {
-  border: 1px solid rgba(226, 232, 240, 0.08);
+.rink-boards {
+  border: 3px solid rgba(225, 29, 46, 0.35);
+  border-radius: 28px;
   box-shadow:
-    inset 0 0 0 7px rgba(125, 211, 252, 0.025),
+    inset 0 0 0 5px rgba(255, 183, 3, 0.55),
+    inset 0 0 0 7px rgba(10, 9, 8, 0.9),
+    inset 0 0 40px rgba(0, 0, 0, 0.35);
+}
+
+@media (min-width: 640px) {
+  .rink-boards {
+    border-radius: 40px;
+  }
+}
+
+.ice-boards {
+  border: 1px solid rgba(239, 230, 210, 0.08);
+  box-shadow:
+    inset 0 0 0 7px rgba(255, 183, 3, 0.03),
     inset 0 0 0 8px rgba(225, 29, 46, 0.08);
 }
 
 .ice-faceoff {
-  border: 1px solid rgba(125, 211, 252, 0.08);
+  border: 1px solid rgba(255, 183, 3, 0.1);
   box-shadow:
-    0 0 0 58px rgba(125, 211, 252, 0.015),
+    0 0 0 58px rgba(255, 183, 3, 0.02),
     0 0 0 59px rgba(225, 29, 46, 0.07);
+}
+
+/* Jersey stripe CTA — home sweater energy */
+.jersey-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 0;
+  background: var(--goal-red);
+  color: white;
+  font-family: var(--font-display), Impact, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 #000;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.jersey-cta::before,
+.jersey-cta::after {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  content: "";
+  background: repeating-linear-gradient(
+    90deg,
+    white 0 8px,
+    transparent 8px 14px
+  );
+  opacity: 0.85;
+}
+
+.jersey-cta::before {
+  top: 5px;
+}
+
+.jersey-cta::after {
+  bottom: 5px;
+}
+
+.jersey-cta:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 #000;
+}
+
+.jersey-cta-ghost {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(239, 230, 210, 0.35);
+  background: transparent;
+  color: var(--kraft);
+  font-family: var(--font-display), Impact, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    border-color 150ms ease,
+    color 150ms ease,
+    background 150ms ease;
+}
+
+.jersey-cta-ghost:hover {
+  border-color: var(--ice);
+  color: var(--ice);
+  background: rgba(255, 183, 3, 0.06);
+}
+
+/* Arena scoreboard strip */
+.scoreboard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: stretch;
+  overflow: hidden;
+  border: 2px solid rgba(239, 230, 210, 0.18);
+  background: linear-gradient(180deg, #1a1612 0%, #0a0908 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 183, 3, 0.12);
+}
+
+.scoreboard-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  padding: 0.55rem 0.9rem;
+  border-right: 1px solid rgba(239, 230, 210, 0.12);
+}
+
+.scoreboard-cell:last-child {
+  border-right: 0;
+}
+
+.scoreboard-label {
+  color: var(--steel);
+  font-size: 0.5625rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.scoreboard-value {
+  color: var(--ice);
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.period-clock {
+  font-variant-numeric: tabular-nums;
+  color: #fda4af;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+}
+
+.lineup-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(239, 230, 210, 0.12);
+  background:
+    linear-gradient(90deg, rgba(225, 29, 46, 0.12) 0 3px, transparent 3px),
+    rgba(18, 16, 12, 0.85);
+  padding: 0.75rem 0.85rem;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.lineup-row:hover {
+  border-color: rgba(225, 29, 46, 0.45);
+  background:
+    linear-gradient(90deg, rgba(225, 29, 46, 0.28) 0 3px, transparent 3px),
+    rgba(225, 29, 46, 0.08);
+}
+
+.pos-badge {
+  display: inline-flex;
+  min-width: 2.1rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(225, 29, 46, 0.4);
+  background: rgba(225, 29, 46, 0.12);
+  padding: 0.15rem 0.35rem;
+  color: #fda4af;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+}
+
+.faceoff-dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--goal-red);
+  box-shadow: 0 0 0 3px rgba(225, 29, 46, 0.2);
 }
 
 .studio-select {
@@ -551,6 +898,7 @@ body {
   .puck-spinner,
   .preload-puck,
   .preload-ripple,
+  .ticker-marquee,
   .duel-round,
   .puck-float,
   .rink-flake,

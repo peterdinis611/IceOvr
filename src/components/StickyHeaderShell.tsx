@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /** Client island — sticky glass header chrome on scroll. */
 export function StickyHeaderShell({
@@ -14,13 +14,27 @@ export function StickyHeaderShell({
   children: ReactNode;
 }) {
   const [scrolled, setScrolled] = useState(false);
+  const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!sticky) return;
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    onScroll();
+
+    const sync = () => {
+      frameRef.current = null;
+      setScrolled(window.scrollY > 12);
+    };
+
+    const onScroll = () => {
+      if (frameRef.current != null) return;
+      frameRef.current = window.requestAnimationFrame(sync);
+    };
+
+    sync();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frameRef.current != null) window.cancelAnimationFrame(frameRef.current);
+    };
   }, [sticky]);
 
   return (
@@ -29,7 +43,7 @@ export function StickyHeaderShell({
         sticky ? "sticky top-0 transition-[background,box-shadow,backdrop-filter] duration-200" : ""
       } ${
         sticky && scrolled
-          ? "border-b border-white/10 bg-[#020b14]/78 shadow-[0_10px_30px_rgba(0,0,0,.28)] backdrop-blur-md"
+          ? "border-b border-[var(--kraft)]/12 bg-[#0a0908]/88 shadow-[0_10px_30px_rgba(0,0,0,.35)] backdrop-blur-md"
           : ""
       } ${
         stacked

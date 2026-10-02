@@ -9,12 +9,9 @@ export function HomeDemoCards({ cards }: { cards: ScoutCard[] }) {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="mt-10 sm:mt-12">
-      <div className="mb-4 flex items-end justify-between gap-3 px-1 sm:mb-0 sm:hidden">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#7dd3fc]">
-          Sample scouts
-        </p>
-        <p className="text-[10px] uppercase tracking-[0.14em] text-[#64748b]">Swipe →</p>
+    <div>
+      <div className="mb-4 flex items-end justify-between gap-3 px-1 sm:hidden">
+        <p className="text-[10px] uppercase tracking-[0.14em] text-[var(--steel)]">Swipe →</p>
       </div>
       <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-4 px-4 pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:items-end sm:justify-center sm:gap-8 sm:overflow-visible sm:scroll-px-0 sm:px-0 sm:pb-0">
         {cards.map((card, i) => (
@@ -32,12 +29,12 @@ export function HomeDemoCards({ cards }: { cards: ScoutCard[] }) {
                   card={card}
                   size={i === 1 ? "lg" : "sm"}
                   reveal
-                  delay={0.55 + i * 0.18}
+                  delay={0.2 + i * 0.12}
                 />
               </div>
               <Link
                 href={`/u/${card.username}`}
-                className="rounded-lg border border-[#7dd3fc]/30 bg-[#7dd3fc]/5 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.16em] text-[#7dd3fc] transition hover:bg-[#7dd3fc]/15 hover:text-white"
+                className="jersey-cta-ghost px-3 py-1.5 text-[9px] tracking-[0.16em]"
               >
                 Open report
               </Link>

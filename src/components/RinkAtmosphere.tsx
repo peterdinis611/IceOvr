@@ -7,11 +7,11 @@ function buildFlakes(count: number) {
     delay: (i % 9) * 0.35,
     duration: 8 + (i % 5),
     size: 2 + (i % 3),
-    opacity: 0.1 + (i % 4) * 0.05,
+    opacity: 0.08 + (i % 4) * 0.04,
   }));
 }
 
-/** Server Component — CSS atmosphere with an optional client parallax island. */
+/** Server Component — rink under floodlights: boards, blue lines, crease, faceoff. */
 export function RinkAtmosphere({
   subtle = false,
   parallax = false,
@@ -19,25 +19,19 @@ export function RinkAtmosphere({
   subtle?: boolean;
   parallax?: boolean;
 }) {
-  const flakes = buildFlakes(subtle ? 14 : 24);
+  const flakes = buildFlakes(subtle ? 12 : 20);
 
   const movingLayer = (
     <>
-      <div className="spot-beam absolute left-[12%] top-0 h-[50vh] w-36 bg-[linear-gradient(180deg,rgba(125,211,252,0.14),transparent)] blur-3xl" />
+      <div className="spot-beam absolute left-[8%] top-0 h-[55vh] w-44 bg-[linear-gradient(180deg,rgba(255,183,3,0.16),transparent)] blur-3xl" />
       <div
-        className="spot-beam absolute right-[10%] top-0 h-[45vh] w-40 bg-[linear-gradient(180deg,rgba(225,29,46,0.1),transparent)] blur-3xl"
+        className="spot-beam absolute right-[6%] top-0 h-[48vh] w-48 bg-[linear-gradient(180deg,rgba(225,29,46,0.12),transparent)] blur-3xl"
         style={{ animationDelay: "-3s" }}
       />
-      {!subtle && (
-        <>
-          <div className="absolute left-1/2 top-[38%] h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#7dd3fc]/10" />
-          <div className="absolute left-1/2 top-[38%] h-[90px] w-[90px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#e11d2e]/15" />
-        </>
-      )}
       {flakes.map((flake) => (
         <span
           key={flake.id}
-          className="rink-flake absolute top-[-10%] rounded-full bg-white"
+          className="rink-flake absolute top-[-10%] rounded-full bg-[#efe6d2]"
           style={{
             left: flake.left,
             width: flake.size,
@@ -57,25 +51,70 @@ export function RinkAtmosphere({
         className="absolute inset-0"
         style={{
           background: subtle
-            ? "radial-gradient(ellipse 70% 40% at 50% 0%, rgba(56,189,248,0.1), transparent 55%)"
-            : undefined,
-          opacity: subtle ? 1 : undefined,
+            ? "radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255,183,3,0.1), transparent 55%)"
+            : "radial-gradient(ellipse 90% 55% at 50% 42%, rgba(239,230,210,0.04), transparent 62%)",
         }}
       />
+
+      {/* Glass + boards */}
+      <div className="rink-boards absolute inset-2 sm:inset-3" />
+
+      {/* Ice surface markings */}
       {!subtle && (
-        <div
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage:
-              "linear-gradient(0deg, transparent 0%, rgba(125,211,252,0.04) 50%, transparent 100%)",
-            backgroundSize: "100% 56px",
-          }}
-        />
+        <svg
+          className="absolute inset-[4%] opacity-[0.55] sm:inset-[5%]"
+          viewBox="0 0 200 100"
+          preserveAspectRatio="none"
+        >
+          {/* Outer ice edge */}
+          <rect
+            x="2"
+            y="2"
+            width="196"
+            height="96"
+            rx="14"
+            fill="none"
+            stroke="rgba(239,230,210,0.12)"
+            strokeWidth="0.6"
+          />
+          {/* Blue lines */}
+          <line x1="66" y1="4" x2="66" y2="96" stroke="rgba(59,130,246,0.28)" strokeWidth="1.4" />
+          <line x1="134" y1="4" x2="134" y2="96" stroke="rgba(59,130,246,0.28)" strokeWidth="1.4" />
+          {/* Center red line */}
+          <line x1="100" y1="4" x2="100" y2="96" stroke="rgba(225,29,46,0.45)" strokeWidth="1.8" />
+          {/* Center faceoff circle */}
+          <circle cx="100" cy="50" r="14" fill="none" stroke="rgba(225,29,46,0.35)" strokeWidth="0.9" />
+          <circle cx="100" cy="50" r="1.4" fill="rgba(225,29,46,0.55)" />
+          {/* End-zone faceoff dots */}
+          <circle cx="38" cy="28" r="7" fill="none" stroke="rgba(225,29,46,0.22)" strokeWidth="0.7" />
+          <circle cx="38" cy="72" r="7" fill="none" stroke="rgba(225,29,46,0.22)" strokeWidth="0.7" />
+          <circle cx="162" cy="28" r="7" fill="none" stroke="rgba(225,29,46,0.22)" strokeWidth="0.7" />
+          <circle cx="162" cy="72" r="7" fill="none" stroke="rgba(225,29,46,0.22)" strokeWidth="0.7" />
+          <circle cx="38" cy="28" r="1" fill="rgba(225,29,46,0.4)" />
+          <circle cx="38" cy="72" r="1" fill="rgba(225,29,46,0.4)" />
+          <circle cx="162" cy="28" r="1" fill="rgba(225,29,46,0.4)" />
+          <circle cx="162" cy="72" r="1" fill="rgba(225,29,46,0.4)" />
+          {/* Goal creases */}
+          <path
+            d="M8 38 A12 12 0 0 1 8 62"
+            fill="rgba(59,130,246,0.06)"
+            stroke="rgba(225,29,46,0.4)"
+            strokeWidth="0.8"
+          />
+          <path
+            d="M192 38 A12 12 0 0 0 192 62"
+            fill="rgba(59,130,246,0.06)"
+            stroke="rgba(225,29,46,0.4)"
+            strokeWidth="0.8"
+          />
+          {/* Goal lines */}
+          <line x1="10" y1="18" x2="10" y2="82" stroke="rgba(225,29,46,0.28)" strokeWidth="0.7" />
+          <line x1="190" y1="18" x2="190" y2="82" stroke="rgba(225,29,46,0.28)" strokeWidth="0.7" />
+        </svg>
       )}
+
       <div className="noise-overlay absolute inset-0" />
-      <div className="ice-boards absolute inset-2 rounded-[22px] sm:inset-3 sm:rounded-[32px]" />
-      <div className="ice-faceoff absolute left-1/2 top-[28%] h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-72 sm:w-72" />
-      <div className="radar-sweep absolute inset-0 opacity-25" />
+      <div className="radar-sweep absolute inset-0 opacity-[0.12]" />
 
       {parallax ? (
         <RinkParallaxLayer>{movingLayer}</RinkParallaxLayer>

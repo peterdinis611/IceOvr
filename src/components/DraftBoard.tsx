@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type KeyboardEvent } from "react";
 import { PlayerCard } from "@/components/PlayerCard";
 import {
   pickPlayerOfTheWeek,
@@ -21,6 +21,21 @@ export function DraftBoard({ rows }: { rows: DraftBoardRow[] }) {
   const [sort, setSort] = useState<DraftBoardSort>("ovr");
   const ranked = useMemo(() => sortDraftBoard(rows, sort), [rows, sort]);
   const potw = useMemo(() => pickPlayerOfTheWeek(rows), [rows]);
+
+  function onSortKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    const current = SORTS.findIndex((item) => item.id === sort);
+    if (current < 0) return;
+    let next = current;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      next = (current + 1) % SORTS.length;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      next = (current - 1 + SORTS.length) % SORTS.length;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    setSort(SORTS[next].id);
+  }
 
   if (rows.length === 0) {
     return (
@@ -53,6 +68,7 @@ export function DraftBoard({ rows }: { rows: DraftBoardRow[] }) {
         className="mt-8 flex overflow-x-auto rounded-xl border border-white/10 bg-[#071524]/70 p-1.5"
         role="tablist"
         aria-label="Leaderboard sort"
+        onKeyDown={onSortKeyDown}
       >
         {SORTS.map((item) => {
           const active = sort === item.id;
@@ -62,8 +78,9 @@ export function DraftBoard({ rows }: { rows: DraftBoardRow[] }) {
               type="button"
               role="tab"
               aria-selected={active}
+              tabIndex={active ? 0 : -1}
               onClick={() => setSort(item.id)}
-              className={`min-w-[7.5rem] flex-1 rounded-lg px-3 py-2 text-left transition ${
+              className={`min-w-[7.5rem] flex-1 rounded-lg px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7dd3fc]/50 ${
                 active
                   ? "bg-[#7dd3fc]/12 text-white shadow-[inset_0_0_0_1px_rgba(125,211,252,.25)]"
                   : "text-[#94a3b8] hover:bg-white/[.04] hover:text-white"
@@ -132,7 +149,7 @@ function PlayerOfTheWeek({ row }: { row: DraftBoardRow }) {
           </div>
           <Link
             href={`/u/${row.card.username}`}
-            className="mt-5 inline-flex rounded-lg bg-[#e11d2e] px-4 py-2.5 font-display text-sm tracking-[0.14em] text-white shadow-[0_8px_24px_rgba(225,29,46,0.35)]"
+            className="mt-5 inline-flex rounded-lg bg-[#e11d2e] px-4 py-2.5 font-display text-sm tracking-[0.14em] text-white shadow-[0_8px_24px_rgba(225,29,46,0.35)] transition hover:bg-[#f12638] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fda4af]/60"
           >
             OPEN SCOUT REPORT
           </Link>

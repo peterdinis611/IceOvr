@@ -32,7 +32,7 @@ export function ArenaIntro({
     <AnimatePresence>
       {intro && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]/92"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#050403]/94"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.45 }}
@@ -55,14 +55,14 @@ export function ArenaIntro({
               />
             </motion.div>
             <motion.p
-              className="text-xs uppercase tracking-[0.4em] text-[#7dd3fc]"
+              className="text-xs uppercase tracking-[0.4em] text-[var(--ice)]"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              Entering the arena
+              Dropping the puck
             </motion.p>
             <motion.h2
-              className="mt-3 font-display text-5xl tracking-[0.12em] text-white sm:text-7xl"
+              className="mt-3 font-display text-5xl tracking-[0.12em] text-[var(--kraft)] sm:text-7xl"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15, type: "spring" }}

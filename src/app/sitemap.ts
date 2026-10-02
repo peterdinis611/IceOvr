@@ -6,7 +6,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "http://localhost:3000";
   return [
     { url: site, changeFrequency: "weekly", priority: 1 },
+    { url: `${site}/search`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${site}/board`, changeFrequency: "daily", priority: 0.85 },
     { url: `${site}/compare`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${site}/team`, changeFrequency: "monthly", priority: 0.65 },
   ];
 }

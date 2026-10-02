@@ -46,15 +46,23 @@ export default function NotFound() {
           </div>
         </div>
         <div className="mt-5 border-y border-white/10 py-5">
-          <ScoutForm large />
+          <ScoutForm large withSuggestions />
         </div>
-        <Link
-          href="/"
-          className="mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#7dd3fc] transition hover:text-white"
-        >
-          <span aria-hidden>←</span>
-          Back to draft board
-        </Link>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            href="/search"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#7dd3fc] transition hover:text-white"
+          >
+            Open scout desk
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#94a3b8] transition hover:text-white"
+          >
+            <span aria-hidden>←</span>
+            Back home
+          </Link>
+        </div>
         <p className="mt-5 text-[9px] uppercase tracking-[0.16em] text-white/30">
           Unofficial NHL-style concept · Not affiliated with NHL or EA
         </p>

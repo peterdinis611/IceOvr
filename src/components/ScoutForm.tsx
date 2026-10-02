@@ -1,29 +1,53 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition, type FormEvent } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useTransition,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
+import Image from "next/image";
 import { useArenaAudio } from "@/components/ArenaAudioProvider";
 import { PuckSpinner } from "@/components/PuckSpinner";
+import { pushRecentScout } from "@/lib/client/recent-scouts";
 
 const HINTS = ["@torvalds", "@gaearon", "@sindresorhus"];
+
+type Suggestion = {
+  login: string;
+  avatarUrl: string;
+};
 
 export function ScoutForm({
   initial = "",
   large = false,
   showAnalyzing = false,
+  withSuggestions = false,
+  autoFocus = false,
 }: {
   initial?: string;
   large?: boolean;
   showAnalyzing?: boolean;
+  withSuggestions?: boolean;
+  autoFocus?: boolean;
 }) {
   const router = useRouter();
   const { playPuckShot } = useArenaAudio();
+  const listId = useId();
   const [username, setUsername] = useState(initial);
   const [isPending, startTransition] = useTransition();
   const [hintIndex, setHintIndex] = useState(0);
   const [typedHint, setTypedHint] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [analyzeStep, setAnalyzeStep] = useState(0);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (username) return;
@@ -55,9 +79,46 @@ export function ScoutForm({
     return () => window.clearInterval(timer);
   }, [isPending]);
 
-  function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    const clean = username.trim().replace(/^@/, "");
+  useEffect(() => {
+    if (!withSuggestions) return;
+    const query = username.trim().replace(/^@/, "");
+    if (query.length < 2) {
+      setSuggestions([]);
+      setOpen(false);
+      setActiveIndex(-1);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+      void fetch(`/api/github-search?q=${encodeURIComponent(query)}`, {
+        signal: controller.signal,
+      })
+        .then((response) => (response.ok ? response.json() : { users: [] }))
+        .then((payload: { users?: Suggestion[] }) => {
+          const users = payload.users ?? [];
+          setSuggestions(users);
+          setOpen(users.length > 0);
+          setActiveIndex(-1);
+        })
+        .catch(() => {
+          if (!controller.signal.aborted) {
+            setSuggestions([]);
+            setOpen(false);
+          }
+        });
+    }, 220);
+
+    return () => {
+      window.clearTimeout(timer);
+      abortRef.current?.abort();
+    };
+  }, [username, withSuggestions]);
+
+  function scout(raw: string) {
+    const clean = raw.trim().replace(/^@/, "");
     if (!clean) {
       setError("Enter a GitHub username to scout.");
       return;
@@ -67,10 +128,37 @@ export function ScoutForm({
       return;
     }
     setError(null);
+    setOpen(false);
     playPuckShot();
+    pushRecentScout(clean);
     startTransition(() => {
       router.push(`/u/${encodeURIComponent(clean)}`);
     });
+  }
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (activeIndex >= 0 && suggestions[activeIndex]) {
+      scout(suggestions[activeIndex].login);
+      return;
+    }
+    scout(username);
+  }
+
+  function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (!open || suggestions.length === 0) return;
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((index) => (index + 1) % suggestions.length);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((index) =>
+        index <= 0 ? suggestions.length - 1 : index - 1,
+      );
+    } else if (event.key === "Escape") {
+      setOpen(false);
+      setActiveIndex(-1);
+    }
   }
 
   const analyzeCopy = [
@@ -83,9 +171,8 @@ export function ScoutForm({
   const showClear = username.length > 0 && !isPending;
 
   return (
-    <div className={`w-full ${large ? "max-w-xl" : ""}`}>
-      <form onSubmit={onSubmit} className="w-full">
-        {/* Always one row — prevents mobile stack misalignment */}
+    <div className={`relative w-full ${large ? "max-w-xl" : ""}`}>
+      <form onSubmit={onSubmit} className="w-full" autoComplete="off">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-3">
           <div
             className={`scout-input-shell relative min-w-0 ${
@@ -101,8 +188,20 @@ export function ScoutForm({
                 setUsername(e.target.value);
                 if (error) setError(null);
               }}
+              onKeyDown={onKeyDown}
+              onFocus={() => {
+                if (suggestions.length > 0) setOpen(true);
+              }}
+              onBlur={() => {
+                window.setTimeout(() => setOpen(false), 120);
+              }}
               placeholder={typedHint || "username"}
               aria-invalid={Boolean(error)}
+              aria-autocomplete={withSuggestions ? "list" : undefined}
+              aria-controls={withSuggestions ? listId : undefined}
+              aria-expanded={withSuggestions ? open : undefined}
+              role={withSuggestions ? "combobox" : undefined}
+              autoFocus={autoFocus}
               className={`box-border h-full w-full rounded-xl border bg-[#0b1524] pl-8 pr-10 text-white outline-none transition placeholder:text-[#64748b] ${
                 error
                   ? "border-[#fda4af]/55 focus:border-[#fda4af]"
@@ -112,7 +211,9 @@ export function ScoutForm({
               autoCorrect="off"
               spellCheck={false}
               disabled={isPending}
-              aria-describedby={isPending || error ? "scout-search-status" : undefined}
+              aria-describedby={
+                isPending || error ? "scout-search-status" : undefined
+              }
             />
 
             {showClear && (
@@ -120,10 +221,12 @@ export function ScoutForm({
                 type="button"
                 onClick={() => {
                   setUsername("");
+                  setSuggestions([]);
+                  setOpen(false);
                   if (error) setError(null);
                 }}
                 aria-label="Clear username"
-                className="absolute right-2 top-1/2 z-[1] flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-[#64748b] transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7dd3fc]"
+                className="absolute right-2 top-1/2 z-[1] flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-[#64748b] transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ice)]"
               >
                 <svg
                   viewBox="0 0 20 20"
@@ -172,17 +275,63 @@ export function ScoutForm({
         </div>
       </form>
 
-      <div id="scout-search-status" role="status" aria-live="polite" className="mt-2 min-h-5">
-        {error && <p className="text-[11px] font-bold text-[#fda4af]">{error}</p>}
+      {withSuggestions && open && suggestions.length > 0 && (
+        <ul
+          id={listId}
+          role="listbox"
+          className="absolute left-0 right-0 top-[calc(100%-0.25rem)] z-30 mt-2 overflow-hidden rounded-xl border border-white/12 bg-[#071524]/98 shadow-[0_18px_50px_rgba(0,0,0,.45)] backdrop-blur-md"
+        >
+          {suggestions.map((user, index) => {
+            const active = index === activeIndex;
+            return (
+              <li key={user.login} role="option" aria-selected={active}>
+                <button
+                  type="button"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => {
+                    setUsername(user.login);
+                    scout(user.login);
+                  }}
+                  className={`flex w-full items-center gap-3 px-3 py-2.5 text-left transition ${
+                    active ? "bg-[var(--ice)]/12" : "hover:bg-white/[0.04]"
+                  }`}
+                >
+                  <Image
+                    src={user.avatarUrl}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="h-7 w-7 rounded-full border border-white/15"
+                  />
+                  <span className="font-semibold text-white">@{user.login}</span>
+                  <span className="ml-auto text-[9px] font-black uppercase tracking-[0.14em] text-[#64748b]">
+                    Scout
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      <div
+        id="scout-search-status"
+        role="status"
+        aria-live="polite"
+        className="mt-2 min-h-5"
+      >
+        {error && (
+          <p className="text-[11px] font-bold text-[#fda4af]">{error}</p>
+        )}
         {isPending && showAnalyzing && (
           <div className="mt-1">
             <div className="h-1 overflow-hidden rounded-full bg-white/10">
               <div
-                className="scout-analyze-bar h-full rounded-full bg-gradient-to-r from-[#e11d2e] via-white to-[#7dd3fc]"
+                className="scout-analyze-bar h-full rounded-full bg-gradient-to-r from-[#e11d2e] via-[#efe6d2] to-[var(--ice)]"
                 style={{ width: `${25 + analyzeStep * 25}%` }}
               />
             </div>
-            <p className="mt-1.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#7dd3fc]">
+            <p className="mt-1.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--goal-red)]">
               <PuckSpinner label="Analyzing" size="sm" />
               <span className="min-w-0 truncate">{analyzeCopy}</span>
             </p>

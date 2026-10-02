@@ -1,57 +1,43 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { CountUp } from "@/components/CountUp";
 
+/** Brand-first hero — sodium floodlights over center ice. */
 export function HomeHeroHeadline() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <>
-      <motion.p
-        className="text-[9px] font-black uppercase tracking-[.28em] text-[#7dd3fc] sm:text-[10px] sm:tracking-[.32em]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.08 }}
+    <div className="relative max-w-3xl">
+      <motion.div
+        className="on-air-pill"
+        initial={reduceMotion ? false : { opacity: 0, x: -12 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.04 }}
       >
-        Open ice · live scouting
-      </motion.p>
-      <h1 className="mt-2 font-display text-[clamp(2.85rem,14vw,9.5rem)] leading-[.78] tracking-[.025em] text-white sm:mt-3 sm:leading-[.76]">
-        {["DRAFT", "YOUR", "PROFILE"].map((line, index) => (
-          <motion.span
-            key={line}
-            className={`block ${line === "YOUR" ? "your-glow text-[#e11d2e]" : ""}`}
-            initial={reduceMotion ? false : { opacity: 0, y: 36 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              delay: 0.14 + index * 0.12,
-              type: "spring",
-              stiffness: 120,
-              damping: 18,
-            }}
-          >
-            {line}
-          </motion.span>
-        ))}
+        <span className="faceoff-dot" aria-hidden />
+        Period 1 · faceoff pending
+      </motion.div>
+
+      <h1 className="mt-5 font-display leading-[0.72] tracking-[0.02em] text-[var(--kraft)]">
+        <motion.span
+          className="block text-[clamp(4.8rem,20vw,12rem)]"
+          initial={reduceMotion ? false : { opacity: 0, y: 48 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 110, damping: 16 }}
+        >
+          ICE
+          <span className="your-glow text-[var(--goal-red)]">OVR</span>
+        </motion.span>
       </h1>
-    </>
-  );
-}
 
-export function HomeDraftMetrics() {
-  return (
-    <div className="mt-6 grid grid-cols-2 gap-2">
-      <DraftMetric value={6} label="Attributes" />
-      <DraftMetric value={99} label="Rating cap" />
-    </div>
-  );
-}
-
-function DraftMetric({ value, label }: { value: number; label: string }) {
-  return (
-    <div className="border-l border-white/10 bg-white/[.035] px-3 py-2.5">
-      <CountUp value={value} className="font-display text-2xl tracking-[.08em] text-white" />
-      <p className="mt-0.5 text-[8px] font-bold uppercase tracking-[.14em] text-[#64748b]">{label}</p>
+      <motion.p
+        className="mt-6 max-w-[38ch] text-lg leading-relaxed text-[var(--steel)] sm:text-xl"
+        initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.26 }}
+      >
+        Public GitHub, graded at center ice — attributes, tiers, and a shareable player card.
+      </motion.p>
     </div>
   );
 }

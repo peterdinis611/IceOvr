@@ -1,5 +1,6 @@
 import { ArenaIntro } from "@/components/ArenaIntro";
 import { CardStudio } from "@/components/CardStudio";
+import { RememberScout } from "@/components/RememberScout";
 import { RinkAtmosphere } from "@/components/RinkAtmosphere";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { CardStyleId } from "@/components/player-card/cardStyles";
@@ -21,8 +22,9 @@ export function PlayerExperience({
 
   return (
     <main className="relative flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto">
-      <RinkAtmosphere subtle />
-      <SiteHeader showScout scoutInitial={card.username} />
+      <RememberScout username={card.username} />
+      <RinkAtmosphere />
+      <SiteHeader showScout scoutInitial={card.username} sticky />
 
       <ArenaIntro
         displayName={card.displayName}
@@ -31,49 +33,61 @@ export function PlayerExperience({
         tierAccent={tier.accent}
       />
 
-      <section className="arena-panel relative z-10 mx-auto mt-1 w-full max-w-6xl rounded-2xl px-4 py-4 sm:px-7">
-        <div
-          aria-hidden
-          className="absolute inset-y-0 right-0 w-2/5 opacity-30 sm:opacity-40"
-          style={{
-            background: `linear-gradient(135deg, transparent, ${tier.accent}35)`,
-          }}
-        />
-        <div className="relative flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <p className="text-[9px] font-black uppercase tracking-[0.24em] text-[#7dd3fc] sm:text-[10px] sm:tracking-[0.3em]">
+      <section className="relative z-10 mx-auto mt-2 w-full max-w-6xl px-4 sm:px-6">
+        <div className="flex overflow-hidden border-2 border-[var(--kraft)]/18 bg-[linear-gradient(180deg,#1a1612_0%,#0a0908_100%)] shadow-[inset_0_1px_0_rgba(255,183,3,0.12)]">
+          <div className="flex shrink-0 flex-col items-center justify-center bg-[var(--goal-red)] px-4 py-3 sm:px-5">
+            <span className="text-[9px] font-black uppercase tracking-[0.22em] text-white/65">
+              OVR
+            </span>
+            <span className="font-display text-4xl leading-none tracking-[0.04em] text-white sm:text-5xl">
+              {card.ovr}
+            </span>
+          </div>
+
+          <div className="relative min-w-0 flex-1 self-stretch px-4 py-4 sm:px-6">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 w-1/2 opacity-40"
+              style={{
+                background: `linear-gradient(110deg, transparent, ${tier.accent}28)`,
+              }}
+            />
+            <p className="relative text-[9px] font-black uppercase tracking-[0.28em] text-[var(--ice)] sm:text-[10px]">
               Official scouting dossier · GitHub live
             </p>
-            <h1 className="mt-1 truncate font-display text-2xl tracking-[0.09em] text-white sm:text-4xl">
+            <h1 className="relative mt-1 truncate font-display text-3xl tracking-[0.06em] text-[var(--kraft)] sm:text-5xl">
               {card.displayName}
             </h1>
-            <p className="mt-1.5 text-xs text-[#94a3b8] sm:text-sm">
-              @{card.username}
-              {card.topLanguage ? ` · ${card.topLanguage}` : ""}
-              {card.location ? ` · ${card.location}` : ""}
+            <p className="relative mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--steel)] sm:text-sm">
+              <span className="faceoff-dot" aria-hidden />
+              <span>@{card.username}</span>
+              {card.topLanguage ? <span>· {card.topLanguage}</span> : null}
+              {card.location ? <span>· {card.location}</span> : null}
             </p>
           </div>
-          <div className="flex items-end gap-3 self-start sm:self-auto">
-            <div className="border-r border-white/10 pr-3 text-right">
-              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#94a3b8]">
-                Scout grade
-              </p>
-              <p
-                className="mt-1 font-display text-xl tracking-[0.12em] sm:text-2xl"
-                style={{ color: tier.accent }}
-              >
-                {tier.label}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="font-display text-4xl leading-none text-white sm:text-5xl">
-                {card.ovr}
-              </p>
-              <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[#94a3b8]">
-                Player rating
-              </p>
-            </div>
+
+          <div className="hidden min-w-[7.5rem] shrink-0 flex-col items-center justify-center border-l border-[var(--kraft)]/12 px-4 py-3 sm:flex">
+            <span className="text-[9px] font-black uppercase tracking-[0.22em] text-[var(--steel)]">
+              Scout grade
+            </span>
+            <span
+              className="mt-1 font-display text-2xl tracking-[0.1em]"
+              style={{ color: tier.accent }}
+            >
+              {tier.label}
+            </span>
           </div>
+        </div>
+        <div className="mt-2 flex items-center justify-between gap-3 border border-t-0 border-[var(--kraft)]/12 bg-black/40 px-3 py-2 sm:hidden">
+          <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[var(--steel)]">
+            Scout grade
+          </p>
+          <p
+            className="font-display text-xl tracking-[0.1em]"
+            style={{ color: tier.accent }}
+          >
+            {tier.label}
+          </p>
         </div>
       </section>
 
