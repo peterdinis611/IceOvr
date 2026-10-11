@@ -27,6 +27,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        source: "/:username-form.png",
+        destination: "/api/form/:username",
+      },
+      {
         source: "/:username.png",
         destination: "/api/card/:username",
       },

@@ -5,6 +5,13 @@ All notable IceOVR updates are recorded here.
 ## Unreleased
 
 ### Added
+- Season form PNG embed (`/<user>-form.png`) and README form badge in share pack.
+- Hybrid live Draft Board: seed + recent scouts + shareable `?players=` lists.
+- Nation and language Cups on the Draft Board (`?cup=country:SK` / `?cup=lang:Rust`).
+- Org Franchise Draft (`/franchise`) — public members auto-lined into a roster for Lineup/PNG.
+- Playoff Bracket (`/playoffs`) — 8-player single-elim with deterministic OVR winners.
+- Call-up pack reveal when local scout history detects a tier jump / foil unlock.
+- Team chemistry boost from shared-repo collaboration signals.
 - Head-to-head Scout Compare with shareable URLs and six attribute duel rounds.
 - Live Season form check, contribution streak, and next GitHub Cup milestone.
 - IndexedDB scouting snapshots for per-profile local change tracking.

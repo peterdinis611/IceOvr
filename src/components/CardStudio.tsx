@@ -61,7 +61,7 @@ export function CardStudio({
     initialTheme,
   );
   const [downloading, setDownloading] = useState(false);
-  const [copied, setCopied] = useState<"markdown" | "image" | "png" | null>(
+  const [copied, setCopied] = useState<"markdown" | "form" | "image" | "png" | null>(
     null,
   );
   const [copyNotice, setCopyNotice] = useState<string | null>(null);
@@ -98,7 +98,10 @@ export function CardStudio({
     };
   }, []);
 
-  function flashNotice(message: string, kind: "markdown" | "image" | "png") {
+  function flashNotice(
+    message: string,
+    kind: "markdown" | "form" | "image" | "png",
+  ) {
     for (const timer of noticeTimers.current) window.clearTimeout(timer);
     noticeTimers.current = [];
     setCopied(kind);
@@ -131,11 +134,15 @@ export function CardStudio({
     }
   }
 
-  async function copyEmbed(value: string, kind: "markdown" | "image") {
+  async function copyEmbed(value: string, kind: "markdown" | "form" | "image") {
     try {
       await navigator.clipboard.writeText(value);
       flashNotice(
-        kind === "image" ? "Card image URL copied" : "GitHub Markdown copied",
+        kind === "image"
+          ? "Card image URL copied"
+          : kind === "form"
+            ? "Season form badge copied"
+            : "GitHub Markdown copied",
         kind,
       );
     } catch {
@@ -272,7 +279,7 @@ export function CardStudio({
           </aside>
 
           <div className="min-w-0">
-            <OverviewPanel card={card} />
+            <OverviewPanel card={card} onFoilHint={setStyle} />
           </div>
         </div>
       )}
@@ -285,8 +292,10 @@ export function CardStudio({
             edition={share.edition}
             previewSrc={pngPath}
             publicPng={share.publicPng}
+            publicFormPng={share.publicFormPng}
             pageUrl={share.pageUrl}
             markdown={share.markdown}
+            formMarkdown={share.formMarkdown}
             twitterUrl={share.twitterUrl}
             linkedInUrl={share.linkedInUrl}
             copied={copied}
@@ -294,6 +303,7 @@ export function CardStudio({
             onCopyPng={() => void copyPngImage()}
             onCopyImage={() => void copyEmbed(share.publicPng, "image")}
             onCopyMarkdown={() => void copyEmbed(share.markdown, "markdown")}
+            onCopyFormMarkdown={() => void copyEmbed(share.formMarkdown, "form")}
           />
         )}
       </AnimatePresence>
@@ -362,7 +372,13 @@ function TabLoading({ label }: { label: string }) {
   );
 }
 
-function OverviewPanel({ card }: { card: ScoutCard }) {
+function OverviewPanel({
+  card,
+  onFoilHint,
+}: {
+  card: ScoutCard;
+  onFoilHint?: (style: CardStyleId) => void;
+}) {
   const tier = TIER_META[card.tier];
   const topStat = useMemo(() => {
     let best: (typeof STAT_LABELS)[number] = STAT_LABELS[0];
@@ -431,7 +447,7 @@ function OverviewPanel({ card }: { card: ScoutCard }) {
           value={card.raw.publicRepos.toLocaleString()}
         />
       </div>
-      <ScoutRefresh card={card} />
+      <ScoutRefresh card={card} onFoilHint={onFoilHint} />
     </section>
   );
 }
@@ -454,8 +470,10 @@ function ShareDialog({
   edition,
   previewSrc,
   publicPng,
+  publicFormPng,
   pageUrl,
   markdown,
+  formMarkdown,
   twitterUrl,
   linkedInUrl,
   copied,
@@ -463,20 +481,24 @@ function ShareDialog({
   onCopyPng,
   onCopyImage,
   onCopyMarkdown,
+  onCopyFormMarkdown,
 }: {
   localEmbed: boolean;
   edition: string;
   previewSrc: string;
   publicPng: string;
+  publicFormPng: string;
   pageUrl: string;
   markdown: string;
+  formMarkdown: string;
   twitterUrl: string;
   linkedInUrl: string;
-  copied: "markdown" | "image" | "png" | null;
+  copied: "markdown" | "form" | "image" | "png" | null;
   onClose: () => void;
   onCopyPng: () => void;
   onCopyImage: () => void;
   onCopyMarkdown: () => void;
+  onCopyFormMarkdown: () => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -617,6 +639,19 @@ function ShareDialog({
           button={copied === "markdown" ? "Copied!" : "Copy markdown"}
           onCopy={onCopyMarkdown}
           code
+        />
+        <EmbedRow
+          label="Live season form badge"
+          value={formMarkdown}
+          button={copied === "form" ? "Copied!" : "Copy form badge"}
+          onCopy={onCopyFormMarkdown}
+          code
+        />
+        <EmbedRow
+          label="Form PNG URL"
+          value={publicFormPng}
+          button="Copy form URL"
+          onCopy={() => void navigator.clipboard?.writeText(publicFormPng)}
         />
         <EmbedRow label="Profile link" value={pageUrl} button="Copy link" onCopy={() => void navigator.clipboard?.writeText(pageUrl)} />
       </motion.section>

@@ -1,3 +1,4 @@
+import { loadCollaborationSignals } from "@/lib/github/collaboration";
 import { scoutPlayer } from "@/lib/scout";
 
 const MAX_PLAYERS = 16;
@@ -30,17 +31,39 @@ export async function GET(request: Request) {
   const countries = new Set(
     cards.map((card) => card.countryCode).filter(Boolean),
   );
+
+  const collabSignals = await loadCollaborationSignals(
+    cards.map((card) => card.username),
+  );
+  const collabByPair = new Map(
+    collabSignals.map((signal) => {
+      const key = [...signal.players].map((p) => p.toLowerCase()).sort().join("|");
+      return [key, signal] as const;
+    }),
+  );
+
   const connections = cards
     .flatMap((card, index) =>
       cards.slice(index + 1).flatMap((other) => {
         const reasons: string[] = [];
-        if (card.topLanguage && card.topLanguage === other.topLanguage)
+        let score = 0;
+        if (card.topLanguage && card.topLanguage === other.topLanguage) {
           reasons.push(card.topLanguage);
-        if (card.countryCode && card.countryCode === other.countryCode)
+          score += 7;
+        }
+        if (card.countryCode && card.countryCode === other.countryCode) {
           reasons.push(card.countryCode);
-        const score =
-          (card.topLanguage === other.topLanguage ? 7 : 0) +
-          (card.countryCode === other.countryCode ? 5 : 0);
+          score += 5;
+        }
+        const pairKey = [card.username, other.username]
+          .map((name) => name.toLowerCase())
+          .sort()
+          .join("|");
+        const collab = collabByPair.get(pairKey);
+        if (collab) {
+          score += collab.score;
+          reasons.push(...collab.reasons);
+        }
         return score
           ? [
               {
@@ -53,6 +76,13 @@ export async function GET(request: Request) {
       }),
     )
     .sort((a, b) => b.score - a.score);
+
+  const collabBoost = Math.min(
+    18,
+    collabSignals.reduce((sum, signal) => sum + Math.min(12, signal.score), 0) /
+      Math.max(1, cards.length),
+  );
+
   const teamOvr = cards.length
     ? Math.round(
         cards.reduce((total, card) => total + card.ovr, 0) / cards.length,
@@ -61,7 +91,13 @@ export async function GET(request: Request) {
   const chemistry = cards.length
     ? Math.min(
         100,
-        48 + cards.length * 2 + languages.size * 3 + countries.size * 2,
+        Math.round(
+          48 +
+            cards.length * 2 +
+            languages.size * 3 +
+            countries.size * 2 +
+            collabBoost,
+        ),
       )
     : null;
 

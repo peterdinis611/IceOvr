@@ -15,8 +15,10 @@ export type CardSharePayload = {
   style: CardStyleId;
   edition: string;
   publicPng: string;
+  publicFormPng: string;
   pageUrl: string;
   markdown: string;
+  formMarkdown: string;
   text: string;
   twitterUrl: string;
   linkedInUrl: string;
@@ -40,16 +42,20 @@ export function buildCardSharePayload(
       ? `&theme=${encodeURIComponent(encodeCustomTheme(customTheme))}`
       : "";
   const publicPng = `${base}/${user}.png?style=${style}${themeQuery}`;
+  const publicFormPng = `${base}/${user}-form.png`;
   const pageUrl = `${base}/u/${user}?style=${style}${themeQuery}`;
   const text = `${card.displayName} — ${card.ovr} OVR · ${edition} on IceOVR`;
   const markdown = `[![IceOVR · ${edition}](${publicPng})](${pageUrl})`;
+  const formMarkdown = `[![IceOVR · Live Season Form](${publicFormPng})](${pageUrl})`;
 
   return {
     style,
     edition,
     publicPng,
+    publicFormPng,
     pageUrl,
     markdown,
+    formMarkdown,
     text,
     twitterUrl: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(pageUrl)}`,
     linkedInUrl: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`,

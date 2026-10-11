@@ -6,7 +6,9 @@ import { usePathname } from "next/navigation";
 const LINKS = [
   { href: "/search", label: "Scout", active: "border-[var(--ice)]/50 text-[var(--ice)]" },
   { href: "/board", label: "Draft", active: "border-[var(--goal-red)]/50 text-[#fda4af]" },
+  { href: "/franchise", label: "Org", active: "border-[var(--kraft)]/50 text-[var(--kraft)]" },
   { href: "/compare", label: "Faceoff", active: "border-[var(--kraft)]/40 text-[var(--kraft)]" },
+  { href: "/playoffs", label: "Cup", active: "border-[#fda4af]/50 text-[#fda4af]" },
   { href: "/team", label: "Lineup", active: "border-[var(--flood)]/50 text-[var(--flood)]" },
 ] as const;
 

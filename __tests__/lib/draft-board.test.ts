@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  filterDraftBoardByCup,
+  mergeDraftUsernames,
+  parseCupParam,
+  parsePlayersParam,
   pickPlayerOfTheWeek,
   sortDraftBoard,
   type DraftBoardRow,
@@ -82,5 +86,55 @@ describe("draft board ranking", () => {
       row("y", 60, 10, { delta: 20, direction: "falling" }),
     ];
     expect(pickPlayerOfTheWeek(steady)?.card.username).toBe("y");
+  });
+});
+
+describe("draft board hybrid helpers", () => {
+  it("merges extras ahead of seed and caps", () => {
+    const merged = mergeDraftUsernames(["alice", "@Bob", "alice"], ["seed"]);
+    expect(merged).toEqual(["alice", "Bob", "seed"]);
+  });
+
+  it("parses players and cup params", () => {
+    expect(parsePlayersParam("alice, bob")).toEqual(["alice", "bob"]);
+    expect(parseCupParam("country:sk")).toEqual({
+      kind: "country",
+      code: "SK",
+    });
+    expect(parseCupParam("lang:TypeScript")).toEqual({
+      kind: "lang",
+      language: "TypeScript",
+    });
+  });
+
+  it("filters rows by nation and language cups", () => {
+    const rows = [
+      {
+        card: makeScoutCard({
+          username: "sk",
+          countryCode: "SK",
+          topLanguage: "Go",
+        }),
+        form: form({}),
+      },
+      {
+        card: makeScoutCard({
+          username: "ts",
+          countryCode: "US",
+          topLanguage: "TypeScript",
+        }),
+        form: form({}),
+      },
+    ];
+    expect(
+      filterDraftBoardByCup(rows, { kind: "country", code: "SK" }).map(
+        (r) => r.card.username,
+      ),
+    ).toEqual(["sk"]);
+    expect(
+      filterDraftBoardByCup(rows, { kind: "lang", language: "TypeScript" }).map(
+        (r) => r.card.username,
+      ),
+    ).toEqual(["ts"]);
   });
 });

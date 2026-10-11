@@ -28,7 +28,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for the latest additions and improvements.
 - **G** — standing wall easter egg (elite DEF + consistency)
 
 ### Tiers
-Bronze → Silver → Gold → X-Factor → TOTY → Legend
+Bronze → Silver (Call-up) → Gold → Elite → Legend
 
 ## Stack
 Next.js · TypeScript · Tailwind · GitHub API · `next/og` PNG cards
@@ -51,8 +51,15 @@ Open [http://localhost:3000](http://localhost:3000).
 | URL | What |
 |-----|------|
 | `/` | Landing — GET DRAFTED |
-| `/u/<username>` | Full scout report |
+| `/search` | Scout desk + autocomplete |
+| `/u/<username>` | Full scout report + card studio |
+| `/board` | Draft board (hybrid live + cups) |
+| `/franchise` | Org → auto lineup draft |
+| `/compare` | Head-to-head faceoff |
+| `/playoffs` | 8-player single-elim bracket |
+| `/team` | Lineup builder |
 | `/<username>.png` | Live embeddable card image |
+| `/<username>-form.png` | Live season form badge |
 | `/api/card/<username>` | Same PNG (API) |
 
 Tier, nation (from location) and top language come automatically from GitHub — no query overrides.
@@ -61,6 +68,7 @@ Tier, nation (from location) and top language come automatically from GitHub —
 
 ```md
 [![IceOVR card](https://YOUR_DOMAIN/USERNAME.png)](https://YOUR_DOMAIN/u/USERNAME)
+[![IceOVR form](https://YOUR_DOMAIN/USERNAME-form.png)](https://YOUR_DOMAIN/u/USERNAME)
 ```
 
 ## Env

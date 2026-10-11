@@ -1,17 +1,24 @@
 # IceOVR
 
-IceOVR turns public GitHub activity into hockey-inspired player cards, scouting reports, live season form, GitHub Cups, and shareable head-to-head comparisons.
+IceOVR turns public GitHub activity into hockey-inspired player cards, scouting reports, live season form, GitHub Cups, draft boards, org franchises, playoff brackets, and shareable head-to-head comparisons.
 
 ## Primary pages
 
 - `/` — Create a GitHub scouting card from a public username.
+- `/search` — Scout desk with username autocomplete.
 - `/u/{username}` — Public player card, performance report, activity, and achievements.
+- `/board` — Hybrid draft board with nation/language cups (`?players=` / `?cup=`).
+- `/franchise` — Draft a GitHub organization into an IceOVR lineup.
 - `/compare?left={username}&right={username}` — Compare two public GitHub profiles.
+- `/playoffs` — Eight-player single-elimination bracket (`?p1=`…`?p8=`).
+- `/team` — Lineup builder with chemistry and shareable roster links.
+- `/{username}.png` — Embeddable player card image.
+- `/{username}-form.png` — Embeddable live season form badge.
 
 ## Data and methodology
 
-IceOVR uses public GitHub profile and repository activity. Ratings are illustrative, are based on activity signals such as commits, stars, pull requests, issues, reviews, languages, and account history, and are not official GitHub or NHL ratings.
+IceOVR uses public GitHub profile and repository activity. Ratings are illustrative, are based on activity signals such as commits, stars, pull requests, issues, reviews, languages, and account history, and are not official GitHub or NHL ratings. Team chemistry may include shared-repository collaboration signals from public events.
 
 ## Privacy
 
-IceOVR only processes public GitHub data required to generate the requested report. Local scouting snapshots remain in the visitor's browser.
+IceOVR only processes public GitHub data required to generate the requested report. Local scouting snapshots and recent scout lists remain in the visitor's browser.
