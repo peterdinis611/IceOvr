@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ScoutCard } from "@/lib/types";
 import { TIER_META } from "@/lib/tiers";
@@ -88,13 +87,13 @@ export function CardStudio({
     () => buildCardSharePayload(card, style, site, customTheme),
     [card, style, site, customTheme],
   );
-  const pngPath = useMemo(
-    () =>
-      style === "custom"
-        ? `/api/card/${card.username}?style=custom&theme=${encodeURIComponent(encodeCustomTheme(customTheme))}`
-        : `/api/card/${card.username}?style=${style}`,
-    [card.username, style, customTheme],
-  );
+  const pngPath = useMemo(() => {
+    const user = encodeURIComponent(card.username);
+    if (style === "custom") {
+      return `/card/${user}.png?style=custom&theme=${encodeURIComponent(encodeCustomTheme(customTheme))}`;
+    }
+    return `/card/${user}.png?style=${style}`;
+  }, [card.username, style, customTheme]);
   const localEmbed = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(site);
 
   useEffect(() => {
@@ -622,14 +621,16 @@ function ShareDialog({
             </div>
           </div>
           <div className="border-b border-[var(--kraft)]/12 bg-black/30 px-4 py-3">
-            <div className="relative mx-auto h-48 w-[148px] overflow-hidden border border-[var(--kraft)]/15 bg-black/40 shadow-[0_12px_40px_rgba(0,0,0,.45)]">
-              <Image
+            <div className="relative mx-auto flex h-48 w-[148px] items-center justify-center overflow-hidden border border-[var(--kraft)]/15 bg-black/40 shadow-[0_12px_40px_rgba(0,0,0,.45)]">
+              {/* Plain img — next/image is flaky with dynamic OG PNG routes */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                key={previewSrc}
                 src={previewSrc}
                 alt={`${edition} IceOVR card preview`}
-                fill
-                sizes="148px"
-                unoptimized
-                className="object-contain object-center"
+                width={148}
+                height={194}
+                className="max-h-full max-w-full object-contain object-center"
               />
             </div>
           </div>
