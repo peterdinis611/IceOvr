@@ -41,8 +41,8 @@ export function buildCardSharePayload(
     style === "custom" && customTheme
       ? `&theme=${encodeURIComponent(encodeCustomTheme(customTheme))}`
       : "";
-  const publicPng = `${base}/${user}.png?style=${style}${themeQuery}`;
-  const publicFormPng = `${base}/${user}-form.png`;
+  const publicPng = `${base}/card/${user}.png?style=${style}${themeQuery}`;
+  const publicFormPng = `${base}/form/${user}.png`;
   const pageUrl = `${base}/u/${user}?style=${style}${themeQuery}`;
   const text = `${card.displayName} — ${card.ovr} OVR · ${edition} on IceOVR`;
   const markdown = `[![IceOVR · ${edition}](${publicPng})](${pageUrl})`;

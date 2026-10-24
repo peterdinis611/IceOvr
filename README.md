@@ -58,17 +58,19 @@ Open [http://localhost:3000](http://localhost:3000).
 | `/compare` | Head-to-head faceoff |
 | `/playoffs` | 8-player single-elim bracket |
 | `/team` | Lineup builder |
-| `/<username>.png` | Live embeddable card image |
-| `/<username>-form.png` | Live season form badge |
+| `/card/<username>.png` | Live embeddable card image |
+| `/form/<username>.png` | Live season form badge |
 | `/api/card/<username>` | Same PNG (API) |
+
+Legacy `/USERNAME.png` and `/USERNAME-form.png` still work for older embeds.
 
 Tier, nation (from location) and top language come automatically from GitHub — no query overrides.
 
 ### Embed
 
 ```md
-[![IceOVR card](https://YOUR_DOMAIN/USERNAME.png)](https://YOUR_DOMAIN/u/USERNAME)
-[![IceOVR form](https://YOUR_DOMAIN/USERNAME-form.png)](https://YOUR_DOMAIN/u/USERNAME)
+[![IceOVR card](https://YOUR_DOMAIN/card/USERNAME.png)](https://YOUR_DOMAIN/u/USERNAME)
+[![IceOVR form](https://YOUR_DOMAIN/form/USERNAME.png)](https://YOUR_DOMAIN/u/USERNAME)
 ```
 
 ## Env

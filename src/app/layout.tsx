@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, Teko } from "next/font/google";
 import { Providers } from "@/components/Providers";
+import { resolveSiteUrl } from "@/lib/site";
 import "./globals.css";
 
 const display = Teko({
@@ -22,9 +23,7 @@ export const metadata: Metadata = {
   },
   description:
     "Transform public GitHub activity into a hockey-inspired player card, scouting report, live season form, and shareable head-to-head matchup.",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
+  metadataBase: new URL(resolveSiteUrl()),
   applicationName: "IceOVR",
   keywords: [
     "GitHub profile card",

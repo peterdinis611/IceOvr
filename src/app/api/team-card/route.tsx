@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { fetchAvatarDataUrl, githubAvatarUrl } from "@/lib/avatar";
 
 export const runtime = "edge";
 
@@ -14,10 +15,18 @@ const POSITIONS = [
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const name = sanitizeName(searchParams.get("name")) || "My IceOVR Team";
-  const players = POSITIONS.map((position) => ({
+  const roster = POSITIONS.map((position) => ({
     ...position,
     username: sanitizeUsername(searchParams.get(position.key)),
   }));
+  const players = await Promise.all(
+    roster.map(async (player) => ({
+      ...player,
+      avatarSrc: player.username
+        ? await fetchAvatarDataUrl(githubAvatarUrl(player.username, 160), 160)
+        : null,
+    })),
+  );
 
   return new ImageResponse(
     (
@@ -92,11 +101,13 @@ export async function GET(request: Request) {
                 borderRadius: 999,
                 border: "3px solid rgba(255,255,255,.7)",
                 background: "rgba(2,11,20,.85)",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              {player.username ? (
+              {player.avatarSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={`https://github.com/${player.username}.png?size=160`} width={96} height={96} alt="" />
+                <img src={player.avatarSrc} width={96} height={96} alt="" />
               ) : null}
             </div>
             <span style={{ marginTop: 10, fontSize: 15, fontWeight: 900, letterSpacing: 1, color: player.username ? "white" : "rgba(255,255,255,.42)" }}>

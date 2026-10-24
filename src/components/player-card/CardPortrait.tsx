@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { withAvatarSize } from "@/lib/avatar";
 
 type CardPortraitProps = {
   src: string;
@@ -12,10 +13,6 @@ type CardPortraitProps = {
   /** Extra classes on the outer frame. */
   className?: string;
 };
-
-function avatarSrc(url: string, size: number) {
-  return url.includes("?") ? `${url}&size=${size}` : `${url}?size=${size}`;
-}
 
 /**
  * Trading-card portrait: ambient fill + sharp full avatar.
@@ -29,7 +26,7 @@ export function CardPortrait({
   imageClassName = "",
   className = "",
 }: CardPortraitProps) {
-  const hiRes = avatarSrc(src, 320);
+  const hiRes = withAvatarSize(src, 320);
 
   return (
     <div className={`relative h-full w-full overflow-hidden ${className}`}>

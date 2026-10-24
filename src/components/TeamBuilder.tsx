@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { useArenaAudio } from "@/components/ArenaAudioProvider";
+import { githubAvatarUrl } from "@/lib/avatar";
 
 type SlotKey =
   | "lw"
@@ -580,7 +581,7 @@ function RosterSlot({
       {username ? (
         <>
           <Image
-            src={`https://github.com/${encodeURIComponent(username)}.png?size=96`}
+            src={githubAvatarUrl(username, 96)}
             alt=""
             width={compact ? 32 : 44}
             height={compact ? 32 : 44}

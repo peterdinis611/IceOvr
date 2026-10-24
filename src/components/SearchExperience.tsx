@@ -9,6 +9,7 @@ import {
   readRecentScouts,
   type RecentScout,
 } from "@/lib/client/recent-scouts";
+import { githubAvatarUrl } from "@/lib/avatar";
 
 const FEATURED = [
   { login: "torvalds", detail: "Kernel legend", pos: "C" },
@@ -96,7 +97,7 @@ export function SearchExperience() {
               <li key={item.username}>
                 <Link href={`/u/${item.username}`} className="lineup-row">
                   <Image
-                    src={`https://github.com/${encodeURIComponent(item.username)}.png?size=64`}
+                    src={githubAvatarUrl(item.username, 64)}
                     alt=""
                     width={36}
                     height={36}
@@ -144,7 +145,7 @@ export function SearchExperience() {
               <Link href={`/u/${player.login}`} className="lineup-row group">
                 <span className="pos-badge">{player.pos}</span>
                 <Image
-                  src={`https://github.com/${encodeURIComponent(player.login)}.png?size=64`}
+                  src={githubAvatarUrl(player.login, 64)}
                   alt=""
                   width={40}
                   height={40}

@@ -26,6 +26,16 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
+      // Prefer /form/:user.png — avoids colliding with GitHub usernames ending in "-form"
+      {
+        source: "/form/:username.png",
+        destination: "/api/form/:username",
+      },
+      {
+        source: "/card/:username.png",
+        destination: "/api/card/:username",
+      },
+      // Legacy pretty URLs (kept for existing README embeds)
       {
         source: "/:username-form.png",
         destination: "/api/form/:username",

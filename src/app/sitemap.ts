@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next";
+import { resolveSiteUrl } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const site =
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-    "http://localhost:3000";
+  const site = resolveSiteUrl();
   return [
     { url: site, changeFrequency: "weekly", priority: 1 },
     { url: `${site}/search`, changeFrequency: "weekly", priority: 0.9 },

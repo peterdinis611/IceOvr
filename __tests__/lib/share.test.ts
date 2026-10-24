@@ -14,11 +14,13 @@ describe("buildCardSharePayload", () => {
 
     expect(share.style).toBe("brutal");
     expect(share.edition).toBe("Puck Stamp");
-    expect(share.publicPng).toBe("https://iceovr.app/gaearon.png?style=brutal");
-    expect(share.publicFormPng).toBe("https://iceovr.app/gaearon-form.png");
+    expect(share.publicPng).toBe(
+      "https://iceovr.app/card/gaearon.png?style=brutal",
+    );
+    expect(share.publicFormPng).toBe("https://iceovr.app/form/gaearon.png");
     expect(share.pageUrl).toBe("https://iceovr.app/u/gaearon?style=brutal");
-    expect(share.markdown).toContain("gaearon.png?style=brutal");
-    expect(share.formMarkdown).toContain("gaearon-form.png");
+    expect(share.markdown).toContain("card/gaearon.png?style=brutal");
+    expect(share.formMarkdown).toContain("form/gaearon.png");
     expect(share.markdown).toContain("/u/gaearon?style=brutal");
     expect(share.twitterUrl).toContain("twitter.com/intent/tweet");
     expect(share.twitterUrl).toContain(encodeURIComponent(share.pageUrl));

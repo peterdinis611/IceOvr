@@ -28,7 +28,7 @@ export async function generateMetadata({
     const card = await scoutPlayer(username);
     const title = `${card.displayName} — ${card.ovr} OVR GitHub scouting report`;
     const description = `View ${card.displayName}'s public GitHub scouting card: ${card.ovr} OVR, ${card.tier} tier, ${card.raw.stars.toLocaleString()} stars and ${card.raw.commitsLastYear.toLocaleString()} commits this year.`;
-    const image = `/${encodeURIComponent(card.username)}.png?style=${style}${themeQuery}`;
+    const image = `/card/${encodeURIComponent(card.username)}.png?style=${style}${themeQuery}`;
     return {
       title,
       description,

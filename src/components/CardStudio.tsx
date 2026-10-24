@@ -72,9 +72,14 @@ export function CardStudio({
   const noticeTimers = useRef<number[]>([]);
   const tier = TIER_META[card.tier];
 
-  const configuredSite = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  const configuredSite = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(
+    /\/$/,
+    "",
+  );
   const site =
-    configuredSite ??
+    (configuredSite && /^https?:\/\//i.test(configuredSite)
+      ? configuredSite
+      : null) ??
     (typeof window !== "undefined"
       ? window.location.origin
       : "http://localhost:3000");
