@@ -18,7 +18,7 @@ import {
   type CustomCardTheme,
   useCardStyle,
 } from "@/components/player-card";
-import { buildCardSharePayload } from "@/lib/share";
+import { buildCardSharePayload, canNativeShareCard } from "@/lib/share";
 
 const ScoutReport = dynamic(
   () => import("@/components/ScoutReport").then((module) => module.ScoutReport),
@@ -298,6 +298,7 @@ export function CardStudio({
             publicPng={share.publicPng}
             publicFormPng={share.publicFormPng}
             pageUrl={share.pageUrl}
+            shareText={share.text}
             markdown={share.markdown}
             formMarkdown={share.formMarkdown}
             twitterUrl={share.twitterUrl}
@@ -308,6 +309,7 @@ export function CardStudio({
             onCopyImage={() => void copyEmbed(share.publicPng, "image")}
             onCopyMarkdown={() => void copyEmbed(share.markdown, "markdown")}
             onCopyFormMarkdown={() => void copyEmbed(share.formMarkdown, "form")}
+            onFlash={(message) => flashNotice(message, "image")}
           />
         )}
       </AnimatePresence>
@@ -476,6 +478,7 @@ function ShareDialog({
   publicPng,
   publicFormPng,
   pageUrl,
+  shareText,
   markdown,
   formMarkdown,
   twitterUrl,
@@ -486,6 +489,7 @@ function ShareDialog({
   onCopyImage,
   onCopyMarkdown,
   onCopyFormMarkdown,
+  onFlash,
 }: {
   localEmbed: boolean;
   edition: string;
@@ -493,6 +497,7 @@ function ShareDialog({
   publicPng: string;
   publicFormPng: string;
   pageUrl: string;
+  shareText: string;
   markdown: string;
   formMarkdown: string;
   twitterUrl: string;
@@ -503,8 +508,15 @@ function ShareDialog({
   onCopyImage: () => void;
   onCopyMarkdown: () => void;
   onCopyFormMarkdown: () => void;
+  onFlash: (message: string) => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const [nativeReady, setNativeReady] = useState(false);
+  const [sharingNative, setSharingNative] = useState(false);
+
+  useEffect(() => {
+    setNativeReady(canNativeShareCard());
+  }, []);
 
   useEffect(() => {
     const previous = document.body.style.overflow;
@@ -520,6 +532,35 @@ function ShareDialog({
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [onClose]);
+
+  async function shareNativeCard() {
+    setSharingNative(true);
+    try {
+      const response = await fetch(previewSrc);
+      if (!response.ok) throw new Error("PNG fetch failed");
+      const blob = await response.blob();
+      const file = new File([blob], `iceovr-${edition.toLowerCase().replace(/\s+/g, "-")}.png`, {
+        type: "image/png",
+      });
+      const payload: ShareData = {
+        title: shareText,
+        text: shareText,
+        url: pageUrl,
+        files: [file],
+      };
+      if (navigator.canShare && !navigator.canShare(payload)) {
+        await navigator.share({ title: shareText, text: shareText, url: pageUrl });
+      } else {
+        await navigator.share(payload);
+      }
+      onFlash("Share sheet opened");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      onFlash("Share cancelled or unavailable — try X / LinkedIn");
+    } finally {
+      setSharingNative(false);
+    }
+  }
 
   return (
     <motion.div
@@ -565,29 +606,66 @@ function ShareDialog({
         </div>
         {localEmbed && (
           <p className="mt-4 rounded-lg border border-amber-300/20 bg-amber-300/5 px-3 py-2 text-xs leading-relaxed text-amber-100/80">
-            Local preview URL. Set{" "}
+            Localhost links won&apos;t resolve for X / LinkedIn crawlers. Set{" "}
             <code className="text-amber-100">NEXT_PUBLIC_SITE_URL</code> to your
-            deployed HTTPS domain before sharing.
+            deployed HTTPS domain — or use{" "}
+            <span className="text-amber-100">Share card</span> to send the PNG
+            file from this device.
           </p>
         )}
 
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <a
-            href={twitterUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex h-11 items-center justify-center border border-[var(--kraft)]/20 bg-black/40 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--kraft)] transition hover:border-[var(--ice)]/50 hover:bg-[var(--ice)]/10"
-          >
-            Post on X
-          </a>
-          <a
-            href={linkedInUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex h-11 items-center justify-center border border-[var(--kraft)]/20 bg-black/40 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--kraft)] transition hover:border-[var(--ice)]/50 hover:bg-[var(--ice)]/10"
-          >
-            LinkedIn
-          </a>
+        <div className="mt-4 space-y-2">
+          {nativeReady && (
+            <button
+              type="button"
+              disabled={sharingNative}
+              onClick={() => void shareNativeCard()}
+              className="flex h-11 w-full items-center justify-center gap-2 border border-[var(--ice)]/50 bg-[var(--ice)]/15 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--ice)] transition hover:bg-[var(--ice)]/25 disabled:opacity-60"
+            >
+              {sharingNative ? "Preparing…" : "Share card · PNG"}
+            </button>
+          )}
+          <div className="grid grid-cols-2 gap-2">
+            {localEmbed ? (
+              <>
+                <span
+                  title="Needs a public HTTPS SITE_URL so X can fetch the card"
+                  className="flex h-11 cursor-not-allowed items-center justify-center border border-[var(--kraft)]/10 bg-black/20 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--steel)]/50"
+                >
+                  Post on X
+                </span>
+                <span
+                  title="Needs a public HTTPS SITE_URL so LinkedIn can fetch the card"
+                  className="flex h-11 cursor-not-allowed items-center justify-center border border-[var(--kraft)]/10 bg-black/20 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--steel)]/50"
+                >
+                  LinkedIn
+                </span>
+              </>
+            ) : (
+              <>
+                <a
+                  href={twitterUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-11 items-center justify-center border border-[var(--kraft)]/20 bg-black/40 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--kraft)] transition hover:border-[var(--ice)]/50 hover:bg-[var(--ice)]/10"
+                >
+                  Post on X
+                </a>
+                <a
+                  href={linkedInUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-11 items-center justify-center border border-[var(--kraft)]/20 bg-black/40 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--kraft)] transition hover:border-[var(--ice)]/50 hover:bg-[var(--ice)]/10"
+                >
+                  LinkedIn
+                </a>
+              </>
+            )}
+          </div>
+          <p className="text-[10px] leading-relaxed text-[var(--steel)]">
+            X / LinkedIn open a compose draft with your scout page (card art via
+            Open Graph). They never auto-publish without you tapping Post.
+          </p>
         </div>
 
         <div className="mt-4 overflow-hidden border border-[var(--kraft)]/15 bg-gradient-to-br from-[#1a1612] to-black/40">

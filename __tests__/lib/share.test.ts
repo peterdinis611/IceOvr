@@ -24,6 +24,7 @@ describe("buildCardSharePayload", () => {
     expect(share.markdown).toContain("/u/gaearon?style=brutal");
     expect(share.twitterUrl).toContain("twitter.com/intent/tweet");
     expect(share.twitterUrl).toContain(encodeURIComponent(share.pageUrl));
+    expect(share.twitterUrl).toContain(encodeURIComponent(share.publicPng));
     expect(share.linkedInUrl).toContain("linkedin.com/sharing");
     expect(share.linkedInUrl).toContain(encodeURIComponent(share.pageUrl));
   });
